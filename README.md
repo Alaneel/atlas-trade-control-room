@@ -1,160 +1,74 @@
-<div align="center">
+# Atlas Trade Control Room
 
-# ◈ Atlas Trade Control Room
+**Explore a pre-trade decision workflow: instrument checks, counterparty capacity, and exception requests.**
 
-**A production-minded pre-trade risk and approval workflow, built as a compact full-stack reference architecture.**
+Atlas pairs a Java / Spring Boot API with a Streamlit control room. It is a learning prototype for making a decision path visible, from an instrument query to a simulated execution result and stored trade history.
 
-[![CI](https://github.com/Alaneel/atlas-trade-control-room/actions/workflows/ci.yml/badge.svg)](https://github.com/Alaneel/atlas-trade-control-room/actions/workflows/ci.yml)
-[![Java](https://img.shields.io/badge/Java-11-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-2.6-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![License: MIT](https://img.shields.io/badge/License-MIT-0b6b4d.svg)](LICENSE)
+[Architecture notes](ARCHITECTURE.md) · [Backend services](src/main/java/com/gic/service) · [Dashboard](python_src/trading_dashboard.py) · [Contributing](CONTRIBUTING.md)
 
-[Explore the architecture](ARCHITECTURE.md) · [Read the API](#api-surface) · [Contribute](CONTRIBUTING.md)
+## Start with the control room
 
-</div>
-
----
-
-Atlas answers one deceptively hard question before a trade reaches execution:
-
-> Is this instrument permitted, and does this counterparty still have enough capacity?
-
-It combines fast instrument screening, authoritative data checks, atomic limit consumption, exception routing, and an operator-facing control room. The repository is intentionally small enough to understand in an afternoon while still demonstrating the patterns used in risk-sensitive systems.
-
-## Why this project is interesting
-
-- **Layered validation** — a Bloom filter quickly rejects obvious misses before MongoDB performs the authoritative lookup.
-- **Resilient limits** — Caffeine handles local hot reads, while Redis integration is isolated behind a circuit breaker.
-- **Explainable decisions** — trades produce explicit approval or rejection outcomes and are written to trade history.
-- **Human-in-the-loop workflow** — unknown instruments can be routed into an approval request instead of disappearing into an error log.
-- **Zero-infrastructure demo** — the Streamlit control room ships with realistic sample data, so the product can be explored immediately.
-- **Operational baseline** — health endpoints, Prometheus metrics, containers, coverage reporting, and security scanning are included.
-
-## See it in 60 seconds
-
-The fastest route is the standalone product demo; it does not require Java, MongoDB, or Redis.
+The dashboard defaults to **Demo data** and runs without the backend. Its sample records let you inspect the interface; they are not observations from a trading system.
 
 ```bash
-git clone https://github.com/Alaneel/atlas-trade-control-room.git
-cd atlas-trade-control-room
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r python_src/requirements.txt
 streamlit run python_src/trading_dashboard.py
 ```
 
-Open [localhost:8501](http://localhost:8501). Demo data is enabled by default. Use the sidebar toggle when you are ready to connect the real API.
+Open [localhost:8501](http://localhost:8501).
 
-## Run the complete stack
-
-Docker Compose starts the dashboard, API, MongoDB, and Redis together:
+For the API, MongoDB, Redis, and dashboard together:
 
 ```bash
-git clone https://github.com/Alaneel/atlas-trade-control-room.git
-cd atlas-trade-control-room
 docker compose up --build
 ```
 
-| Surface | Address | Purpose |
+Switch off **Demo data** in the sidebar to call the backend. The API is exposed at `localhost:8080`; its [Swagger UI](http://localhost:8080/swagger-ui.html) describes the request schemas.
+
+## Follow a request through the code
+
+1. [InstrumentService](src/main/java/com/gic/service/InstrumentService.java) queries MongoDB for matching instrument attributes, including department. Spring caching wraps the lookup.
+2. [LimitService](src/main/java/com/gic/service/LimitService.java) reads a counterparty / instrument-group limit, checks available capacity, subtracts the amount, and saves the record.
+3. [TradeService](src/main/java/com/gic/service/TradeService.java) simulates execution. On simulated success it records an executed trade; on failure it releases the reservation and records a failed trade.
+4. [ApprovalService](src/main/java/com/gic/service/ApprovalService.java) stores an explicit exception request with `PENDING` status. A completed reviewer decision workflow is not implemented here.
+
+Instrument or capacity checks that reject a trade return a decision before execution; the current service saves history for execution outcomes, not every rejection.
+
+| Method | Route | Purpose |
 |---|---|---|
-| Control room | [localhost:8501](http://localhost:8501) | Operator workflow and demo |
-| OpenAPI UI | [localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) | Interactive API explorer |
-| Health | [localhost:8080/actuator/health](http://localhost:8080/actuator/health) | Dependency and service status |
-| Metrics | [localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus) | Prometheus scrape endpoint |
+| `POST` | `/api/trader/verify-instrument` | Query a permitted instrument combination |
+| `GET` | `/api/trader/instruments` | List instrument IDs |
+| `GET` | `/api/trader/limit/{counterparty}/{instrumentGroup}` | Read available capacity |
+| `POST` | `/api/trader/trade` | Evaluate a request and simulate execution |
+| `GET` | `/api/trader/trades` | Read stored trade history |
+| `POST` | `/api/trader/approval-request` | Create a pending exception request |
 
-Turn off **Demo data** in the control room sidebar to use the running backend.
+## What this prototype does not establish
 
-## Architecture
+Limit consumption is **read → modify → save**, not an atomic conditional database update. `@Transactional` annotations alone do not establish concurrent reservation correctness; the implementation needs an explicit concurrency design and verification before multiple requests can safely compete for capacity.
 
-```mermaid
-flowchart LR
-    UI["Atlas control room"] --> API["Spring Boot API"]
-    API --> BF["Bloom filter"]
-    BF --> MDB[(MongoDB)]
-    API --> C["Caffeine cache"]
-    API --> CB["Circuit breaker"]
-    CB --> R[(Redis)]
-    API --> H["Trade history & approvals"]
-    H --> MDB
-```
+“External execution” is `Thread.sleep(500)` followed by `Math.random() < 0.9`. The delay and probability are simulation parameters, not latency measurements or reliability results. Amounts use `Double`; this is not an exact-money ledger.
 
-The backend follows a conventional controller → service → repository boundary. Instrument verification uses the Bloom filter as a fast negative check, but MongoDB remains the source of truth. See [ARCHITECTURE.md](ARCHITECTURE.md) for the detailed flow and design trade-offs.
+A Bloom-filter utility and Redis circuit-breaker service exist in the repository, but the inspected instrument/trade decision path does not invoke them. Their presence is not evidence of an integrated fast path or tested failover. Authentication and role-based approval controls should not be inferred from the interface. This project is not a live trading or production risk platform.
 
-## A trade's decision path
+## Work on the backend
 
-1. Verify that required instrument attributes match a permitted product.
-2. Look up the counterparty limit for the requested product group.
-3. Compare available capacity with requested notional.
-4. Approve and record the trade, or return a clear domain error.
-5. Route an unknown instrument to approval when an operator requests it.
-
-## API surface
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/trader/verify-instrument` | Validate an instrument definition |
-| `POST` | `/api/trader/trade` | Evaluate and record a trade |
-| `GET` | `/api/trader/limit/{counterparty}/{group}` | Read available capacity |
-| `GET` | `/api/trader/trades` | Return trade decision history |
-| `POST` | `/api/trader/approval-request` | Route an exception for review |
-
-Once the backend is running, Swagger UI contains the request schemas and lets you call each endpoint interactively.
-
-## Technology choices
-
-| Layer | Technology | Role |
-|---|---|---|
-| UI | Streamlit, Pandas | Operational control room and instant demo |
-| API | Java, Spring Boot | Validation, decisions, exception mapping |
-| Primary store | MongoDB | Instruments, limits, trades, approvals |
-| Fast path | Redis, Caffeine, Guava | Distributed/local caching and Bloom screening |
-| Reliability | Resilience4j, Actuator | Circuit breaking, health, and metrics |
-| Delivery | Docker Compose, GitHub Actions | Reproducible local stack and CI |
-
-## Development
-
-Requirements for backend development are Java 11+, Maven 3.6+, MongoDB 7, and Redis 7.
+Backend development uses Java 11+, Maven 3.6+, MongoDB, and Redis. The Compose file selects MongoDB 7 and Redis 7.
 
 ```bash
-# Build and test the backend
 mvn clean test
-
-# Run the backend against local dependencies
 mvn spring-boot:run
+```
 
-# Run the UI against that API
+To start the dashboard in API mode:
+
+```bash
 DEMO_MODE=false BACKEND_API_URL=http://localhost:8080 \
   streamlit run python_src/trading_dashboard.py
 ```
 
-Useful shortcuts are available through `make help`. Configuration can be overridden with `MONGODB_URI`, `REDIS_HOST`, `REDIS_PORT`, `SERVER_PORT`, and `BACKEND_API_URL`; see [.env.example](.env.example).
+See [.env.example](.env.example), [docker-compose.yml](docker-compose.yml), and [architecture notes](ARCHITECTURE.md) for configuration. Existing architecture documentation also describes design intentions; use the linked service implementations to distinguish those intentions from the current path.
 
-## Repository map
-
-```text
-src/main/java/com/gic/
-├── controller/     HTTP boundary
-├── service/        decision and workflow logic
-├── repository/     MongoDB persistence
-├── model/          domain records
-├── exception/      typed failures and API responses
-├── config/         cache, security, OpenAPI, seed data
-└── health/         operational checks
-
-python_src/         Atlas control room
-.github/workflows/  CI and dependency automation
-```
-
-## Roadmap
-
-- [ ] Optimistic locking for concurrent limit consumption
-- [ ] Immutable audit events with actor and rationale
-- [ ] Role-based approval actions
-- [ ] Testcontainers-based integration suite
-- [ ] OpenTelemetry traces across decision stages
-
-## Contributing and security
-
-Small, focused pull requests are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), and avoid including real counterparty or trading data in issues and fixtures. This repository is a portfolio/reference implementation, not a production trading platform.
-
-Released under the [MIT License](LICENSE).
+Released under the [MIT license](LICENSE).
