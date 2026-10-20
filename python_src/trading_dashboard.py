@@ -203,15 +203,16 @@ elif page == "New trade":
                 except requests.RequestException as exc:
                     submission_error(exc)
         trade_id = st.text_input("Trade reference to inspect")
-        use_ai = st.checkbox("Use AI to organize the evidence", value=False,
-            help="Requires a configured model. Facts and read-only checks remain validated by the server.")
+        use_ai = st.checkbox("Add AI analysis across events", value=False,
+            help="Requires a configured model. Event relations are checked; model interpretations remain hypotheses. All actions stay read-only.")
         if trade_id and st.button("Explain rejection or anomaly"):
             try:
                 path = f"/trades/{quote(trade_id, safe='')}/explanation"
                 explanation = api("GET", path, params={"mode": "ai" if use_ai else "rules"})
                 source = {"rules": "Rule explanation", "model_ordered": "AI-organized, verified evidence",
+                          "model_attributed": "Rule facts with AI cross-event interpretation",
                           "rules_fallback": "Rule explanation (model unavailable or output rejected)",
-                          "fixture_ordered": "Test fixture"}.get(explanation.get("mode"), "Explanation")
+                          "fixture_ordered": "Test fixture", "fixture_attributed": "Test fixture"}.get(explanation.get("mode"), "Explanation")
                 st.caption(source)
                 if explanation.get("abstained"):
                     st.warning(explanation.get("summary", "Evidence is insufficient."))
@@ -220,6 +221,12 @@ elif page == "New trade":
                 for finding in explanation.get("findings", []):
                     st.write(finding.get("text", ""))
                     st.caption("Evidence: " + ", ".join(finding.get("evidenceIds", [])))
+                for insight in explanation.get("attributions", []):
+                    st.write("Observed relationship: " + insight.get("observedRelation", ""))
+                    st.text("AI interpretation: " + insight.get("interpretation", ""))
+                    st.text("Uncertainty: " + insight.get("uncertainty", ""))
+                    st.caption("Evidence: " + ", ".join(insight.get("evidenceIds", [])))
+                    st.caption(insight.get("validationScope", ""))
                 for check in explanation.get("nextChecks", []):
                     st.write("Read-only check: " + check.get("text", ""))
                 st.caption("Explanations cannot approve trades, change capacity or execute operations.")

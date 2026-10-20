@@ -18,7 +18,7 @@ final class ExplanationModelReport {
     static Map<String, Object> summarize(List<CaseResult> rows, List<Explanation> controls, JsonNode prices) {
         Map<String, Object> result = new LinkedHashMap<>();
         long calls = rows.stream().mapToInt(r -> r.explanation().modelCalls()).sum();
-        List<CaseResult> accepted = rows.stream().filter(r -> "model_ordered".equals(r.explanation().mode())).toList();
+        List<CaseResult> accepted = rows.stream().filter(r -> Set.of("model_ordered", "model_attributed").contains(r.explanation().mode())).toList();
         long fallbacks = rows.stream().filter(r -> "rules_fallback".equals(r.explanation().mode())).count();
         result.put("cases", rows.size()); result.put("initiated_requests", calls);
         result.put("validated_plans", accepted.size()); result.put("fallbacks", fallbacks);
@@ -27,7 +27,7 @@ final class ExplanationModelReport {
         result.put("latency_ms", latency(rows.stream().map(r -> r.explanation().elapsedMillis()).toList()));
         result.put("provider_latency_ms", latency(rows.stream().map(CaseResult::providerElapsedMillis).filter(java.util.Objects::nonNull).toList()));
         result.put("latency_scope", "Sequential end-to-end in-process explanation calls, including network and rendering; no load/concurrency inference. Nearest-rank percentiles; no unreported warmup requests.");
-        result.put("cost", cost(rows, prices));
+        result.put("cost", cost(rows.stream().filter(r -> r.explanation().modelCalls() > 0).map(CaseResult::providerUsage).toList(), prices));
         Map<String, Object> quality = new LinkedHashMap<>();
         quality.put("raw_plan_acceptance", fraction(accepted.size(), rows.size()));
         quality.put("final_application_output", quality(rows));
@@ -65,14 +65,12 @@ final class ExplanationModelReport {
         return score;
     }
 
-    private static Map<String, Object> cost(List<CaseResult> rows, JsonNode prices) {
+    static Map<String, Object> cost(List<ModelPlanner.Usage> rows, JsonNode prices) {
         BigDecimal minimum = BigDecimal.ZERO, maximum = BigDecimal.ZERO;
         int missing = 0, unpriced = 0, missingCache = 0;
         long inputTotal = 0, cachedTotal = 0, outputTotal = 0, reasoningTotal = 0, requests = 0;
-        for (CaseResult row : rows) {
-            if (row.explanation().modelCalls() == 0) continue;
+        for (ModelPlanner.Usage u : rows) {
             requests++;
-            ModelPlanner.Usage u = row.providerUsage();
             if (u == null || u.inputTokens() == null || u.outputTokens() == null) { missing++; continue; }
             inputTotal += u.inputTokens(); outputTotal += u.outputTokens();
             if (u.cachedInputTokens() != null) cachedTotal += u.cachedInputTokens();

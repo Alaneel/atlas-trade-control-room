@@ -1,8 +1,8 @@
 # Read-only AI explanation layer
 
-Atlas explains recorded rejection and execution states using versioned rules and immutable evidence. The model can choose and order existing finding/check IDs. The application renders the corresponding reviewed factual text. Model-authored prose, new claims, approvals, capacity changes and trading actions are not part of the output contract.
+Atlas explains recorded rejection and execution states using versioned rules and immutable evidence. The application renders authoritative decision facts and required checks. V2 additionally lets the optional model connect events and write labelled hypotheses with exact citations. The program verifies the cited temporal/state observations; model prose is not semantically certified. Approvals, capacity changes and trading actions are outside its capability.
 
-This is intentionally constrained model-assisted presentation. It does not claim an autonomous financial adviser or unrestricted natural-language diagnosis. The deterministic transaction code continues to choose every business state.
+The deterministic transaction code continues to choose every business state. See [cross-event reasoning, proof checks and three-way comparison](CROSS_EVENT_EXPLANATIONS.md) for the current contract. Historical v1 artifacts retain their original ordering-only behavior and measurements.
 
 ## Run without credentials
 
@@ -31,7 +31,7 @@ The initial measured baseline uses `OPENAI_MODEL=gpt-4.1-mini-2025-04-14`, a fix
 
 Restart the backend after configuring it. No model name or price is silently selected. The implementation sends one bounded request to `https://api.openai.com/v1/responses`, uses `store: false` and strict `text.format` JSON Schema, and supplies no tools or conversation continuation. The API shape follows [official Structured Outputs documentation](https://developers.openai.com/api/docs/guides/structured-outputs).
 
-Provider access is disabled by default. Each process permits at most two concurrent requests, immediately falls back when busy, caps output at 512 tokens, caps input at 32 KiB and retained response bytes at 64 KiB, and uses an 8-second overall response deadline. Redirects and application retries are disabled. A stalled response body is also bounded. Requests explicitly select the standard `default` service tier. Returned token usage is recorded when available, including billable refusals and incomplete responses; missing usage is null, not a fabricated zero cost. The public `model` field identifies the requested model. The evaluation additionally retains allowlisted resolved model, response/request IDs, service tier, cached input tokens and reasoning token counts, without storing reasoning text or raw provider error bodies.
+Provider access is disabled by default. Each process permits at most two concurrent requests, immediately falls back when busy, caps v2 output at 1,400 tokens (v1: 512), input at 32 KiB and retained response at 64 KiB, and uses an 8-second overall deadline. Redirects and application retries are disabled. A stalled response body is also bounded. Requests explicitly select the standard `default` service tier. Returned token usage is recorded when available, including refusal/incomplete-response usage; missing usage is null, not zero cost. The public `model` field identifies the requested model. Evaluation additionally retains allowlisted resolved model, response/request IDs, service tier, cached input and reasoning token counts, without reasoning text or raw error bodies.
 
 For separately opted-in actual-provider evaluation on synthetic cases:
 
@@ -65,10 +65,11 @@ The response includes:
 
 - trade reference, recorded state/version and snapshot hash;
 - rule and prompt versions;
-- mode: `rules`, `model_ordered`, `rules_fallback` or a clearly labelled test-only `fixture_ordered`;
+- mode: `rules`, `model_ordered`, `model_attributed`, `rules_fallback` or clearly labelled test-only fixture modes;
 - provider outcome and initiated model-request count;
 - grounded findings with rule IDs and evidence references;
 - read-only inspection checks, explicit uncertainty/abstention and scope limitations.
+- optional `attributions`, separating program-checked observations from model-authored interpretations and uncertainties.
 
 An explanation is an observation of the returned version, not an authorization or an eternally current trading decision. After a provider request the service rereads evidence. If the snapshot changes, it discards the old model plan and renders a fresh deterministic explanation. It makes no second provider request.
 
@@ -86,7 +87,7 @@ Rules are reviewed explanatory descriptions of deterministic code, not an editab
 
 The explanation service depends only on `ExplanationReader`, the rule engine and a planner. Its reader has a `load` method, and the Mongo adapter calls read operations only. It has no `TradeService`, `TradeWorker`, reservation, approval or gateway capability. No model output is dispatched as a function or HTTP operation.
 
-The model receives curated findings, rule text and allowlisted references. Raw event messages, instrument/counterparty names, idempotency keys, request fingerprints and lease tokens are not model inputs. This removes free-text message instructions from that context. The returned plan must match the snapshot, preserve the primary reason and all mandatory uncertainty/check items, use existing IDs exactly once, and contain no extra properties. Function-call output, invented IDs, omitted mandatory items, stale hashes and action fields are rejected. Failure returns the already-computed rules explanation.
+The model receives curated findings, rules, an allowlisted typed timeline and references. Raw event messages, instrument/counterparty names, keys, fingerprints and lease tokens are not model inputs. The plan must match the snapshot, preserve the reason and required checks, use valid IDs once and contain no extra fields. Function calls, invented IDs, omitted mandatory items, stale hashes and action fields are rejected. V2 attribution references and temporal/state predicates are separately checked. Interpretation text remains a labelled hypothesis, not a verified business fact. Failure returns the rules explanation.
 
 This is an application capability boundary, not a separate-process or database-role security boundary: the local backend retains its existing database identity and unauthenticated development API. The adapter contract and tests do not prove general prompt-injection immunity or production tenant isolation.
 

@@ -32,7 +32,8 @@ public class ExplanationService {
                 calls = reply.modelRequest() ? 1 : 0;
                 model = reply.model(); input = reply.inputTokens(); output = reply.outputTokens();
                 plan = ExplanationPlan.parseAndValidate(reply.json(), analysis);
-                mode = reply.modelRequest() ? "model_ordered" : "fixture_ordered";
+                mode = plan.attributions().isEmpty() ? (reply.modelRequest() ? "model_ordered" : "fixture_ordered")
+                    : (reply.modelRequest() ? "model_attributed" : "fixture_attributed");
                 outcome = "validated";
             } catch (ModelPlanner.Failure ex) {
                 if (ex.modelRequest()) calls = 1;
@@ -56,9 +57,11 @@ public class ExplanationService {
         Map<String, Explanation.Check> checks = analysis.checks().stream()
             .collect(Collectors.toMap(Explanation.Check::id, Function.identity()));
         List<Explanation.Finding> ordered = plan.findingIds().stream().map(findings::get).toList();
+        ExplanationEngine.Analysis checkedAnalysis = analysis;
+        List<Explanation.Attribution> attributions = plan.attributions().stream().map(p -> CrossEventVerifier.verify(p, checkedAnalysis)).toList();
         return new Explanation(snapshot.tradeId(), snapshot.version(), String.valueOf(snapshot.status()), analysis.snapshotHash(),
             snapshot.ruleVersion(), OpenAiPlanner.PROMPT_VERSION, mode, outcome, model, calls, input, output,
             (System.nanoTime() - start) / 1_000_000, analysis.abstained(), findings.get(plan.headlineId()).text(),
-            ordered, plan.checkIds().stream().map(checks::get).toList(), analysis.evidence(), analysis.limitations(), Instant.now());
+            ordered, plan.checkIds().stream().map(checks::get).toList(), analysis.evidence(), analysis.limitations(), Instant.now(), attributions);
     }
 }

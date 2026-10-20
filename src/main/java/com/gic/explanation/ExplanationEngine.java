@@ -22,7 +22,7 @@ public final class ExplanationEngine {
     public ExplanationEngine(RuleCatalog catalog) { this.catalog = catalog; }
 
     public record Analysis(String snapshotHash, String headlineId, boolean abstained, List<Finding> findings,
-            List<Check> checks, List<Evidence> evidence, List<String> limitations) {
+            List<Check> checks, List<Evidence> evidence, List<String> limitations, ExplanationSnapshot snapshot) {
         public Analysis {
             findings = List.copyOf(findings); checks = List.copyOf(checks);
             evidence = List.copyOf(evidence); limitations = List.copyOf(limitations);
@@ -49,11 +49,11 @@ public final class ExplanationEngine {
             Finding finding = new Finding("evidence.insufficient", "EVIDENCE_REQUIRED",
                 "Cannot establish a specific cause from this evidence: " + problem + ". No execution or capacity change is authorized.", refs, true);
             return new Analysis(hash, finding.id(), true, List.of(finding), List.of(
-                new Check("inspect.events", "Read the ordered trade events and compare their version and status with the trade record.", refs, true)), evidence, limitations);
+                new Check("inspect.events", "Read the ordered trade events and compare their version and status with the trade record.", refs, true)), evidence, limitations, snapshot);
         }
         for (ExplanationSnapshot.Event event : snapshot.events()) {
             evidence.add(new Evidence(event.id(), "event", "/trade_events/" + event.id(),
-                "sequence=" + event.sequence() + "; status=" + event.status() + "; decision=" + event.decisionCode()));
+                "sequence=" + event.sequence() + "; status=" + event.status() + "; decision=" + event.decisionCode() + "; recordedAt=" + event.at()));
         }
         String eventRef = snapshot.events().get(snapshot.events().size() - 1).id();
         List<Finding> findings = new ArrayList<>();
@@ -108,7 +108,7 @@ public final class ExplanationEngine {
         if (snapshot.receipt() != null) {
             String receiptRef = "receipt:" + snapshot.tradeId();
             evidence.add(new Evidence(receiptRef, "receipt", "/simulated_execution_receipts/" + snapshot.tradeId(),
-                "Matching simulated venue receipt status=" + snapshot.receipt().status() + "; amount=" + money(snapshot.receipt().amount())));
+                "Matching simulated venue receipt status=" + snapshot.receipt().status() + "; amount=" + money(snapshot.receipt().amount()) + "; recordedAt=" + snapshot.receipt().at()));
             findings.add(new Finding("evidence.receipt", "EXEC_RECEIPT",
                 "A matching simulated venue receipt is present with status " + snapshot.receipt().status()
                     + ". A receipt alone does not change the trade state or authorize a new execution.",
@@ -123,7 +123,7 @@ public final class ExplanationEngine {
                 "The ordered status history is " + String.join(" → ", snapshot.events().stream().map(e -> e.status().name()).toList()) + ".",
                 snapshot.events().stream().map(ExplanationSnapshot.Event::id).toList(), false));
         }
-        return new Analysis(hash, id, false, findings, checks, evidence, limitations);
+        return new Analysis(hash, id, false, findings, checks, evidence, limitations, snapshot);
     }
 
     private String rule(String id, List<Evidence> evidence) {

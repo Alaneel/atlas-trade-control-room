@@ -82,6 +82,6 @@ class LiveExplanationModelEvaluationTest {
         Path destination = Path.of(System.getProperty("atlas.explanation.report", "target/atlas-explanation-model-evaluation.json"));
         Files.createDirectories(destination.toAbsolutePath().getParent());
         json.enable(SerializationFeature.INDENT_OUTPUT).writeValue(destination.toFile(), report);
-        assertThat(results).anyMatch(result -> "model_ordered".equals(result.explanation().mode()));
+        assertThat(results).anyMatch(result -> java.util.Set.of("model_ordered", "model_attributed").contains(result.explanation().mode()));
     }
 }

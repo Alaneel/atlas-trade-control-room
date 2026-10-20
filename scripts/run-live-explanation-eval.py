@@ -116,7 +116,7 @@ def main():
     manifest = {"run_id": run_id, "source_commit": git("rev-parse", "HEAD"), "working_tree_dirty": bool(git("status", "--porcelain")),
                 "tracked_diff_sha256": hashlib.sha256(git("diff", "HEAD").encode()).hexdigest(),
                 "request_limit": args.limit, "model": values["OPENAI_MODEL"], "automatic_retries": 0,
-                "timeout_ms": 8000, "max_output_tokens": 512, "service_tier": "default",
+                "timeout_ms": 8000, "max_output_tokens": 1400, "service_tier": "default",
                 "source_sha256": {str(path.relative_to(ROOT)): digest(path) for path in paths}}
     (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     environment = os.environ.copy()

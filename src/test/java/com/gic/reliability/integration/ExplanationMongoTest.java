@@ -52,6 +52,30 @@ class ExplanationMongoTest {
         assertThat(store.get(order.getId()).getStatus()).isEqualTo(TradeStatus.UNKNOWN);
         assertThat(documents()).isEqualTo(before);
     }
+    @Test void crossEventAttributionUsesRealReadProjectionsWithoutSettlingOrWritingTheTrade() {
+        var order = create(seed("100.00"), "10.00");
+        new TradeWorker(store, new MongoExecutionGateway(fixture.mongo, "TIMEOUT_AFTER_SUCCESS"), 5000L).dispatch(order.getId());
+        var base = java.time.Instant.parse("2026-10-20T12:00:00Z");
+        for (int sequence = 0; sequence < 3; sequence++) fixture.mongo.updateFirst(Query.query(Criteria.where("_id").is(order.getId() + ":" + sequence)),
+            new Update().set("createdAt", java.util.Date.from(base.plusSeconds(sequence == 2 ? 5 : sequence))), TradeEvent.class);
+        fixture.mongo.updateFirst(Query.query(Criteria.where("_id").is(order.getId())), new Update()
+            .set("createdAt", java.util.Date.from(base.plusSeconds(4))), ExecutionReceipt.class);
+        String before = documents();
+        var result = service(analysis -> {
+            var baseline = ExplanationPlan.baseline(analysis);
+            String receipt = "receipt:" + order.getId(), unknown = order.getId() + ":2";
+            var attribution = new CrossEventVerifier.Proposal("RECEIPT_BEFORE_UNKNOWN", receipt, unknown, List.of(receipt, unknown),
+                "An acknowledgement or local commit gap is a possible explanation of the differing records.",
+                "The physical mechanism is not established. Inspect existing records only.");
+            var plan = new ExplanationPlan(baseline.snapshotHash(), baseline.headlineId(), baseline.findingIds(), baseline.checkIds(), List.of(attribution));
+            return new ModelPlanner.Reply(new ObjectMapper().valueToTree(plan).toString(), "fixture", null, null, false);
+        }).explain(order.getId(), true);
+        assertThat(result.mode()).isEqualTo("fixture_attributed");
+        assertThat(result.attributions()).hasSize(1);
+        assertThat(result.attributions().get(0).observedRelation()).contains("1 seconds before");
+        assertThat(result.tradeStatus()).isEqualTo("UNKNOWN");
+        assertThat(documents()).isEqualTo(before);
+    }
     @Test void providerMutationAndInventedClaimsAreRejectedWithoutAnyDatabaseWrite() {
         var order = create(seed("5.00"), "10.00"); String before = documents();
         ModelPlanner attack = a -> new ModelPlanner.Reply("{\"snapshotHash\":\"" + a.snapshotHash()
@@ -69,7 +93,7 @@ class ExplanationMongoTest {
         AtomicReference<String> context = new AtomicReference<>();
         ModelPlanner planner = a -> {
             try {
-                context.set(new ObjectMapper().writeValueAsString(a));
+                context.set(new ObjectMapper().registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule()).writeValueAsString(a));
                 return new ModelPlanner.Reply(new ObjectMapper().writeValueAsString(ExplanationPlan.baseline(a)), "fixture", null, null, false);
             } catch (Exception ex) { throw new AssertionError(ex); }
         };

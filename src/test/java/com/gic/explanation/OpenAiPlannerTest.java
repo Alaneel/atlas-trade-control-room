@@ -66,9 +66,12 @@ class OpenAiPlannerTest {
         assertThat(request.path("store").asBoolean()).isFalse();
         assertThat(request.path("text").path("format").path("strict").asBoolean()).isTrue();
         assertThat(request.has("tools")).isFalse(); assertThat(request.has("previous_response_id")).isFalse();
-        assertThat(request.path("max_output_tokens").asInt()).isEqualTo(512);
+        assertThat(request.path("max_output_tokens").asInt()).isEqualTo(OpenAiPlanner.MAX_OUTPUT_TOKENS);
+        assertThat(request.path("text").path("format").path("schema").path("required").toString()).contains("attributions");
+        assertThat(requestBody.get()).contains("timeline", "relationDefinitions", "recordedAt");
         assertThat(request.path("service_tier").asText()).isEqualTo("default");
         assertThat(requestBody.get()).doesNotContain("counterparty", "requestFingerprint", "Idempotency-Key", "leaseToken");
+        assertThat(requestBody.get()).doesNotContain("expectedRelations", "reviewGoals", "forbiddenClaims");
     }
     @Test void refusalIsNotRenderedAsAnExplanation() throws Exception {
         var planner = start(200, response(List.of(Map.of("type", "message", "content", List.of(Map.of("type", "refusal", "refusal", "no"))))), 0, Duration.ofSeconds(2));
