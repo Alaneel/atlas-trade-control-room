@@ -11,7 +11,13 @@ public interface ModelPlanner {
     }
     /** Allowlisted response metadata only; never retains credentials, reasoning text or raw provider errors. */
     record Usage(String requestedModel, String resolvedModel, String responseId, String requestId, String serviceTier,
-                 Long inputTokens, Long cachedInputTokens, Long outputTokens, Long reasoningTokens) { }
+                 Long inputTokens, Long cachedInputTokens, Long outputTokens, Long reasoningTokens, Long cacheWriteTokens) {
+        public Usage(String requestedModel, String resolvedModel, String responseId, String requestId, String serviceTier,
+                Long inputTokens, Long cachedInputTokens, Long outputTokens, Long reasoningTokens) {
+            this(requestedModel, resolvedModel, responseId, requestId, serviceTier, inputTokens, cachedInputTokens,
+                outputTokens, reasoningTokens, null);
+        }
+    }
     final class Failure extends RuntimeException {
         private final String outcome;
         private final boolean modelRequest;

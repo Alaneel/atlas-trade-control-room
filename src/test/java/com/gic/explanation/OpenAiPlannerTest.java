@@ -70,8 +70,25 @@ class OpenAiPlannerTest {
         assertThat(request.path("text").path("format").path("schema").path("required").toString()).contains("attributions");
         assertThat(requestBody.get()).contains("timeline", "relationDefinitions", "recordedAt");
         assertThat(request.path("service_tier").asText()).isEqualTo("default");
+        assertThat(request.has("reasoning")).isFalse(); assertThat(request.has("prompt_cache_options")).isFalse();
         assertThat(requestBody.get()).doesNotContain("counterparty", "requestFingerprint", "Idempotency-Key", "leaseToken");
         assertThat(requestBody.get()).doesNotContain("expectedRelations", "reviewGoals", "forbiddenClaims");
+    }
+    @Test void lunaUsesExplicitBoundedReasoningAndAccountsForCacheWritesWithoutEnablingTools() throws Exception {
+        var root = (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(response(List.of(message("{}"))));
+        root.put("model", "gpt-5.6-luna");
+        ((com.fasterxml.jackson.databind.node.ObjectNode) root.at("/usage/input_tokens_details")).put("cache_write_tokens", 20);
+        start(200, root.toString(), 0, Duration.ofSeconds(2));
+        var planner = OpenAiPlanner.loopbackTest("fixture-key", "gpt-5.6-luna", Duration.ofSeconds(2),
+            URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/v1/responses"));
+        var reply = planner.propose(analysis);
+        assertThat(reply.usage().cacheWriteTokens()).isEqualTo(20);
+        var body = json.readTree(requestBody.get());
+        assertThat(body.at("/reasoning/effort").asText()).isEqualTo("low");
+        assertThat(body.at("/reasoning/mode").asText()).isEqualTo("standard");
+        assertThat(body.at("/prompt_cache_options/mode").asText()).isEqualTo("explicit");
+        assertThat(body.path("max_output_tokens").asInt()).isEqualTo(1400);
+        assertThat(body.has("tools")).isFalse(); assertThat(body.path("store").asBoolean()).isFalse();
     }
     @Test void refusalIsNotRenderedAsAnExplanation() throws Exception {
         var planner = start(200, response(List.of(Map.of("type", "message", "content", List.of(Map.of("type", "refusal", "refusal", "no"))))), 0, Duration.ofSeconds(2));

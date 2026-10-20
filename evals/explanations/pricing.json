@@ -1,5 +1,5 @@
 {
-  "version": "atlas-openai-standard-prices-2026-10-21",
+  "version": "atlas-openai-standard-prices-2026-10-21-luna",
   "verified_on": "2026-10-21",
   "source": "https://developers.openai.com/api/docs/pricing",
   "currency": "USD",
@@ -14,7 +14,13 @@
       "input": "0.40",
       "cached_input": "0.10",
       "output": "1.60"
+    },
+    "gpt-5.6-luna": {
+      "input": "0.20",
+      "cached_input": "0.02",
+      "cache_write": "0.25",
+      "output": "1.20"
     }
   },
-  "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens."
+  "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens. Cache-write tokens replace ordinary input tokens at the cache-write rate; they are not an additive fee."
 }

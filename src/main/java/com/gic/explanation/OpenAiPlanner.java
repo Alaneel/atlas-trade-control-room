@@ -93,10 +93,17 @@ public final class OpenAiPlanner implements ModelPlanner {
         boolean requested = false;
         Usage usage = null;
         try {
-            byte[] body = json.writeValueAsBytes(Map.of("model", model, "store", false, "max_output_tokens", MAX_OUTPUT_TOKENS, "service_tier", "default",
+            var parameters = new java.util.LinkedHashMap<String, Object>(Map.of("model", model, "store", false, "max_output_tokens", MAX_OUTPUT_TOKENS, "service_tier", "default",
                 "input", List.of(Map.of("role", "system", "content", instruction),
                     Map.of("role", "user", "content", json.writeValueAsString(context))),
                 "text", Map.of("format", Map.of("type", "json_schema", "name", "atlas_explanation_plan", "strict", true, "schema", schema))));
+            // Explicitly bounded low reasoning, with the same output/deadline contract as the pinned comparator.
+            if ("gpt-5.6-luna".equals(model)) {
+                parameters.put("reasoning", Map.of("effort", "low", "mode", "standard"));
+                // Each synthetic request has a different suffix; do not pay to write it to the cache.
+                parameters.put("prompt_cache_options", Map.of("mode", "explicit"));
+            }
+            byte[] body = json.writeValueAsBytes(parameters);
             if (body.length > 32768) throw new Failure("input_too_large", false);
             HttpRequest request = HttpRequest.newBuilder(endpoint).timeout(timeout)
                 .header("Authorization", "Bearer " + key).header("Content-Type", "application/json")
@@ -108,10 +115,12 @@ public final class OpenAiPlanner implements ModelPlanner {
             JsonNode root = json.readTree(response.body());
             JsonNode counts = root.path("usage");
             Long input = tokens(counts.path("input_tokens")), outputCount = tokens(counts.path("output_tokens"));
+            Long cached = boundedTokens(counts.path("input_tokens_details").path("cached_tokens"), input);
+            Long written = boundedTokens(counts.path("input_tokens_details").path("cache_write_tokens"), input);
+            if (written != null && cached != null && written > input - cached) written = null;
             usage = new Usage(model, identifier(root.path("model").asText()), identifier(root.path("id").asText()),
                 identifier(response.headers().firstValue("x-request-id").orElse(null)), identifier(root.path("service_tier").asText()),
-                input, boundedTokens(counts.path("input_tokens_details").path("cached_tokens"), input),
-                outputCount, boundedTokens(counts.path("output_tokens_details").path("reasoning_tokens"), outputCount));
+                input, cached, outputCount, boundedTokens(counts.path("output_tokens_details").path("reasoning_tokens"), outputCount), written);
             if (!"completed".equals(root.path("status").asText())) throw new Failure("incomplete_response", true);
             String text = null;
             for (JsonNode output : root.path("output")) {

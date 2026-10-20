@@ -43,29 +43,34 @@ public final class CrossEventVerifier {
         var last = s.events().get(s.events().size() - 1);
         boolean reversed = reversed(s);
         if (reversed && !Set.of("TEMPORAL_ORDER_UNRELIABLE", "NO_RECEIPT_NOT_FAILURE").contains(p.relation())) throw invalid();
+        require(p.fromId() != null && p.toId() != null && !p.fromId().equals(p.toId()), "distinct_operands_required");
         Set<String> expected = Set.of(p.fromId(), p.toId());
         String observation;
         switch (p.relation()) {
             case "RECEIPT_BEFORE_UNKNOWN" -> {
                 require(receipt.equals(p.fromId()) && s.receipt() != null && to != null && to.equals(firstUnknown)
-                    && s.receipt().at().isBefore(to.at()));
+                    , "receipt_to_first_unknown_required");
+                require(s.receipt().at().isBefore(to.at()), "receipt_not_before_first_unknown");
                 observation = "A matching " + s.receipt().status() + " simulated receipt was recorded "
                     + seconds(s.receipt().at(), to.at()) + " seconds before the first UNKNOWN event. Latest recorded state=" + s.status() + ".";
             }
             case "RECEIPT_AFTER_UNKNOWN" -> {
                 require(from != null && from.equals(firstUnknown) && receipt.equals(p.toId()) && s.receipt() != null
-                    && from.at().isBefore(s.receipt().at()));
+                    , "first_unknown_to_receipt_required");
+                require(from.at().isBefore(s.receipt().at()), "receipt_not_after_first_unknown");
                 observation = "A matching " + s.receipt().status() + " simulated receipt was recorded "
                     + seconds(from.at(), s.receipt().at()) + " seconds after the first UNKNOWN event. Receipt creation time is not a network-arrival measurement.";
             }
             case "REPEATED_UNKNOWN" -> {
-                require(from != null && to != null && from.equals(firstUnknown) && to.equals(lastUnknown) && from.sequence() < to.sequence());
+                require(from != null && to != null && from.equals(firstUnknown) && to.equals(lastUnknown) && from.sequence() < to.sequence(),
+                    "distinct_first_last_unknown_required");
                 observation = unknowns.size() + " UNKNOWN events span " + seconds(from.at(), to.at())
                     + " seconds in this history. Event count is not a count of venue submissions.";
             }
             case "RECOVERY_COMPLETED" -> {
                 require(from != null && from.equals(firstUnknown) && to != null && to.equals(last) && to.status().terminal()
-                    && from.sequence() < to.sequence() && s.receipt() != null && s.receipt().status() == to.status());
+                    && from.sequence() < to.sequence(), "latest_terminal_event_required");
+                require(s.receipt() != null && s.receipt().status() == to.status(), "matching_terminal_receipt_required");
                 expected = Set.of(p.fromId(), p.toId(), receipt);
                 observation = "The first UNKNOWN was followed " + seconds(from.at(), to.at()) + " seconds later by recorded "
                     + to.status() + " settlement with a matching simulated receipt. The earlier UNKNOWN is historical; no new execution is authorized.";
@@ -83,7 +88,8 @@ public final class CrossEventVerifier {
                     + seconds(s.receipt().at(), to.at()) + " seconds. This is a recorded receipt-to-state gap, not the current age of the trade.";
             }
             case "TEMPORAL_ORDER_UNRELIABLE" -> {
-                require(from != null && to != null && from.sequence() < to.sequence() && from.at().isAfter(to.at()));
+                require(from != null && to != null && from.sequence() < to.sequence(), "increasing_sequence_required");
+                require(from.at().isAfter(to.at()), "timestamps_must_reverse");
                 observation = "Event sequence " + from.sequence() + " precedes " + to.sequence()
                     + ", but its timestamp is later. Sequence order and wall-clock order disagree; elapsed-time attribution is unreliable.";
             }
@@ -93,8 +99,8 @@ public final class CrossEventVerifier {
             }
             default -> throw invalid();
         }
-        require(p.evidenceIds().size() == expected.size() && Set.copyOf(p.evidenceIds()).equals(expected));
-        require(a.evidence().stream().map(Explanation.Evidence::id).toList().containsAll(expected));
+        require(p.evidenceIds().size() == expected.size() && Set.copyOf(p.evidenceIds()).equals(expected), "exact_citation_set_required");
+        require(a.evidence().stream().map(Explanation.Evidence::id).toList().containsAll(expected), "foreign_evidence");
         return new Explanation.Attribution(p.relation(), observation, p.interpretation(), p.uncertainty(), p.evidenceIds(), SCOPE);
     }
 
@@ -158,5 +164,8 @@ public final class CrossEventVerifier {
             && !value.matches("(?is).*(https?://|```|[<>]).*"));
     }
     private static void require(boolean pass) { if (!pass) throw invalid(); }
+    private static void require(boolean pass, String code) {
+        if (!pass) throw new ModelPlanner.Failure("invalid_attribution_" + code, false);
+    }
     private static ModelPlanner.Failure invalid() { return new ModelPlanner.Failure("invalid_attribution", false); }
 }

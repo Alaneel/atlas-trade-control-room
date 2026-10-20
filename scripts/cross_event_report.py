@@ -69,7 +69,8 @@ def summarize(report):
         hits = sum(len(set(row["expected_relations"]) & {a["relation"] for a in (row["ai"].get(field, []) if variant == "ai" else row[field])}) for row in eligible)
         recalls[variant] = {"covered": hits, "total": expected_total, "rate": hits / expected_total if expected_total else None}
     return {
-        "complete": report["complete"], "model": report["model"], "eligible_cases": len(eligible), "controls": len(controls),
+        "complete": report["complete"], "model": report["model"], "reviewer_model": report.get("reviewer_model", report["model"]),
+        "budget": report.get("budget"), "eligible_cases": len(eligible), "controls": len(controls),
         "request_attempts": len(report["requests"]), "initiated_requests": sum(bool(t["initiated"]) for t in report["requests"]),
         "generation_requests": sum(r["ai"]["modelCalls"] for r in eligible),
         "fallbacks": sum(r["ai"]["mode"] == "rules_fallback" for r in eligible),
@@ -89,7 +90,7 @@ def summarize(report):
         "model_ratings": ratings, "ai_vs_rules": paired_outcomes(eligible, "rules"),
         "ai_vs_strong_rules": paired_outcomes(eligible, "strong_rules"),
         "human_review": None,
-        "review_scope": "Same snapshot generates and grades; source labels hidden, positions reversed. Each case is counted once for stable pair preference; rating counts include both presentations. Self-preference, correlated error and order effects remain. Not human, heldout or production evidence."
+        "review_scope": "Generator and reviewer model IDs are recorded; source labels hidden, positions reversed. Each case is counted once for stable pair preference; rating counts include both presentations. Same-provider preference, correlated error and order effects remain (including self-preference when IDs match). Not human, heldout or production evidence."
     }
 
 

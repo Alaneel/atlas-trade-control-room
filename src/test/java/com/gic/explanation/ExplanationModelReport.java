@@ -67,8 +67,8 @@ final class ExplanationModelReport {
 
     static Map<String, Object> cost(List<ModelPlanner.Usage> rows, JsonNode prices) {
         BigDecimal minimum = BigDecimal.ZERO, maximum = BigDecimal.ZERO;
-        int missing = 0, unpriced = 0, missingCache = 0;
-        long inputTotal = 0, cachedTotal = 0, outputTotal = 0, reasoningTotal = 0, requests = 0;
+        int missing = 0, unpriced = 0, missingCache = 0, missingWrites = 0;
+        long inputTotal = 0, cachedTotal = 0, writtenTotal = 0, outputTotal = 0, reasoningTotal = 0, requests = 0;
         for (ModelPlanner.Usage u : rows) {
             requests++;
             if (u == null || u.inputTokens() == null || u.outputTokens() == null) { missing++; continue; }
@@ -79,28 +79,35 @@ final class ExplanationModelReport {
             if (rates == null || (u.serviceTier() != null && !"default".equals(u.serviceTier()))) { unpriced++; continue; }
             BigDecimal input = new BigDecimal(rates.path("input").asText());
             BigDecimal cached = new BigDecimal(rates.path("cached_input").asText());
-            BigDecimal output = new BigDecimal(rates.path("output").asText()).multiply(BigDecimal.valueOf(u.outputTokens()));
-            if (u.cachedInputTokens() == null) {
-                missingCache++;
-                minimum = minimum.add(cached.multiply(BigDecimal.valueOf(u.inputTokens())).add(output));
-                maximum = maximum.add(input.multiply(BigDecimal.valueOf(u.inputTokens())).add(output));
-            } else {
-                BigDecimal value = input.multiply(BigDecimal.valueOf(u.inputTokens() - u.cachedInputTokens()))
-                    .add(cached.multiply(BigDecimal.valueOf(u.cachedInputTokens()))).add(output);
-                minimum = minimum.add(value); maximum = maximum.add(value);
-            }
+            BigDecimal write = rates.has("cache_write") ? new BigDecimal(rates.path("cache_write").asText()) : input;
+            Long writes = u.cacheWriteTokens() == null && !rates.has("cache_write") ? Long.valueOf(0) : u.cacheWriteTokens();
+            if (writes != null) writtenTotal += writes;
+            if (u.cachedInputTokens() == null) missingCache++;
+            if (writes == null) missingWrites++;
+            long c = u.cachedInputTokens() == null ? 0 : u.cachedInputTokens(), w = writes == null ? 0 : writes;
+            if (c + w > u.inputTokens()) { missing++; continue; }
+            long remaining = u.inputTokens() - c - w;
+            BigDecimal lowRate = input, highRate = input;
+            if (u.cachedInputTokens() == null) { lowRate = lowRate.min(cached); highRate = highRate.max(cached); }
+            if (writes == null) { lowRate = lowRate.min(write); highRate = highRate.max(write); }
+            BigDecimal fixed = cached.multiply(BigDecimal.valueOf(c)).add(write.multiply(BigDecimal.valueOf(w)))
+                .add(new BigDecimal(rates.path("output").asText()).multiply(BigDecimal.valueOf(u.outputTokens())));
+            minimum = minimum.add(fixed.add(lowRate.multiply(BigDecimal.valueOf(remaining))));
+            maximum = maximum.add(fixed.add(highRate.multiply(BigDecimal.valueOf(remaining))));
         }
         Map<String, Object> cost = new LinkedHashMap<>();
         BigDecimal million = BigDecimal.valueOf(1_000_000);
         cost.put("currency", "USD"); cost.put("initiated_requests", requests);
         cost.put("requests_missing_usage", missing); cost.put("requests_unpriced", unpriced);
         cost.put("requests_missing_cache_breakdown", missingCache);
+        cost.put("requests_missing_cache_write_breakdown", missingWrites);
         cost.put("reported_input_tokens", inputTotal); cost.put("reported_cached_input_tokens", cachedTotal);
+        cost.put("reported_cache_write_tokens", writtenTotal);
         cost.put("reported_output_tokens", outputTotal); cost.put("reported_reasoning_tokens", reasoningTotal);
         cost.put("known_usage_estimate_usd_min", minimum.divide(million));
         cost.put("known_usage_estimate_usd_max", maximum.divide(million));
-        cost.put("estimated_total_usd", missing == 0 && unpriced == 0 && missingCache == 0 ? maximum.divide(million) : null);
-        cost.put("status", missing > 0 || unpriced > 0 ? "incomplete" : missingCache > 0 ? "bounded_cache_uncertainty" : "complete_usage_estimate");
+        cost.put("estimated_total_usd", missing == 0 && unpriced == 0 && missingCache == 0 && missingWrites == 0 ? maximum.divide(million) : null);
+        cost.put("status", missing > 0 || unpriced > 0 ? "incomplete" : missingCache > 0 || missingWrites > 0 ? "bounded_cache_uncertainty" : "complete_usage_estimate");
         cost.put("pricing_version", prices.path("version").asText()); cost.put("pricing_source", prices.path("source").asText());
         cost.put("pricing_verified_on", prices.path("verified_on").asText()); cost.put("basis", prices.path("basis").asText());
         return cost;

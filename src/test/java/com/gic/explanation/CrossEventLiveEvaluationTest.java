@@ -33,35 +33,43 @@ class CrossEventLiveEvaluationTest {
     private final Map<String, Object> report = new LinkedHashMap<>();
     private Path destination;
     private JsonNode prices;
+    private EvaluationBudget budget;
 
     @Test void compareWithOriginalAndStrongerRulesWithoutLeakingReferencesToGenerator() throws Exception {
         String key = System.getenv("OPENAI_API_KEY"), model = System.getenv("OPENAI_MODEL");
         assertThat(key).as("Configure OPENAI_API_KEY locally").isNotBlank();
         assertThat(model).as("Set the explicitly selected OPENAI_MODEL").isNotBlank();
+        String reviewerModel = System.getProperty("atlas.explanation.reviewer-model", model);
         int limit = Integer.parseInt(System.getProperty("atlas.explanation.limit", "10"));
         assertThat(limit).isBetween(1, 10);
         destination = Path.of(System.getProperty("atlas.explanation.report", "target/atlas-cross-event-evaluation.json"));
         prices = json.readTree(Path.of("evals/explanations/pricing.json").toFile());
+        budget = new EvaluationBudget(new java.math.BigDecimal(System.getProperty("atlas.explanation.max-usd", "0.10")), prices);
         byte[] dataset = Files.readAllBytes(Path.of("evals/explanations/cross-event-cases.json"));
         var data = json.readTree(dataset);
         report.put("kind", "cross_event_paired_model_review"); report.put("recorded_at", Instant.now().toString());
         report.put("model", model); report.put("dataset_version", data.path("datasetVersion").asText());
+        report.put("reviewer_model", reviewerModel);
+        report.put("generation_parameters", Map.of("timeout_ms", 8000, "max_output_tokens", OpenAiPlanner.MAX_OUTPUT_TOKENS,
+            "reasoning_effort", "gpt-5.6-luna".equals(model) ? "low" : "not_sent", "service_tier", "default",
+            "prompt_cache_mode", "gpt-5.6-luna".equals(model) ? "explicit_without_breakpoints" : "not_sent"));
         report.put("dataset_sha256", TradeOrder.hash(new String(dataset, StandardCharsets.UTF_8)));
         report.put("generator_prompt", OpenAiPlanner.PROMPT_VERSION); report.put("reviewer_prompt", CrossEventJudge.VERSION);
         report.put("request_cap", 3 * limit); report.put("requested_generation_limit", limit); report.put("complete", false);
         report.put("blinding_seed", 6102026); report.put("results", results); report.put("requests", traces);
         report.put("scope", "Development-visible synthetic cases. Reference goals are withheld from generation, visible to the model reviewer. "
-            + "Same model snapshot generates and reviews: self-preference/correlated errors remain possible. Two reversed positions are not independent cases. "
+            + "Reviewer model is explicitly recorded and can remain fixed across generator models. Same-provider/correlated errors and reviewer preferences remain possible. Two reversed positions are not independent cases. "
             + "Model ratings are provisional; no human review or production/generalization claim.");
         var engine = new ExplanationEngine(new RuleCatalog());
         var provider = new OpenAiPlanner(key, model, Duration.ofSeconds(8));
+        var reviewer = new OpenAiPlanner(key, reviewerModel, Duration.ofSeconds(8));
         int eligible = 0;
         for (JsonNode row : data.path("cases")) {
             String id = row.path("id").asText();
             var snapshot = json.treeToValue(row.path("snapshot"), ExplanationSnapshot.class);
             var analysis = engine.analyze(snapshot);
             if (!analysis.abstained() && eligible >= limit) continue;
-            ModelPlanner observed = a -> call("generation", id, -1, () -> provider.propose(a));
+            ModelPlanner observed = a -> call("generation", id, -1, model, () -> provider.propose(a));
             var baseline = new ExplanationService(ignored -> snapshot, engine, observed).explain(snapshot.tradeId(), false);
             long strongStart = System.nanoTime();
             var strong = CrossEventVerifier.strongBaseline(analysis);
@@ -97,7 +105,7 @@ class CrossEventLiveEvaluationTest {
                 review.put("valid", false); reviews.add(review);
                 int position = orientation;
                 try {
-                    var reply = call("review", id, position, () -> provider.requestStructured(CrossEventJudge.INSTRUCTION, context, CrossEventJudge.schema()));
+                    var reply = call("review", id, position, reviewerModel, () -> reviewer.requestStructured(CrossEventJudge.INSTRUCTION, context, CrossEventJudge.schema()));
                     review.put("parsed", CrossEventJudge.validate(reply.json(), goals)); review.put("valid", true);
                 } catch (ModelPlanner.Failure ex) { review.put("failure", ex.outcome()); }
                 catch (Exception ex) { review.put("failure", "invalid_reviewer_output"); }
@@ -105,20 +113,25 @@ class CrossEventLiveEvaluationTest {
             }
         }
         report.put("complete", true); checkpoint();
-        assertThat(results).anyMatch(row -> !((Explanation) row.get("ai")).attributions().isEmpty());
+        // A negative model result is valid study data, never grounds for an unreported rerun.
     }
 
-    private ModelPlanner.Reply call(String kind, String id, int orientation, Supplier<ModelPlanner.Reply> request) {
+    private ModelPlanner.Reply call(String kind, String id, int orientation, String model, Supplier<ModelPlanner.Reply> request) {
         if (traces.size() >= (int) report.get("request_cap")) throw new ModelPlanner.Failure("evaluation_budget", false);
         long start = System.nanoTime();
         Map<String, Object> trace = new LinkedHashMap<>();
         trace.put("kind", kind); trace.put("case_id", id); trace.put("orientation", orientation);
+        trace.put("requested_model", model);
+        trace.put("initiated", false); trace.put("usage", null);
+        java.math.BigDecimal reservation = null;
         try {
+            reservation = budget.reserve(model); trace.put("reserved_ceiling_usd", reservation);
             var reply = request.get(); trace.put("initiated", reply.modelRequest()); trace.put("usage", reply.usage());
             trace.put("outcome", "response_completed"); trace.put("returned_json", reply.json()); return reply;
         } catch (ModelPlanner.Failure ex) {
             trace.put("initiated", ex.modelRequest()); trace.put("usage", ex.usage()); trace.put("outcome", ex.outcome()); throw ex;
         } finally {
+            if (reservation != null) budget.settle(reservation, Boolean.TRUE.equals(trace.get("initiated")), (ModelPlanner.Usage) trace.get("usage"));
             trace.put("elapsed_ms", (System.nanoTime() - start) / 1_000_000); traces.add(trace); checkpoint();
         }
     }
@@ -127,6 +140,7 @@ class CrossEventLiveEvaluationTest {
             List<ModelPlanner.Usage> usage = traces.stream().filter(t -> Boolean.TRUE.equals(t.get("initiated")))
                 .map(t -> (ModelPlanner.Usage) t.get("usage")).toList();
             report.put("cost", ExplanationModelReport.cost(usage, prices));
+            report.put("budget", budget.state());
             Map<String, Object> byKind = new LinkedHashMap<>();
             for (String kind : List.of("generation", "review")) byKind.put(kind, ExplanationModelReport.cost(traces.stream()
                 .filter(t -> kind.equals(t.get("kind")) && Boolean.TRUE.equals(t.get("initiated")))
