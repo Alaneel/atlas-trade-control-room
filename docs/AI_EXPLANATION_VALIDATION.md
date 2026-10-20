@@ -1,5 +1,7 @@
 # Executed explanation validation — 20 October 2026
 
+This document records the initial ordering-only acceptance. The later [cross-event contract and comparison](CROSS_EVENT_EXPLANATIONS.md) extends the explanation output; historical measurements and artifacts below keep their original settings.
+
 The explanation layer was implemented and exercised on Java 17.0.14 / macOS arm64 with a dedicated MongoDB 7.0 replica-set container. The initial acceptance was offline. A separately authorized real-provider round subsequently made **six OpenAI requests** using a locally configured key. Independent semantic quality and human usefulness remain unmeasured.
 
 ## Real-provider round

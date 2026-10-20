@@ -51,7 +51,7 @@ public record ExplanationPlan(String snapshotHash, String headlineId, List<Strin
             if (!row.isObject() || !fields.equals(Set.of("relation", "fromId", "toId", "evidenceIds", "interpretation", "uncertainty"))) throw new IllegalArgumentException();
             for (String field : List.of("relation", "fromId", "toId", "interpretation", "uncertainty")) if (!row.path(field).isTextual()) throw new IllegalArgumentException();
             strings(row.path("evidenceIds"));
-            var proposal = JSON.treeToValue(row, CrossEventVerifier.Proposal.class);
+            var proposal = ModelEvidenceContext.resolve(JSON.treeToValue(row, CrossEventVerifier.Proposal.class), analysis);
             CrossEventVerifier.verify(proposal, analysis);
             if (!seen.add(proposal.relation())) throw new IllegalArgumentException();
             results.add(proposal);

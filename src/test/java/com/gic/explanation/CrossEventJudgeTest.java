@@ -28,4 +28,16 @@ class CrossEventJudgeTest {
         var invalid = valid(); ((ObjectNode) invalid.path("evaluations").get(0)).put("clarity", 10);
         assertThatThrownBy(() -> CrossEventJudge.validate(invalid.toString(), Set.of("g1"))).isInstanceOf(IllegalArgumentException.class);
     }
+    @Test void fixedPairObjectsNormalizeWithoutChangingJudgementsAndLegacyReversePairsAreValid() throws Exception {
+        var current = valid(); var fixed = CrossEventFixtures.JSON.createObjectNode();
+        for (var pair : current.path("comparisons")) fixed.set(pair.path("left").asText() + pair.path("right").asText(),
+            CrossEventFixtures.JSON.createObjectNode().put("winner", pair.path("winner").asText()).put("reason", pair.path("reason").asText()));
+        current.set("comparisons", fixed);
+        assertThat(CrossEventJudge.validate(current.toString(), Set.of("g1")).path("comparisons")).hasSize(3);
+        var legacy = valid(); var pair = (ObjectNode) legacy.path("comparisons").get(1);
+        pair.put("left", "C").put("right", "A");
+        assertThat(CrossEventJudge.validate(legacy.toString(), Set.of("g1")).path("comparisons")).hasSize(3);
+        ((ObjectNode) fixed.path("AB")).put("winner", "C");
+        assertThatThrownBy(() -> CrossEventJudge.validate(current.toString(), Set.of("g1"))).isInstanceOf(IllegalArgumentException.class);
+    }
 }

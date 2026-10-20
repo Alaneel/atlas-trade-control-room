@@ -33,13 +33,15 @@ The standalone dashboard defaults to **Demo data**. Sample activity is labelled;
 
 The read-only explanation layer joins versioned rules, the recorded decision and ordered events. It explains insufficient capacity using the balance captured inside that decision transaction. UNKNOWN outcomes remain unknown even when a matching receipt is present.
 
-`GET /api/trader/trades/{id}/explanation` defaults to rules. Optional `?mode=ai` lets a configured model organize validated findings and read-only checks. Invalid or unavailable model output falls back explicitly; it cannot approve, change capacity, reconcile or execute trades. Legacy or conflicting evidence produces an abstention.
+`GET /api/trader/trades/{id}/explanation` defaults to rules. Optional `?mode=ai` adds cited cross-event interpretations: receipt order, repeated UNKNOWN, eventual settlement and recorded delays. The server checks cited state/time observations while separately labelling model-authored hypotheses. Rule facts stay authoritative; invalid or unavailable output falls back explicitly. There is no AI approval, capacity, reconciliation or execution capability. Legacy/conflicting evidence abstains.
 
 ```sh
 python3 scripts/explanation-demo.py --offline
 ```
 
 [Configuration, API and capability boundary](docs/AI_EXPLANATIONS.md) · [Executed evaluation](docs/AI_EXPLANATION_VALIDATION.md) · [Frozen cases](evals/explanations/cases.json)
+
+[Cross-event contract and three-way comparison](docs/CROSS_EVENT_EXPLANATIONS.md) covers the new generation contract, a stronger deterministic comparator, blinded reversed-position model review and a standalone read-only replay. It retains failed rounds and distinguishes provisional model ratings from human evidence.
 
 The first [real-model round](docs/examples/ai-explanations/live-20261020/report.md) used six `gpt-4.1-mini-2025-04-14` requests: estimated cost **$0.0034696**, P50 **2.108 s**, P95 **3.746 s**, fallback **0/6**, and all required claims/checks and citations retained. All six presentations matched the rules baseline, so added usefulness is not established. Configure a private `.env.local`, then run `python3 scripts/run-live-explanation-eval.py --limit 6` to archive a separate round; ordinary CI stays offline.
 

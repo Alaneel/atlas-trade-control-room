@@ -129,4 +129,4 @@ def markdown(report, summary):
             lines += [f"- Observed: {attribution['observedRelation']}", f"  Interpretation: {attribution['interpretation']}",
                       f"  Uncertainty: {attribution['uncertainty']}", "  Evidence: " + ", ".join(attribution["evidenceIds"])]
         lines.append("")
-    return "\n".join(lines)
+    return "\n".join(lines).rstrip() + "\n"
