@@ -46,7 +46,7 @@ jobs:
 
     - name: Start disposable MongoDB replica set
       run: |
-        docker run -d --name atlas-ci-mongo -p 127.0.0.1:28027:27017 mongo:7.0 --replSet atlas-rs --bind_ip_all --setParameter enableTestCommands=1
+        docker run -d --name atlas-ci-mongo --label io.github.alaneel.atlas.task=atlas-ai-ci -p 127.0.0.1:28027:27017 mongo:7.0 --replSet atlas-rs --bind_ip_all --setParameter enableTestCommands=1
         for attempt in $(seq 1 40); do
           if docker exec atlas-ci-mongo mongosh --quiet --eval 'try { rs.status() } catch(e) { if(e.code === 94) rs.initiate({_id:"atlas-rs",members:[{_id:0,host:"localhost:27017"}]}); else throw e; } if(!db.hello().isWritablePrimary) quit(1);'; then
             exit 0
@@ -63,6 +63,9 @@ jobs:
         ATLAS_MONGO_URI: mongodb://127.0.0.1:28027/atlas_context_test?replicaSet=atlas-rs&directConnection=true
         REDIS_HOST: localhost
         REDIS_PORT: 6379
+
+    - name: Read-only explanation HTTP demonstration
+      run: python3 scripts/explanation-demo.py --mongo-container atlas-ci-mongo --owner-value atlas-ai-ci
 
     - name: Remove owned test database container
       if: always()

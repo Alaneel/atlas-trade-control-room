@@ -203,6 +203,31 @@ elif page == "New trade":
                 except requests.RequestException as exc:
                     submission_error(exc)
         trade_id = st.text_input("Trade reference to inspect")
+        use_ai = st.checkbox("Use AI to organize the evidence", value=False,
+            help="Requires a configured model. Facts and read-only checks remain validated by the server.")
+        if trade_id and st.button("Explain rejection or anomaly"):
+            try:
+                path = f"/trades/{quote(trade_id, safe='')}/explanation"
+                explanation = api("GET", path, params={"mode": "ai" if use_ai else "rules"})
+                source = {"rules": "Rule explanation", "model_ordered": "AI-organized, verified evidence",
+                          "rules_fallback": "Rule explanation (model unavailable or output rejected)",
+                          "fixture_ordered": "Test fixture"}.get(explanation.get("mode"), "Explanation")
+                st.caption(source)
+                if explanation.get("abstained"):
+                    st.warning(explanation.get("summary", "Evidence is insufficient."))
+                else:
+                    st.info(explanation.get("summary", ""))
+                for finding in explanation.get("findings", []):
+                    st.write(finding.get("text", ""))
+                    st.caption("Evidence: " + ", ".join(finding.get("evidenceIds", [])))
+                for check in explanation.get("nextChecks", []):
+                    st.write("Read-only check: " + check.get("text", ""))
+                st.caption("Explanations cannot approve trades, change capacity or execute operations.")
+                with st.expander("Evidence and provenance"):
+                    st.json({key: explanation.get(key) for key in ["tradeVersion", "snapshotHash", "ruleVersion",
+                        "promptVersion", "mode", "providerOutcome", "modelCalls", "evidence", "limitations"]})
+            except requests.RequestException as exc:
+                st.error(f"Explanation could not be loaded: {exc}")
         if trade_id and st.button("Refresh trade and events"):
             try:
                 path = f"/trades/{quote(trade_id, safe='')}"

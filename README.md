@@ -29,6 +29,18 @@ streamlit run python_src/trading_dashboard.py
 
 The standalone dashboard defaults to **Demo data**. Sample activity is labelled; connected mode uses backend records and does not invent performance measurements.
 
+## Explain rejection and anomalies
+
+The read-only explanation layer joins versioned rules, the recorded decision and ordered events. It explains insufficient capacity using the balance captured inside that decision transaction. UNKNOWN outcomes remain unknown even when a matching receipt is present.
+
+`GET /api/trader/trades/{id}/explanation` defaults to rules. Optional `?mode=ai` lets a configured model organize validated findings and read-only checks. Invalid or unavailable model output falls back explicitly; it cannot approve, change capacity, reconcile or execute trades. Legacy or conflicting evidence produces an abstention.
+
+```sh
+python3 scripts/explanation-demo.py --offline
+```
+
+[Configuration, API and capability boundary](docs/AI_EXPLANATIONS.md) · [Executed evaluation](docs/AI_EXPLANATION_VALIDATION.md) · [Frozen cases](evals/explanations/cases.json)
+
 ## Inspect the failure path
 
 | Concern | Implementation |
@@ -71,6 +83,6 @@ python3 scripts/reliability-demo.py --help
 - The repository retains its existing Spring Boot 2.6 dependency line; framework and dependency modernization remain separate work.
 - Old binary-double ledgers require an explicit audited migration. Startup rejects incompatible records; no opening balances are invented.
 - Audit events record status transitions. Full event-sourced ledger reconstruction is not implemented.
-- Approval-request creation remains a prototype. AI explanations and a complete exception-review workflow are not implemented in this milestone.
+- Approval-request creation remains a prototype. A complete exception-review workflow is unfinished. Model explanations are read-only and require separately configured API access; offline contract results do not establish model usefulness.
 
 [Contributing](CONTRIBUTING.md) · [Environment example](.env.example) · [MIT license](LICENSE)

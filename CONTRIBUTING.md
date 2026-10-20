@@ -65,3 +65,7 @@ Feel free to open an issue for any questions.
 ## Reliable execution changes
 
 Use `mvn clean test` for unit and HTTP contract checks. A configured `ATLAS_MONGO_URI` must point at a disposable loopback replica set; integration tests create their own UUID databases. See `docs/RELIABLE_EXECUTION.md` for API compatibility, the fresh-database requirement and optional failure injection. `mvn verify` also enforces the scoped reliability-package coverage gate; actual integration acceptance requires the database and explicit non-skipped results.
+
+## Explanation tests and real model opt-in
+
+`./scripts/run-explanation-eval.sh` runs the offline rules, HTTP-contract and loopback provider-transport tests. Real Mongo read-only invariance tests run with `ATLAS_MONGO_URI` in `mvn verify` or the acceptance runner. Actual provider evaluation is excluded by default; see `docs/AI_EXPLANATIONS.md` for its bounded explicit opt-in. Never present scripted plans or provider transport fixtures as real model-quality measurements.

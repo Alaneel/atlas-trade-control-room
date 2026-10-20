@@ -104,4 +104,8 @@ The commit-uncertainty failpoint test additionally requires a dedicated MongoDB 
 
 ## Remaining work
 
-This milestone establishes a bounded reliable-execution baseline. Next changes can add measured retry/queue metrics, broader generated histories and fault boundaries, then framework/auth modernization. AI explanations should consume versioned rules and events through a read-only interface; they must not grant capacity or authorize execution. Full ledger reconstruction needs additional event data and independent replay validation before any event-sourcing claim.
+This milestone establishes a bounded reliable-execution baseline. Next changes can add measured retry/queue metrics, broader generated histories and fault boundaries, then framework/auth modernization. The read-only explanation extension now consumes versioned rules and events; it cannot grant capacity or authorize execution. Full ledger reconstruction needs additional event data and independent replay validation before any event-sourcing claim.
+
+## Read-only explanation extension
+
+[The explanation layer](AI_EXPLANATIONS.md) now reads typed decision provenance and event history. New decisions record a rule version/cause and historical available capacity for insufficient-capacity rejection. These additions do not grant the planner any transaction or execution capability. Older unversioned evidence causes explanation abstention; it is not silently upgraded.

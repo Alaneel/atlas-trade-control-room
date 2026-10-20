@@ -29,6 +29,9 @@ public class TradeOrder {
     private String currency;
     @Field(targetType = FieldType.DECIMAL128) private BigDecimal amount;
     private TradeStatus status;
+    private DecisionCode decisionCode;
+    private String ruleVersion;
+    @Field(targetType = FieldType.DECIMAL128) private BigDecimal availableAtDecision;
     private String message;
     private long version;
     private Instant createdAt;
@@ -69,6 +72,8 @@ public class TradeOrder {
         order.currency = currency;
         order.amount = amount;
         order.status = rejectionReason == null ? TradeStatus.RESERVED : TradeStatus.REJECTED;
+        order.ruleVersion = DecisionCode.RULE_VERSION;
+        order.decisionCode = rejectionReason == null ? DecisionCode.CAPACITY_RESERVED : DecisionCode.LEGACY_UNSPECIFIED;
         order.message = rejectionReason == null ? "Capacity reserved; awaiting submission" : rejectionReason;
         order.createdAt = Instant.now();
         order.updatedAt = order.createdAt;

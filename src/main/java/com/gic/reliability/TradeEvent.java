@@ -13,6 +13,10 @@ public class TradeEvent {
     private String tradeId;
     private long sequence;
     private TradeStatus status;
+    private DecisionCode decisionCode;
+    private String ruleVersion;
+    @org.springframework.data.mongodb.core.mapping.Field(targetType = org.springframework.data.mongodb.core.mapping.FieldType.DECIMAL128)
+    private java.math.BigDecimal availableAtDecision;
     private String message;
     private Instant createdAt;
 
@@ -21,6 +25,9 @@ public class TradeEvent {
         tradeId = trade.getId();
         sequence = trade.getVersion();
         status = trade.getStatus();
+        decisionCode = trade.getDecisionCode();
+        ruleVersion = trade.getRuleVersion();
+        availableAtDecision = trade.getAvailableAtDecision();
         message = trade.getMessage();
         createdAt = trade.getUpdatedAt();
     }

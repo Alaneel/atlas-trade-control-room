@@ -75,3 +75,9 @@ atlas:
     enabled: ${ATLAS_RECOVERY_ENABLED:true}
     poll-ms: 1000
     lease-ms: 5000
+
+  explanation:
+    enabled: ${ATLAS_AI_EXPLANATIONS_ENABLED:false}
+    api-key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:}
+    timeout-ms: 8000

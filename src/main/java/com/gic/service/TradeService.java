@@ -37,6 +37,7 @@ public class TradeService {
         InstrumentVerificationResult verification = instruments.verifyInstrument(request.getInstrumentVerificationRequest());
         if (!verification.isValid() || !verification.isApprovedForDepartment()) {
             proposal.setStatus(com.gic.reliability.TradeStatus.REJECTED);
+            proposal.setDecisionCode(com.gic.reliability.DecisionCode.INSTRUMENT_NOT_APPROVED);
             proposal.setMessage("Instrument combination is not approved for this department");
         }
         TradeOrder trade = store.create(proposal);

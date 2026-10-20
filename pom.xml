@@ -128,7 +128,7 @@
                             <rules>
                                 <rule>
                                     <element>PACKAGE</element>
-                                    <includes><include>com/gic/reliability</include></includes>
+                                    <includes><include>com/gic/reliability</include><include>com/gic/explanation</include></includes>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>

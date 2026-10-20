@@ -113,6 +113,10 @@ public class ReliableTradeStore {
                     .inc("reservedLimit", trade.getAmount()), Limit.class).getModifiedCount();
                 if (reserved != 1) {
                     trade.setStatus(TradeStatus.REJECTED);
+                    // Record evidence from this transaction, never reconstruct a past rejection from today's balance.
+                    Limit observed = mongo.findOne(account(trade), Limit.class);
+                    trade.setDecisionCode(observed == null ? DecisionCode.NO_CURRENCY_LIMIT : DecisionCode.INSUFFICIENT_CAPACITY);
+                    trade.setAvailableAtDecision(observed == null ? null : observed.getAvailableLimit());
                     trade.setMessage("Insufficient capacity or no initialized exact-currency limit");
                 }
             }
@@ -185,6 +189,7 @@ public class ReliableTradeStore {
             if (trade == null) { return null; }
             if (trade.getStatus() == TradeStatus.RESERVED) {
                 trade.setStatus(TradeStatus.SUBMITTED);
+                trade.setDecisionCode(DecisionCode.SUBMISSION_PENDING);
                 trade.setVersion(trade.getVersion() + 1);
                 trade.setUpdatedAt(now);
                 trade.setMessage("Submitted with stable execution identity");
@@ -228,6 +233,8 @@ public class ReliableTradeStore {
                 }
             }
             current.setStatus(status);
+            current.setDecisionCode(status == TradeStatus.UNKNOWN ? DecisionCode.EXECUTION_OUTCOME_UNKNOWN
+                : status == TradeStatus.EXECUTED ? DecisionCode.VENUE_ACCEPTED : DecisionCode.VENUE_REJECTED);
             current.setMessage(message);
             current.setVersion(current.getVersion() + 1);
             current.setUpdatedAt(Instant.now());

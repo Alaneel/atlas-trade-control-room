@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
             "Malformed request or missing required header", request.getDescription(false).replace("uri=", "")));
     }
 
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleUnsupportedMethod(Exception ex, WebRequest request) {
+        return ResponseEntity.status(405).body(new ErrorResponse(405, "Method Not Allowed",
+            "This endpoint does not support that HTTP method", request.getDescription(false).replace("uri=", "")));
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
