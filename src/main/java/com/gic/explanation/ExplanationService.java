@@ -36,6 +36,9 @@ public class ExplanationService {
                 outcome = "validated";
             } catch (ModelPlanner.Failure ex) {
                 if (ex.modelRequest()) calls = 1;
+                if (ex.usage() != null) {
+                    model = ex.usage().requestedModel(); input = ex.usage().inputTokens(); output = ex.usage().outputTokens();
+                }
                 outcome = ex.outcome(); plan = ExplanationPlan.baseline(analysis);
             } catch (RuntimeException ex) {
                 outcome = "provider_error"; plan = ExplanationPlan.baseline(analysis);

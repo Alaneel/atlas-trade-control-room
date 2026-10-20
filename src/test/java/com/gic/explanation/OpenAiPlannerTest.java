@@ -47,7 +47,9 @@ class OpenAiPlannerTest {
     }
     private String response(Object output) throws Exception {
         return json.writeValueAsString(Map.of("status", "completed", "output", output,
-            "usage", Map.of("input_tokens", 123, "output_tokens", 45)));
+            "id", "resp_fixture", "model", "gpt-4.1-mini-2025-04-14", "service_tier", "default",
+            "usage", Map.of("input_tokens", 123, "output_tokens", 45,
+                "input_tokens_details", Map.of("cached_tokens", 100), "output_tokens_details", Map.of("reasoning_tokens", 5))));
     }
     private Object message(String plan) { return Map.of("type", "message", "content", List.of(Map.of("type", "output_text", "text", plan))); }
     @Test void validResponseRequestsStrictSchemaWithoutToolsOrStorage() throws Exception {
@@ -56,18 +58,23 @@ class OpenAiPlannerTest {
         var reply = planner.propose(analysis);
         assertThat(reply.inputTokens()).isEqualTo(123); assertThat(reply.outputTokens()).isEqualTo(45);
         assertThat(reply.modelRequest()).isTrue();
+        assertThat(reply.usage().resolvedModel()).isEqualTo("gpt-4.1-mini-2025-04-14");
+        assertThat(reply.usage().cachedInputTokens()).isEqualTo(100);
+        assertThat(reply.usage().reasoningTokens()).isEqualTo(5);
         ExplanationPlan.parseAndValidate(reply.json(), analysis);
         var request = json.readTree(requestBody.get());
         assertThat(request.path("store").asBoolean()).isFalse();
         assertThat(request.path("text").path("format").path("strict").asBoolean()).isTrue();
         assertThat(request.has("tools")).isFalse(); assertThat(request.has("previous_response_id")).isFalse();
         assertThat(request.path("max_output_tokens").asInt()).isEqualTo(512);
+        assertThat(request.path("service_tier").asText()).isEqualTo("default");
         assertThat(requestBody.get()).doesNotContain("counterparty", "requestFingerprint", "Idempotency-Key", "leaseToken");
     }
     @Test void refusalIsNotRenderedAsAnExplanation() throws Exception {
         var planner = start(200, response(List.of(Map.of("type", "message", "content", List.of(Map.of("type", "refusal", "refusal", "no"))))), 0, Duration.ofSeconds(2));
         assertThatThrownBy(() -> planner.propose(analysis)).isInstanceOfSatisfying(ModelPlanner.Failure.class,
-            ex -> { assertThat(ex.outcome()).isEqualTo("refused"); assertThat(ex.modelRequest()).isTrue(); });
+            ex -> { assertThat(ex.outcome()).isEqualTo("refused"); assertThat(ex.modelRequest()).isTrue();
+                assertThat(ex.usage().inputTokens()).isEqualTo(123); assertThat(ex.usage().outputTokens()).isEqualTo(45); });
     }
     @Test void toolCallIsRejectedWithoutAnyDispatch() throws Exception {
         var planner = start(200, response(List.of(Map.of("type", "function_call", "name", "executeTrade", "arguments", "{}"))), 0, Duration.ofSeconds(2));
@@ -90,9 +97,11 @@ class OpenAiPlannerTest {
         assertThatThrownBy(() -> planner.propose(analysis)).isInstanceOf(ModelPlanner.Failure.class);
     }
     @Test void incompleteResponseIsNotAccepted() throws Exception {
-        var planner = start(200, "{\"status\":\"incomplete\",\"output\":[]}", 0, Duration.ofSeconds(2));
+        var response = json.readTree(response(List.of()));
+        ((com.fasterxml.jackson.databind.node.ObjectNode) response).put("status", "incomplete");
+        var planner = start(200, response.toString(), 0, Duration.ofSeconds(2));
         assertThatThrownBy(() -> planner.propose(analysis)).isInstanceOfSatisfying(ModelPlanner.Failure.class,
-            ex -> assertThat(ex.outcome()).isEqualTo("incomplete_response"));
+            ex -> { assertThat(ex.outcome()).isEqualTo("incomplete_response"); assertThat(ex.usage().cachedInputTokens()).isEqualTo(100); });
     }
     @Test void missingCredentialsCannotMakeANetworkRequest() {
         var planner = new OpenAiPlanner("", "", Duration.ofSeconds(1));

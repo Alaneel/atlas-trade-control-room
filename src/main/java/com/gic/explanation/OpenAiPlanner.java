@@ -53,6 +53,7 @@ public final class OpenAiPlanner implements ModelPlanner {
         if (!slots.tryAcquire()) throw new Failure("busy", false);
         CompletableFuture<HttpResponse<byte[]>> pending = null;
         boolean requested = false;
+        Usage usage = null;
         try {
             Map<String, Object> schema = Map.of("type", "object", "additionalProperties", false,
                 "required", List.of("snapshotHash", "headlineId", "findingIds", "checkIds"), "properties", Map.of(
@@ -66,7 +67,7 @@ public final class OpenAiPlanner implements ModelPlanner {
                 + "Prefer the reason and uncertainty first, then corroborating receipt and timeline. Prompt=" + PROMPT_VERSION;
             Map<String, Object> context = Map.of("snapshotHash", analysis.snapshotHash(), "headlineId", analysis.headlineId(),
                 "findings", analysis.findings(), "checks", analysis.checks(), "evidence", analysis.evidence());
-            byte[] body = json.writeValueAsBytes(Map.of("model", model, "store", false, "max_output_tokens", 512,
+            byte[] body = json.writeValueAsBytes(Map.of("model", model, "store", false, "max_output_tokens", 512, "service_tier", "default",
                 "input", List.of(Map.of("role", "system", "content", instruction),
                     Map.of("role", "user", "content", json.writeValueAsString(context))),
                 "text", Map.of("format", Map.of("type", "json_schema", "name", "atlas_explanation_plan", "strict", true, "schema", schema))));
@@ -79,6 +80,12 @@ public final class OpenAiPlanner implements ModelPlanner {
             HttpResponse<byte[]> response = pending.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
             if (response.statusCode() < 200 || response.statusCode() >= 300) throw new Failure("http_" + response.statusCode(), true);
             JsonNode root = json.readTree(response.body());
+            JsonNode counts = root.path("usage");
+            Long input = tokens(counts.path("input_tokens")), outputCount = tokens(counts.path("output_tokens"));
+            usage = new Usage(model, identifier(root.path("model").asText()), identifier(root.path("id").asText()),
+                identifier(response.headers().firstValue("x-request-id").orElse(null)), identifier(root.path("service_tier").asText()),
+                input, boundedTokens(counts.path("input_tokens_details").path("cached_tokens"), input),
+                outputCount, boundedTokens(counts.path("output_tokens_details").path("reasoning_tokens"), outputCount));
             if (!"completed".equals(root.path("status").asText())) throw new Failure("incomplete_response", true);
             String text = null;
             for (JsonNode output : root.path("output")) {
@@ -91,15 +98,19 @@ public final class OpenAiPlanner implements ModelPlanner {
                 }
             }
             if (text == null) throw new Failure("empty_response", true);
-            return new Reply(text, model, tokens(root.path("usage").path("input_tokens")),
-                tokens(root.path("usage").path("output_tokens")), true);
-        } catch (Failure ex) { throw ex; }
+            return new Reply(text, model, input, outputCount, true, usage);
+        } catch (Failure ex) { throw usage != null && ex.usage() == null ? new Failure(ex.outcome(), ex.modelRequest(), usage) : ex; }
         catch (java.util.concurrent.TimeoutException ex) { throw new Failure("timeout", requested); }
         catch (InterruptedException ex) { Thread.currentThread().interrupt(); throw new Failure("interrupted", requested); }
         catch (Exception ex) { throw new Failure("provider_error", requested); }
         finally { if (pending != null && !pending.isDone()) pending.cancel(true); slots.release(); }
     }
     private Long tokens(JsonNode value) { return value.canConvertToLong() && value.isIntegralNumber() && value.asLong() >= 0 ? value.asLong() : null; }
+    private Long boundedTokens(JsonNode value, Long total) {
+        Long count = tokens(value);
+        return count != null && total != null && count <= total ? count : null;
+    }
+    private String identifier(String value) { return value != null && value.matches("[A-Za-z0-9._:-]{1,160}") ? value : null; }
 
     /** Bound retained bytes before allocation; the outer future also bounds a stalled body. */
     private static final class BoundedBody implements HttpResponse.BodySubscriber<byte[]> {
