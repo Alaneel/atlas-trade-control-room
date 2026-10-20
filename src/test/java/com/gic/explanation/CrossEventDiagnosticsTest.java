@@ -39,6 +39,14 @@ class CrossEventDiagnosticsTest {
             assertThat(accepted).isEqualTo("validated".equals(row.at("/ai/providerOutcome").asText()));
             if (!accepted) rejected++;
             var plan = json.readTree(raw);
+            item.put("snapshot_hash_matches", analysis.snapshotHash().equals(plan.path("snapshotHash").asText()));
+            item.put("headline_matches", analysis.headlineId().equals(plan.path("headlineId").asText()));
+            var actualFindings = new HashSet<String>(); plan.path("findingIds").forEach(n -> actualFindings.add(n.asText()));
+            var actualChecks = new HashSet<String>(); plan.path("checkIds").forEach(n -> actualChecks.add(n.asText()));
+            item.put("missing_required_findings", analysis.findings().stream().filter(Explanation.Finding::required)
+                .map(Explanation.Finding::id).filter(f -> !actualFindings.contains(f)).toList());
+            item.put("missing_required_checks", analysis.checks().stream().filter(Explanation.Check::required)
+                .map(Explanation.Check::id).filter(c -> !actualChecks.contains(c)).toList());
             var baseOnly = plan.deepCopy();
             ((com.fasterxml.jackson.databind.node.ObjectNode) baseOnly).putArray("attributions");
             try { ExplanationPlan.parseAndValidate(baseOnly.toString(), analysis); item.put("base_contract_valid", true); }

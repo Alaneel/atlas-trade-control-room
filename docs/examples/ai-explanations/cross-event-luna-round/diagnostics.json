@@ -1,0 +1,299 @@
+{
+  "kind" : "offline_production_guard_diagnosis",
+  "source" : "docs/examples/ai-explanations/cross-event-luna-round/results.json",
+  "source_sha256" : "b7f960cd35c03f45e0c834e32e027965a55e152f4c17bc5cf6e5088b4d6a50e7",
+  "real_model_requests" : 0,
+  "cases" : [ {
+    "case_id" : "receipt_before_uncertainty",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "RECEIPT_BEFORE_UNKNOWN",
+      "from" : "R",
+      "to" : "E2",
+      "citations" : [ "R", "E2" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "receipt_recorded_later",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "RECEIPT_AFTER_UNKNOWN",
+      "from" : "E2",
+      "to" : "R",
+      "citations" : [ "E2", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "persistent_unknown_without_receipt",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "REPEATED_UNKNOWN",
+      "from" : "E2",
+      "to" : "E4",
+      "citations" : [ "E2", "E4" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "NO_RECEIPT_NOT_FAILURE",
+      "from" : "E4",
+      "to" : "Q",
+      "citations" : [ "E4", "Q" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "eventual_execution",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "RECEIPT_AFTER_UNKNOWN",
+      "from" : "E2",
+      "to" : "R",
+      "citations" : [ "E2", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "REPEATED_UNKNOWN",
+      "from" : "E2",
+      "to" : "E3",
+      "citations" : [ "E2", "E3" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "RECOVERY_COMPLETED",
+      "from" : "E2",
+      "to" : "E4",
+      "citations" : [ "E2", "E4", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "eventual_venue_rejection",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "invalid_output",
+    "whole_plan_accepted" : false,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ "evidence.receipt" ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : false,
+    "proposals" : [ {
+      "relation" : "RECEIPT_AFTER_UNKNOWN",
+      "from" : "E2",
+      "to" : "R",
+      "citations" : [ "E2", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "REPEATED_UNKNOWN",
+      "from" : "E2",
+      "to" : "E3",
+      "citations" : [ "E2", "E3" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "RECOVERY_COMPLETED",
+      "from" : "E2",
+      "to" : "E4",
+      "citations" : [ "E2", "E4", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 3
+  }, {
+    "case_id" : "delay_before_submission",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "DISPATCH_DELAY",
+      "from" : "E0",
+      "to" : "E1",
+      "citations" : [ "E0", "E1" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "NO_RECEIPT_NOT_FAILURE",
+      "from" : "E2",
+      "to" : "Q",
+      "citations" : [ "E2", "Q" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "old_receipt_state_still_unknown",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "RECEIPT_BEFORE_UNKNOWN",
+      "from" : "R",
+      "to" : "E2",
+      "citations" : [ "R", "E2" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "REPEATED_UNKNOWN",
+      "from" : "E2",
+      "to" : "E3",
+      "citations" : [ "E2", "E3" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "SETTLEMENT_GAP",
+      "from" : "R",
+      "to" : "E3",
+      "citations" : [ "R", "E3" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "rapid_terminal_counterexample",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "RECEIPT_AFTER_UNKNOWN",
+      "from" : "E2",
+      "to" : "R",
+      "citations" : [ "E2", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "RECOVERY_COMPLETED",
+      "from" : "E2",
+      "to" : "E3",
+      "citations" : [ "E2", "E3", "R" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "timestamp_sequence_disagreement",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "validated",
+    "whole_plan_accepted" : true,
+    "snapshot_hash_matches" : true,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : true,
+    "proposals" : [ {
+      "relation" : "TEMPORAL_ORDER_UNRELIABLE",
+      "from" : "E1",
+      "to" : "E2",
+      "citations" : [ "E1", "E2" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    }, {
+      "relation" : "NO_RECEIPT_NOT_FAILURE",
+      "from" : "E2",
+      "to" : "Q",
+      "citations" : [ "E2", "Q" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 0
+  }, {
+    "case_id" : "sparse_unknown_counterexample",
+    "transport_outcome" : "response_completed",
+    "retained_application_outcome" : "invalid_output",
+    "whole_plan_accepted" : false,
+    "snapshot_hash_matches" : false,
+    "headline_matches" : true,
+    "missing_required_findings" : [ ],
+    "missing_required_checks" : [ ],
+    "base_contract_valid" : false,
+    "proposals" : [ {
+      "relation" : "DISPATCH_DELAY",
+      "from" : "E0",
+      "to" : "E1",
+      "citations" : [ "E0", "E1" ],
+      "duplicate_relation" : false,
+      "proof_valid" : false,
+      "guard_result" : "invalid_attribution_dispatch_below_inspection_threshold"
+    }, {
+      "relation" : "NO_RECEIPT_NOT_FAILURE",
+      "from" : "E2",
+      "to" : "Q",
+      "citations" : [ "E2", "Q" ],
+      "duplicate_relation" : false,
+      "proof_valid" : true,
+      "guard_result" : "accepted_independently"
+    } ],
+    "independently_valid_proposals_discarded" : 1
+  } ],
+  "rejected_plans" : 2,
+  "empty_attribution_plans" : 0,
+  "independently_valid_proposals_discarded" : 4,
+  "scope" : "Each proposal is checked independently for diagnosis only. Production still rejects the whole plan on any invalid or duplicate claim. Guard codes describe the first failing predicate within each proposal; other defects may also exist. Prose is not semantically validated."
+}

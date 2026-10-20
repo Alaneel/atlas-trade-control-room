@@ -1,0 +1,38 @@
+{
+  "kind": "assistant_qualitative_text_audit",
+  "scope": "Authoring assistant review of all 16 accepted attribution objects, after the paid run. No human review, independent external rater, additional provider call, or semantic accuracy score. Retained production outputs are unchanged. These concerns can be missed by a valid model-review JSON response.",
+  "model": "gpt-5.6-luna",
+  "accepted_attributions_reviewed": 16,
+  "concerns": [
+    {
+      "case_id": "receipt_before_uncertainty",
+      "relation": "RECEIPT_BEFORE_UNKNOWN",
+      "quote": "showing an acknowledgement/commit gap",
+      "issue": "Temporal record order does not establish an acknowledgement or commit mechanism. The interpretation asserts more than its separate uncertainty qualifies.",
+      "suggested_wording": "The record is consistent with an acknowledgement or local settlement gap, among other possible recording or timestamp explanations."
+    },
+    {
+      "case_id": "eventual_execution",
+      "relation": "RECEIPT_AFTER_UNKNOWN",
+      "quote": "uncertainty preceding receipt visibility",
+      "issue": "The source is local receipt creation time, not an observation of visibility. Prefer receipt recording.",
+      "suggested_wording": "The first recorded UNKNOWN precedes the local receipt timestamp; actual visibility time is unknown."
+    },
+    {
+      "case_id": "rapid_terminal_counterexample",
+      "relation": "RECEIPT_AFTER_UNKNOWN",
+      "quote": "local evidence became available later",
+      "issue": "Creation timestamps do not prove when evidence became available to a reader. The uncertainty acknowledges this, but the interpretation still overstates it.",
+      "suggested_wording": "The local receipt timestamp follows the first UNKNOWN timestamp; availability and arrival timing remain unknown."
+    },
+    {
+      "case_id": "old_receipt_state_still_unknown",
+      "relation": "SETTLEMENT_GAP",
+      "quote": "unresolved terminal state",
+      "issue": "The latest recorded state is UNKNOWN, which is nonterminal. The authoritative state remains correct, but the phrase is ambiguous.",
+      "suggested_wording": "Inspect the receipt alongside the unresolved current trade state."
+    }
+  ],
+  "human_review": null,
+  "real_model_requests": 0
+}

@@ -47,4 +47,14 @@ class EvaluationBudgetTest {
         assertThat((BigDecimal) budget.state().get("committed_or_reserved_usd")).isEqualByComparingTo("0");
         assertThatThrownBy(() -> budget.reserve("unpriced-model")).isInstanceOf(ModelPlanner.Failure.class);
     }
+    @Test void providerModelDriftOrMissingWriteBreakdownStopsFurtherDispatch() {
+        for (var usage : List.of(usage(null), new ModelPlanner.Usage(null, null, "resp_fixture", null, "default",
+                1000L, 0L, 500L, 100L, 0L), new ModelPlanner.Usage("gpt-5.6-luna", "unexpected-model", "resp_fixture", null,
+                "default", 1000L, 0L, 500L, 100L, 0L))) {
+            var budget = new EvaluationBudget(new BigDecimal("0.10"), prices);
+            budget.settle(budget.reserve("gpt-5.6-luna"), true, usage);
+            assertThat(budget.state().get("stopped")).isEqualTo(true);
+            assertThatThrownBy(() -> budget.reserve("gpt-5.6-luna")).isInstanceOf(ModelPlanner.Failure.class);
+        }
+    }
 }

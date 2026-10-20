@@ -48,15 +48,15 @@ public final class CrossEventVerifier {
         String observation;
         switch (p.relation()) {
             case "RECEIPT_BEFORE_UNKNOWN" -> {
-                require(receipt.equals(p.fromId()) && s.receipt() != null && to != null && to.equals(firstUnknown)
-                    , "receipt_to_first_unknown_required");
+                require(receipt.equals(p.fromId()) && s.receipt() != null && to != null && to.equals(firstUnknown),
+                    "receipt_to_first_unknown_required");
                 require(s.receipt().at().isBefore(to.at()), "receipt_not_before_first_unknown");
                 observation = "A matching " + s.receipt().status() + " simulated receipt was recorded "
                     + seconds(s.receipt().at(), to.at()) + " seconds before the first UNKNOWN event. Latest recorded state=" + s.status() + ".";
             }
             case "RECEIPT_AFTER_UNKNOWN" -> {
-                require(from != null && from.equals(firstUnknown) && receipt.equals(p.toId()) && s.receipt() != null
-                    , "first_unknown_to_receipt_required");
+                require(from != null && from.equals(firstUnknown) && receipt.equals(p.toId()) && s.receipt() != null,
+                    "first_unknown_to_receipt_required");
                 require(from.at().isBefore(s.receipt().at()), "receipt_not_after_first_unknown");
                 observation = "A matching " + s.receipt().status() + " simulated receipt was recorded "
                     + seconds(from.at(), s.receipt().at()) + " seconds after the first UNKNOWN event. Receipt creation time is not a network-arrival measurement.";
@@ -77,7 +77,8 @@ public final class CrossEventVerifier {
             }
             case "DISPATCH_DELAY" -> {
                 require(from != null && from.sequence() == 0 && from.status() == TradeStatus.RESERVED && to != null
-                    && to.status() == TradeStatus.SUBMITTED && millis(from.at(), to.at()) >= 60000);
+                    && to.status() == TradeStatus.SUBMITTED, "reserved_to_submitted_required");
+                require(millis(from.at(), to.at()) >= 60000, "dispatch_below_inspection_threshold");
                 observation = "The RESERVED-to-SUBMITTED interval is " + seconds(from.at(), to.at())
                     + " seconds, above the 60-second inspection threshold. This interval precedes the recorded venue outcome.";
             }

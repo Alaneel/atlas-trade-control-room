@@ -2,7 +2,7 @@
 
 Atlas explains recorded rejection and execution states using versioned rules and immutable evidence. The application renders authoritative decision facts and required checks. V2 additionally lets the optional model connect events and write labelled hypotheses with exact citations. The program verifies the cited temporal/state observations; model prose is not semantically certified. Approvals, capacity changes and trading actions are outside its capability.
 
-The deterministic transaction code continues to choose every business state. See [cross-event reasoning, proof checks and three-way comparison](CROSS_EVENT_EXPLANATIONS.md) for the current contract. Historical v1 artifacts retain their original ordering-only behavior and measurements.
+The deterministic transaction code continues to choose every business state. See [cross-event reasoning, proof checks and three-way comparison](CROSS_EVENT_EXPLANATIONS.md) for the current contract and the [GPT-5.6 Luna follow-up](LUNA_EVALUATION.md) for diagnosed failures and current measurements. Historical artifacts retain their original behavior and measurements.
 
 ## Run without credentials
 

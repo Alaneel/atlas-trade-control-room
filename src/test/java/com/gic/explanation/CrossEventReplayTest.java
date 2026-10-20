@@ -14,7 +14,7 @@ class CrossEventReplayTest {
         var json = CrossEventFixtures.JSON;
         var engine = new ExplanationEngine(new RuleCatalog());
         List<Map<String, Object>> rounds = new ArrayList<>();
-        for (String directory : List.of("cross-event-v2-first-round", "cross-event-v3-second-round")) {
+        for (String directory : List.of("cross-event-v2-first-round", "cross-event-v3-second-round", "cross-event-luna-round")) {
             var recorded = json.readTree(Path.of("docs/examples/ai-explanations", directory, "results.json").toFile());
             int replayed = 0, controls = 0;
             for (var row : recorded.path("results")) {

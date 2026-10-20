@@ -2,7 +2,7 @@
 
 Atlas keeps the recorded decision, money/state invariants and reviewed rule findings authoritative. The optional model now connects events and authors short interpretations, rather than only ordering existing finding IDs. It has no tools or business mutation dependencies.
 
-The [executed two-round study](CROSS_EVENT_EVALUATION.md) did **not** establish an AI advantage: the second round fell back on 8/10 cases and lost 7/10 comparisons to stronger rules (two ties, one disagreement). The UI therefore defaults to deterministic cross-event rules; `?mode=rules_plus` exposes them without any model/key. The existing API default `rules` remains compatible and `ai` is an explicit experiment. Both negative rounds are retained; no further paid calls followed the second round.
+The [initial two-round study](CROSS_EVENT_EVALUATION.md) did **not** establish an AI advantage: its second round fell back on 8/10 cases. The [GPT-5.6 Luna follow-up](LUNA_EVALUATION.md) reduced fallback to 2/10 and improved explicit relation recall to 14/17, but still did not establish a stable advantage over the 17/17 stronger rules. The UI defaults to deterministic cross-event rules; `?mode=rules_plus` exposes them without any model/key. The existing API default `rules` remains compatible and `ai` is an explicit experiment. All three paid rounds are retained.
 
 ## Observations and hypotheses
 
@@ -82,3 +82,13 @@ python3 scripts/build-cross-event-demo.py \
 Every round creates a fresh directory with checkpointed raw results, aggregated summary, readable report, manifest and sanitized log. Checkpoints retain observed usage after each response; interrupted in-flight billing may be unknown. Generation/reviewer costs are separate and summed. Missing usage/prices never become zero total cost. Requests use the official Responses endpoint, standard tier, `store:false`, no tools/redirects/application retries, 8-second overall deadline, at most two in-flight calls per client, 32 KiB request and 64 KiB retained response bounds. V2 allows 1,400 output tokens; v1 artifacts retain their original 512-token settings.
 
 Ordinary CI skips both paid suites. It runs proof/transport/reviewer-contract tests, real Mongo non-mutation checks, Python aggregation tests and the packaged-JVM HTTP demo. The frozen-snapshot benchmark does not establish live HTTP throughput or production semantic quality. Consult the retained comparison report for actual measurements; this specification does not assert a measured improvement.
+
+### Compare an explicitly selected generator without changing credentials
+
+```sh
+python3 scripts/run-cross-event-eval.py --model gpt-5.6-luna \
+  --reviewer-model gpt-4.1-mini-2025-04-14 --max-usd 0.10 --check-config
+# Remove --check-config only to make paid requests.
+```
+
+The override leaves `.env.local` unchanged. Luna uses standard mode/low reasoning and explicit caching without breakpoints; output remains capped at 1,400 tokens including reasoning, with the same eight-second deadline. Verified pricing includes cache-write usage separately from ordinary and cached input. Missing usage retains the reservation and stops subsequent dispatch. The runner records both model IDs and a conservative pre-request spend reservation, at most 10 generation plus 20 review requests, no retries. This is a local run budget under documented standard text pricing, not an account billing limit. Follow [the predeclared protocol](LUNA_EVALUATION_PROTOCOL.md); a valid structured review is not proof that its semantic assessment or preference is correct.

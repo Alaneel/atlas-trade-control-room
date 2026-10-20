@@ -31,7 +31,7 @@ final class EvaluationBudget {
         if (!initiated) { committed = committed.subtract(reservation); return; }
         if (usage == null || usage.inputTokens() == null || usage.inputTokens() > 33792 || usage.outputTokens() == null
                 || usage.outputTokens() > OpenAiPlanner.MAX_OUTPUT_TOKENS || !"default".equals(usage.serviceTier())
-                || !usage.requestedModel().equals(usage.resolvedModel())) { stopped = true; return; }
+                || usage.requestedModel() == null || !usage.requestedModel().equals(usage.resolvedModel())) { stopped = true; return; }
         var costs = ExplanationModelReport.cost(List.of(usage), prices);
         if (!"complete_usage_estimate".equals(costs.get("status"))) { stopped = true; return; }
         var actual = (BigDecimal) costs.get("estimated_total_usd");
