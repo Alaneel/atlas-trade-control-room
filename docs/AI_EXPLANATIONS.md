@@ -59,13 +59,13 @@ Quality is reported separately for raw plan acceptance, final application output
 
 ## API and provenance
 
-`GET /api/trader/trades/{id}/explanation?mode=rules|ai` returns an explanation with `Cache-Control: no-store`. The default mode is `rules`. A missing trade returns 404, invalid identity/mode returns 400, and POST to the explanation path returns 405.
+`GET /api/trader/trades/{id}/explanation?mode=rules|rules_plus|ai` returns an explanation with `Cache-Control: no-store`. The API default stays `rules` for compatibility; the control-room selector defaults to the useful zero-model `rules_plus` cross-event mode. AI remains experimental after the negative [real comparison](CROSS_EVENT_EVALUATION.md). A missing trade returns 404, invalid identity/mode returns 400, and POST returns 405.
 
 The response includes:
 
 - trade reference, recorded state/version and snapshot hash;
 - rule and prompt versions;
-- mode: `rules`, `model_ordered`, `model_attributed`, `rules_fallback` or clearly labelled test-only fixture modes;
+- mode: `rules`, `rules_plus`, `model_ordered`, `model_attributed`, `rules_fallback` or clearly labelled fixture modes;
 - provider outcome and initiated model-request count;
 - grounded findings with rule IDs and evidence references;
 - read-only inspection checks, explicit uncertainty/abstention and scope limitations.

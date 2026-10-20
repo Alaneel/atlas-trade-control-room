@@ -203,13 +203,15 @@ elif page == "New trade":
                 except requests.RequestException as exc:
                     submission_error(exc)
         trade_id = st.text_input("Trade reference to inspect")
-        use_ai = st.checkbox("Add AI analysis across events", value=False,
-            help="Requires a configured model. Event relations are checked; model interpretations remain hypotheses. All actions stay read-only.")
+        method = st.selectbox("Explanation method", ["Cross-event rules", "Basic rules", "AI analysis (experimental)"],
+            help="Cross-event rules need no model. AI interpretations are experimental hypotheses and can fall back. Every option is read-only.")
+        explanation_mode = {"Cross-event rules": "rules_plus", "Basic rules": "rules", "AI analysis (experimental)": "ai"}[method]
         if trade_id and st.button("Explain rejection or anomaly"):
             try:
                 path = f"/trades/{quote(trade_id, safe='')}/explanation"
-                explanation = api("GET", path, params={"mode": "ai" if use_ai else "rules"})
+                explanation = api("GET", path, params={"mode": explanation_mode})
                 source = {"rules": "Rule explanation", "model_ordered": "AI-organized, verified evidence",
+                          "rules_plus": "Cross-event rule explanation (no model request)",
                           "model_attributed": "Rule facts with AI cross-event interpretation",
                           "rules_fallback": "Rule explanation (model unavailable or output rejected)",
                           "fixture_ordered": "Test fixture", "fixture_attributed": "Test fixture"}.get(explanation.get("mode"), "Explanation")
@@ -223,7 +225,7 @@ elif page == "New trade":
                     st.caption("Evidence: " + ", ".join(finding.get("evidenceIds", [])))
                 for insight in explanation.get("attributions", []):
                     st.write("Observed relationship: " + insight.get("observedRelation", ""))
-                    st.text("AI interpretation: " + insight.get("interpretation", ""))
+                    st.text(("Rule interpretation: " if explanation.get("mode") == "rules_plus" else "AI interpretation: ") + insight.get("interpretation", ""))
                     st.text("Uncertainty: " + insight.get("uncertainty", ""))
                     st.caption("Evidence: " + ", ".join(insight.get("evidenceIds", [])))
                     st.caption(insight.get("validationScope", ""))

@@ -52,13 +52,25 @@ public class ExplanationService {
                 mode = "rules_fallback"; outcome = "snapshot_changed";
             }
         }
+        ExplanationEngine.Analysis checkedAnalysis = analysis;
+        List<Explanation.Attribution> attributions = plan.attributions().stream().map(p -> CrossEventVerifier.verify(p, checkedAnalysis)).toList();
+        return render(analysis, plan, mode, outcome, model, calls, input, output, start, attributions);
+    }
+    /** Useful cross-event rules without paying for a model that failed its comparison. */
+    public Explanation explainCrossEventRules(String tradeId) {
+        long start = System.nanoTime();
+        var analysis = engine.analyze(reader.load(tradeId));
+        return render(analysis, ExplanationPlan.baseline(analysis), "rules_plus", "not_requested", null, 0, null, null,
+            start, CrossEventVerifier.strongBaseline(analysis));
+    }
+    private Explanation render(ExplanationEngine.Analysis analysis, ExplanationPlan plan, String mode, String outcome,
+            String model, int calls, Long input, Long output, long start, List<Explanation.Attribution> attributions) {
+        ExplanationSnapshot snapshot = analysis.snapshot();
         Map<String, Explanation.Finding> findings = analysis.findings().stream()
             .collect(Collectors.toMap(Explanation.Finding::id, Function.identity()));
         Map<String, Explanation.Check> checks = analysis.checks().stream()
             .collect(Collectors.toMap(Explanation.Check::id, Function.identity()));
         List<Explanation.Finding> ordered = plan.findingIds().stream().map(findings::get).toList();
-        ExplanationEngine.Analysis checkedAnalysis = analysis;
-        List<Explanation.Attribution> attributions = plan.attributions().stream().map(p -> CrossEventVerifier.verify(p, checkedAnalysis)).toList();
         return new Explanation(snapshot.tradeId(), snapshot.version(), String.valueOf(snapshot.status()), analysis.snapshotHash(),
             snapshot.ruleVersion(), OpenAiPlanner.PROMPT_VERSION, mode, outcome, model, calls, input, output,
             (System.nanoTime() - start) / 1_000_000, analysis.abstained(), findings.get(plan.headlineId()).text(),

@@ -31,6 +31,18 @@ class ExplanationControllerTest {
         mvc.perform(get("/api/trader/trades/" + id + "/explanation?mode=ai")).andExpect(status().isOk());
         verify(explanations).explain(id, true);
     }
+    @Test void strongerRulesUseTheReadOnlyPathWithoutAModelRequest() throws Exception {
+        var snapshot = CrossEventFixtures.get("receipt_before_uncertainty");
+        var result = new ExplanationService(ignored -> snapshot, new ExplanationEngine(new RuleCatalog()), ignored -> { throw new AssertionError(); })
+            .explainCrossEventRules(snapshot.tradeId());
+        when(explanations.explainCrossEventRules(id)).thenReturn(result);
+        mvc.perform(get("/api/trader/trades/" + id + "/explanation?mode=rules_plus"))
+            .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
+            .andExpect(jsonPath("$.mode").value("rules_plus")).andExpect(jsonPath("$.modelCalls").value(0))
+            .andExpect(jsonPath("$.attributions[0].relation").value("RECEIPT_BEFORE_UNKNOWN"));
+        verify(explanations).explainCrossEventRules(id);
+        verify(explanations, never()).explain(anyString(), anyBoolean());
+    }
     @Test void arbitraryModeDoesNotReachTheService() throws Exception {
         mvc.perform(get("/api/trader/trades/" + id + "/explanation?mode=execute")).andExpect(status().isBadRequest());
         verifyNoInteractions(explanations);

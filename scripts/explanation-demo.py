@@ -76,7 +76,9 @@ def local(args, report):
         prefix = f"/api/trader/trades/{trade_id}"
         rule_status, rules = smoke.http(base, "GET", prefix + "/explanation")
         ai_status, fallback = smoke.http(base, "GET", prefix + "/explanation?mode=ai")
-        smoke.require(rule_status == ai_status == 200, "Explanation endpoint failed")
+        strong_status, strong = smoke.http(base, "GET", prefix + "/explanation?mode=rules_plus")
+        smoke.require(rule_status == ai_status == strong_status == 200, "Explanation endpoint failed")
+        smoke.require(strong["mode"] == "rules_plus" and strong["modelCalls"] == 0, "Cross-event rules unexpectedly called a model")
         smoke.require(rules["mode"] == "rules" and fallback["mode"] == "rules_fallback", "Expected explicit fallback provenance")
         smoke.require(fallback["providerOutcome"] == "disabled" and fallback["modelCalls"] == 0, "Unexpected provider call")
         smoke.require(rules["tradeStatus"] == expected_status and rules["findings"][0]["id"] == expected_headline, "Wrong grounded explanation")
@@ -88,7 +90,7 @@ def local(args, report):
         _, limit = smoke.http(base, "GET", "/api/trader/limit/NORTHSTAR/EQUITY?currency=USD")
         smoke.require(sum(Decimal(str(limit[key])) for key in ['availableLimit', 'reservedLimit', 'usedLimit'])
             == Decimal(str(limit['totalLimit'])), "Ledger conservation failed")
-        report["cases"].append({"id": name, "trade_response": trade, "rules": rules, "ai_fallback": fallback,
+        report["cases"].append({"id": name, "trade_response": trade, "rules": rules, "strong_rules": strong, "ai_fallback": fallback,
             "mutation_route_status": post_status, "documents_before_sha256": before, "documents_after_sha256": after,
             "all_business_documents_unchanged": True, "ledger_after": limit})
         print(name + ": " + rules["summary"])

@@ -43,6 +43,8 @@ python3 scripts/explanation-demo.py --offline
 
 [Cross-event contract and three-way comparison](docs/CROSS_EVENT_EXPLANATIONS.md) covers the new generation contract, a stronger deterministic comparator, blinded reversed-position model review and a standalone read-only replay. It retains failed rounds and distinguishes provisional model ratings from human evidence.
 
+The [two-round comparison](docs/CROSS_EVENT_EVALUATION.md) did not show stable AI gains. The latest round had 80% fallback; against stronger rules, AI had zero stable wins, two ties, seven losses and one disagreement. The control room defaults to `rules_plus` (checked cross-event observations without a model); AI stays experimental. Both rounds cost an estimated $0.0940124 across 60 requests, including reviews.
+
 The first [real-model round](docs/examples/ai-explanations/live-20261020/report.md) used six `gpt-4.1-mini-2025-04-14` requests: estimated cost **$0.0034696**, P50 **2.108 s**, P95 **3.746 s**, fallback **0/6**, and all required claims/checks and citations retained. All six presentations matched the rules baseline, so added usefulness is not established. Configure a private `.env.local`, then run `python3 scripts/run-live-explanation-eval.py --limit 6` to archive a separate round; ordinary CI stays offline.
 
 ## Inspect the failure path

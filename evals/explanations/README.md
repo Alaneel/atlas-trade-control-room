@@ -1,5 +1,7 @@
 # Explanation evaluation contract
 
+The newer [cross-event study](../../docs/CROSS_EVENT_EXPLANATIONS.md) uses `cross-event-cases.json`, three variants and reversed-position model review. Its [actual negative results](../../docs/CROSS_EVENT_EVALUATION.md), failures and costs are retained. The ordering-only suite below remains a separate legacy contract benchmark.
+
 `cases.json` is a curated, development-visible synthetic suite. Its expected headlines and abstentions are declared independently of a provider response, but the cases were used while developing the implementation. It is not a heldout or real-user dataset.
 
 The offline runner compares rule output and scripted valid ID plans, then attacks the plan validator. It reports the 26-case rule/provenance agreement and rejected adversarial plans separately. Citation existence and exact ID enforcement are mechanical checks, not independent semantic judgements of a language model.

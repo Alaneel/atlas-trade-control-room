@@ -75,6 +75,10 @@ class ExplanationMongoTest {
         assertThat(result.attributions().get(0).observedRelation()).contains("1 seconds before");
         assertThat(result.tradeStatus()).isEqualTo("UNKNOWN");
         assertThat(documents()).isEqualTo(before);
+        var deterministic = service(analysis -> { throw new AssertionError("Strong rules cannot call a planner"); }).explainCrossEventRules(order.getId());
+        assertThat(deterministic.attributions()).extracting(Explanation.Attribution::relation).contains("RECEIPT_BEFORE_UNKNOWN");
+        assertThat(deterministic.modelCalls()).isZero();
+        assertThat(documents()).isEqualTo(before);
     }
     @Test void providerMutationAndInventedClaimsAreRejectedWithoutAnyDatabaseWrite() {
         var order = create(seed("5.00"), "10.00"); String before = documents();

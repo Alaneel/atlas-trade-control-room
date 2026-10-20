@@ -2,6 +2,8 @@
 
 Atlas keeps the recorded decision, money/state invariants and reviewed rule findings authoritative. The optional model now connects events and authors short interpretations, rather than only ordering existing finding IDs. It has no tools or business mutation dependencies.
 
+The [executed two-round study](CROSS_EVENT_EVALUATION.md) did **not** establish an AI advantage: the second round fell back on 8/10 cases and lost 7/10 comparisons to stronger rules (two ties, one disagreement). The UI therefore defaults to deterministic cross-event rules; `?mode=rules_plus` exposes them without any model/key. The existing API default `rules` remains compatible and `ai` is an explicit experiment. Both negative rounds are retained; no further paid calls followed the second round.
+
 ## Observations and hypotheses
 
 Each additional attribution contains `relation`, program-computed `observedRelation` (with checked durations/state), model-authored `interpretation` and `uncertainty`, exact `evidenceIds`, and a `validationScope` that explicitly says temporal/state verification is not semantic verification of prose or proof of physical causation.

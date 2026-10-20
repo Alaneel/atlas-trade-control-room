@@ -116,7 +116,9 @@ public final class CrossEventVerifier {
                     found = verify(p, a); break outer;
                 } catch (ModelPlanner.Failure | IllegalArgumentException ignored) { /* unsupported candidate */ }
             }
-            if (found != null) result.add(found);
+            if (found != null) result.add(new Explanation.Attribution(found.relation(), found.observedRelation(), found.interpretation(),
+                found.uncertainty(), found.evidenceIds(), "Program-checked observations and deterministic reviewed hypotheses. "
+                    + "Physical causation is not established. No model request or operation authority."));
         }
         return result.stream().limit(3).toList();
     }

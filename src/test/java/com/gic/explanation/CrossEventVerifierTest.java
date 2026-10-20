@@ -106,4 +106,15 @@ class CrossEventVerifierTest {
         assertThat(result.tradeStatus()).isEqualTo("EXECUTED");
         assertThat(result.attributions()).isEmpty();
     }
+    @Test void crossEventRuleModeOffersTheSameCheckedRelationsWithoutInvokingAPlanner() throws Exception {
+        for (var row : CrossEventFixtures.rows()) {
+            var snapshot = CrossEventFixtures.JSON.treeToValue(row.path("snapshot"), ExplanationSnapshot.class);
+            var result = new ExplanationService(id -> snapshot, engine, ignored -> { throw new AssertionError("No model in cross-event rule mode"); })
+                .explainCrossEventRules(snapshot.tradeId());
+            assertThat(result.mode()).isEqualTo("rules_plus"); assertThat(result.modelCalls()).isZero();
+            assertThat(result.abstained()).isEqualTo(row.path("expectedAbstention").asBoolean());
+            for (var relation : row.path("expectedRelations")) assertThat(result.attributions()).extracting(Explanation.Attribution::relation).contains(relation.asText());
+            assertThat(result.attributions()).allSatisfy(a -> assertThat(a.validationScope()).contains("deterministic", "No model request"));
+        }
+    }
 }
