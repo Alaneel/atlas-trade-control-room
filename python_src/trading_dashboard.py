@@ -8,6 +8,9 @@ Spring Boot API and keeps the same interaction model.
 from __future__ import annotations
 
 import os
+import uuid
+from decimal import Decimal
+from urllib.parse import quote
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -83,6 +86,15 @@ def api(method: str, path: str, **kwargs: Any) -> Any:
     return response.json()
 
 
+def submission_error(exc: requests.RequestException) -> None:
+    code = exc.response.status_code if exc.response is not None else None
+    if code is not None and 400 <= code < 500 and code not in (408, 429):
+        st.session_state.pop("pending_submission", None)
+        st.error(f"The request was rejected (HTTP {code}). Correct the request before submitting again.")
+    else:
+        st.error("The submission outcome may be unknown. Retry the pending submission to retrieve the same trade.")
+
+
 def metric(label: str, value: str, delta: str) -> None:
     st.markdown(
         f'<div class="metric-card"><div class="metric-label">{label}</div>'
@@ -96,11 +108,11 @@ def normalized_trades(raw: list[dict[str, Any]]) -> pd.DataFrame:
     for trade in raw:
         request = trade.get("instrumentVerificationRequest", {}) or {}
         rows.append({
-            "time": str(trade.get("timestamp", "—")).replace("T", " ")[:19],
+            "time": str(trade.get("timestamp", trade.get("createdAt", "—"))).replace("T", " ")[:19],
             "counterparty": trade.get("counterparty", "—"),
             "instrument": request.get("instrument", request.get("instrumentGroup", "—")),
             "group": request.get("instrumentGroup", "—"),
-            "amount": trade.get("amount", 0),
+            "amount": float(trade.get("amount", 0)),
             "status": trade.get("status", "—"),
         })
     return pd.DataFrame(rows)
@@ -148,14 +160,14 @@ else:
 
 if page == "Overview":
     total = float(trades["amount"].sum()) if not trades.empty else 0
-    approved = int((trades["status"] == "APPROVED").sum()) if not trades.empty else 0
-    review = int((trades["status"].isin(["REVIEW", "PENDING"])).sum()) if not trades.empty else 0
+    approved = int((trades["status"].isin(["APPROVED", "EXECUTED"])).sum()) if not trades.empty else 0
+    review = int((trades["status"].isin(["REVIEW", "PENDING", "RESERVED", "SUBMITTED", "UNKNOWN"])).sum()) if not trades.empty else 0
     approval_rate = approved / len(trades) * 100 if len(trades) else 0
     c1, c2, c3, c4 = st.columns(4)
-    with c1: metric("Gross notional", f"${total / 1_000_000:.1f}M", "+8.2% today")
-    with c2: metric("Approval rate", f"{approval_rate:.0f}%", f"{approved} auto-approved")
-    with c3: metric("Needs review", str(review), "Within desk SLA")
-    with c4: metric("Decision latency", "84 ms", "p95 · last hour")
+    with c1: metric("Gross notional", f"${total / 1_000_000:.1f}M", "Sample data" if demo_mode else "Recorded submissions")
+    with c2: metric("Approval rate", f"{approval_rate:.0f}%", f"{approved} executed / approved")
+    with c3: metric("Needs review", str(review), "Sample queue" if demo_mode else "Awaiting execution / reconciliation")
+    with c4: metric("Decision latency", "—", "Run the benchmark to measure")
 
     st.markdown("### Activity")
     left, right = st.columns([1.65, 1])
@@ -177,17 +189,39 @@ if page == "Overview":
 elif page == "New trade":
     st.markdown("### Pre-trade check")
     st.markdown('<div class="callout">Atlas evaluates instrument eligibility and available limit before the order reaches execution.</div>', unsafe_allow_html=True)
+    if not demo_mode:
+        st.caption("Connected fixture: NORTHSTAR / EQUITY / AAPL / USD, initial capacity 100.00. External execution is a local simulator.")
+        pending = st.session_state.get("pending_submission")
+        if pending:
+            st.warning("A previous submission may still be pending. Retry it to retrieve the same trade before creating another.")
+            if st.button("Retry pending submission"):
+                try:
+                    result = api("POST", "/trade", headers={"Idempotency-Key": pending["key"]}, json=pending["body"])
+                    st.json(result)
+                    if result.get("status") in ("EXECUTED", "REJECTED"):
+                        del st.session_state.pending_submission
+                except requests.RequestException as exc:
+                    submission_error(exc)
+        trade_id = st.text_input("Trade reference to inspect")
+        if trade_id and st.button("Refresh trade and events"):
+            try:
+                path = f"/trades/{quote(trade_id, safe='')}"
+                st.json(api("GET", path))
+                st.json(api("GET", path + "/events"))
+            except requests.RequestException as exc:
+                st.error(f"Trade could not be loaded: {exc}")
     with st.form("trade_form"):
         a, b, c = st.columns(3)
         with a:
-            counterparty = st.selectbox("Counterparty", ["NORTHSTAR", "MERIDIAN", "APEX"])
-            instrument_group = st.selectbox("Product group", ["EQUITY", "BOND", "FX", "COMMODITY"])
+            counterparty = st.selectbox("Counterparty", (["NORTHSTAR", "MERIDIAN", "APEX"] if demo_mode else ["NORTHSTAR"]))
+            instrument_group = st.selectbox("Product group", (["EQUITY", "BOND", "FX", "COMMODITY"] if demo_mode else ["EQUITY"]))
         with b:
             instrument = st.text_input("Instrument", "AAPL")
-            amount = st.number_input("Notional (USD)", min_value=1_000.0, value=500_000.0, step=50_000.0)
+            amount = st.number_input("Notional (USD)", min_value=0.01, max_value=999_999_999.99, value=500_000.0 if demo_mode else 10.0, step=10.0)
         with c:
-            country = st.selectbox("Risk country", ["US", "GB", "SG", "JP"])
-            exchange = st.selectbox("Venue", ["NASDAQ", "NYSE", "LSE", "SGX"])
+            country = st.selectbox("Risk country", (["US", "GB", "SG", "JP"] if demo_mode else ["US"]))
+            exchange = st.selectbox("Venue", (["NASDAQ", "NYSE", "LSE", "SGX"] if demo_mode else ["NASDAQ"]))
+        confirmed = st.checkbox("I confirm this trade submission", value=False)
         submitted = st.form_submit_button("Run checks & submit", use_container_width=True)
 
     if submitted:
@@ -209,16 +243,31 @@ elif page == "New trade":
                 st.warning("Routed to manual review · requested notional exceeds the available limit.")
         else:
             try:
-                result = api("POST", "/trade", json={"instrumentVerificationRequest": request, "counterparty": counterparty, "amount": amount})
-                st.success(f"{result.get('status', 'Submitted')} · {result.get('message', 'Decision recorded')}")
+                if not confirmed:
+                    st.warning("Confirm the trade before submitting.")
+                    st.stop()
+                if st.session_state.get("pending_submission"):
+                    st.warning("Resolve the previous submission using Retry pending submission first.")
+                    st.stop()
+                body = {"instrumentVerificationRequest": request, "counterparty": counterparty,
+                        "amount": format(Decimal(str(amount)), ".2f"), "confirmed": True}
+                pending = {"key": str(uuid.uuid4()), "body": body}
+                st.session_state.pending_submission = pending
+                result = api("POST", "/trade", headers={"Idempotency-Key": pending["key"]}, json=body)
+                st.json(result)
+                if result.get("status") in ("EXECUTED", "REJECTED"):
+                    del st.session_state.pending_submission
+                    st.success(result.get("message", "Decision recorded"))
+                else:
+                    st.info("Execution is pending. The reservation remains held until the outcome is known.")
             except requests.RequestException as exc:
-                st.error(f"Trade could not be submitted: {exc}")
+                submission_error(exc)
 
 elif page == "Limit explorer":
     st.markdown("### Counterparty capacity")
     x, y, z = st.columns([1, 1, .6])
-    with x: counterparty = st.selectbox("Counterparty", ["NORTHSTAR", "MERIDIAN", "APEX"])
-    with y: instrument_group = st.selectbox("Product group", ["EQUITY", "BOND", "FX", "COMMODITY"])
+    with x: counterparty = st.selectbox("Counterparty", (["NORTHSTAR", "MERIDIAN", "APEX"] if demo_mode else ["NORTHSTAR"]))
+    with y: instrument_group = st.selectbox("Product group", (["EQUITY", "BOND", "FX", "COMMODITY"] if demo_mode else ["EQUITY"]))
     with z:
         st.write("")
         st.write("")
@@ -230,8 +279,8 @@ elif page == "Limit explorer":
             st.progress(min(available / 40_000_000, 1.0), text="Remaining against desk ceiling")
         else:
             try:
-                result = api("GET", f"/limit/{counterparty}/{instrument_group}")
-                st.metric("Available capacity", f"{result.get('currency', 'USD')} {result.get('availableLimit', 0):,.0f}")
+                result = api("GET", f"/limit/{quote(counterparty, safe='')}/{quote(instrument_group, safe='')}?currency=USD")
+                st.metric("Available capacity", f"{result.get('currency', 'USD')} {float(result.get('availableLimit', 0)):,.2f}")
             except requests.RequestException as exc:
                 st.error(f"Limit could not be loaded: {exc}")
 
@@ -244,5 +293,7 @@ else:
     ])
     if not demo_mode:
         st.info("The current backend exposes approval creation; queue management is shown here as the next API milestone.")
+    if not demo_mode:
+        st.stop()
     st.dataframe(approvals.rename(columns={"age":"Age", "instrument":"Instrument", "reason":"Reason", "owner":"Owner", "priority":"Priority"}), hide_index=True, use_container_width=True)
     st.caption(f"Queue snapshot · {(datetime.now() - timedelta(minutes=1)).strftime('%d %b %Y, %H:%M')}")

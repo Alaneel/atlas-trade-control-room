@@ -1,0 +1,359 @@
+{
+  "command": "ATLAS_MONGO_URI=<owned loopback replica set> ATLAS_MONGO_FAILPOINTS=true mvn -o -q verify -Datlas.benchmark=true -Datlas.benchmark.requests=500 -Datlas.benchmark.threads=8",
+  "tests": 57,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": [
+    {
+      "name": "com.gic.AtlasTradeControlApplicationTests",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.247",
+      "cases": [
+        {
+          "name": "contextLoads",
+          "seconds": "0.003"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.controller.TraderControllerTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.872",
+      "cases": [
+        {
+          "name": "uncertainSubmissionReturns202AndStableTradeReference",
+          "seconds": "0.193"
+        },
+        {
+          "name": "missingIdempotencyHeaderReturns400BeforeService",
+          "seconds": "0.015"
+        },
+        {
+          "name": "testGetLimit",
+          "seconds": "0.011"
+        },
+        {
+          "name": "testGetInstruments",
+          "seconds": "0.005"
+        },
+        {
+          "name": "unconfirmedOrFractionalCentRequestReturns400",
+          "seconds": "0.037"
+        },
+        {
+          "name": "reconciliationUsesDedicatedReadOnlyServiceAndReturnsTerminal200",
+          "seconds": "0.005"
+        },
+        {
+          "name": "testVerifyInstrument",
+          "seconds": "0.003"
+        },
+        {
+          "name": "conflictRemains409AndMalformedJsonRemains400",
+          "seconds": "0.004"
+        },
+        {
+          "name": "testGetTradeHistory",
+          "seconds": "0.003"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.exception.GlobalExceptionHandlerTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001",
+      "cases": [
+        {
+          "name": "testHandleGlobalException",
+          "seconds": "0"
+        },
+        {
+          "name": "testHandleInsufficientLimitException",
+          "seconds": "0.001"
+        },
+        {
+          "name": "testHandleBusinessException",
+          "seconds": "0"
+        },
+        {
+          "name": "testHandleResourceNotFoundException",
+          "seconds": "0"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.LedgerSchemaMongoTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.355",
+      "cases": [
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[1]",
+          "seconds": "0.168"
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[2]",
+          "seconds": "0.017"
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[3]",
+          "seconds": "0.015"
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[4]",
+          "seconds": "0.017"
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[5]",
+          "seconds": "0.014"
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[6]",
+          "seconds": "0.014"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.MongoCommitFailureTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "10.133",
+      "cases": [
+        {
+          "name": "anAbortedTransientTransactionRerunsCallbackButCommitsOneRecord",
+          "seconds": "0.015"
+        },
+        {
+          "name": "unknownCommitResultRetriesTheSameCommitWithoutRepeatingBusinessCallback",
+          "seconds": "10.002"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.ReliableExecutionBenchmarkTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "9.051",
+      "cases": [
+        {
+          "name": "measureHotAndDistributedAccountsWithRetainedSamples",
+          "seconds": "9.05"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.ReliableExecutionMongoTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "24.654",
+      "cases": [
+        {
+          "name": "timeoutBeforeSubmissionDoesNotReleaseFundsAndStableKeyRetryRecovers",
+          "seconds": "0.258"
+        },
+        {
+          "name": "definitiveRejectionReleasesExactlyOnceDespiteRepeatedReconciliation",
+          "seconds": "0.193"
+        },
+        {
+          "name": "committedReservationSurvivesServiceRecreationBeforeDispatch",
+          "seconds": "0.051"
+        },
+        {
+          "name": "venueSuccessSurvivesDatabaseSettlementFailureAndAnExpiredWorkerLease",
+          "seconds": "0.063"
+        },
+        {
+          "name": "oneHundredConcurrentReplaysProduceOneDurableTradeAndExecution",
+          "seconds": "0.201"
+        },
+        {
+          "name": "legacyFloatingPointLedgerFailsClosedWithoutImportingFixtures",
+          "seconds": "0.132"
+        },
+        {
+          "name": "expiredLeaseHolderCannotSettleOverANewerClaim",
+          "seconds": "0.05"
+        },
+        {
+          "name": "eventsHaveUniqueOrderedSequencesAndTerminalReplayAppendsNothing",
+          "seconds": "0.114"
+        },
+        {
+          "name": "eventWriteFailureAbortsReservationAndTradeTogether",
+          "seconds": "0.035"
+        },
+        {
+          "name": "decimalCentsStayExactAndAreStoredAsDecimal128",
+          "seconds": "0.087"
+        },
+        {
+          "name": "oneHundredConcurrentTenUnitTradesNeverOverspendOneHundred",
+          "seconds": "0.53"
+        },
+        {
+          "name": "repeatedDevelopmentSeedDoesNotDuplicateRecordsOrResetConsumedMoney",
+          "seconds": "22.615"
+        },
+        {
+          "name": "reusingAKeyWithAnotherPayloadConflictsWithoutMovingMoney",
+          "seconds": "0.017"
+        },
+        {
+          "name": "currencyIsPartOfTheReservationScope",
+          "seconds": "0.051"
+        },
+        {
+          "name": "lostSuccessResponseHoldsFundsThenReconcilesPersistedReceiptOnce",
+          "seconds": "0.063"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.unit.TradeValidationTest",
+      "tests": "13",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.025",
+      "cases": [
+        {
+          "name": "nullAmountRejected",
+          "seconds": "0"
+        },
+        {
+          "name": "unsafeKeysRejected{String}[1]",
+          "seconds": "0.006"
+        },
+        {
+          "name": "unsafeKeysRejected{String}[2]",
+          "seconds": "0"
+        },
+        {
+          "name": "unsafeKeysRejected{String}[3]",
+          "seconds": "0.001"
+        },
+        {
+          "name": "unsafeKeysRejected{String}[4]",
+          "seconds": "0"
+        },
+        {
+          "name": "canonicalFingerprintPreservesBusinessIdentity",
+          "seconds": "0.004"
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[1]",
+          "seconds": "0"
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[2]",
+          "seconds": "0"
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[3]",
+          "seconds": "0"
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[4]",
+          "seconds": "0.001"
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[5]",
+          "seconds": "0"
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[6]",
+          "seconds": "0.001"
+        },
+        {
+          "name": "incompleteAndUnconfirmedRequestsRejected",
+          "seconds": "0"
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.unit.TradeWorkerTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.037",
+      "cases": [
+        {
+          "name": "timeoutPreservesReservationAsUnknown",
+          "seconds": "0.004"
+        },
+        {
+          "name": "manualReconciliationNeverSubmitsEvenWithoutReceipt",
+          "seconds": "0.002"
+        },
+        {
+          "name": "refusesUnboundedLease",
+          "seconds": "0.001"
+        },
+        {
+          "name": "leasedTradeIsOnlyRead",
+          "seconds": "0"
+        },
+        {
+          "name": "databaseFailureAfterReceiptIsNotMisclassifiedAsVenueRejection",
+          "seconds": "0.001"
+        },
+        {
+          "name": "queryReceiptBeforeAnyResubmission",
+          "seconds": "0"
+        }
+      ]
+    }
+  ],
+  "reliability_coverage": [
+    {
+      "type": "INSTRUCTION",
+      "missed": "1380",
+      "covered": "1801"
+    },
+    {
+      "type": "BRANCH",
+      "missed": "289",
+      "covered": "111"
+    },
+    {
+      "type": "LINE",
+      "missed": "46",
+      "covered": "290"
+    },
+    {
+      "type": "COMPLEXITY",
+      "missed": "193",
+      "covered": "140"
+    },
+    {
+      "type": "METHOD",
+      "missed": "32",
+      "covered": "101"
+    },
+    {
+      "type": "CLASS",
+      "missed": "0",
+      "covered": "13"
+    }
+  ]
+}

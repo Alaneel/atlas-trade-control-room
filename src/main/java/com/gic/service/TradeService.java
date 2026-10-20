@@ -1,79 +1,54 @@
 package com.gic.service;
 
-import com.gic.model.*;
-import com.gic.repository.TradeHistoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
+import com.gic.model.InstrumentVerificationResult;
+import com.gic.model.TradeRequest;
+import com.gic.model.TradeResult;
+import com.gic.reliability.ReliableTradeStore;
+import com.gic.reliability.TradeEvent;
+import com.gic.reliability.TradeOrder;
+import com.gic.reliability.TradeWorker;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TradeService {
+    private final InstrumentService instruments;
+    private final ReliableTradeStore store;
+    private final TradeWorker worker;
 
-    @Autowired
-    private InstrumentService instrumentService;
-
-    @Autowired
-    private LimitService limitService;
-
-    @Autowired
-    private TradeHistoryRepository tradeHistoryRepository;
-
-    @Transactional
-    public TradeResult processTrade(TradeRequest tradeRequest) {
-        InstrumentVerificationResult verificationResult = instrumentService.verifyInstrument(tradeRequest.getInstrumentVerificationRequest());
-
-        if (!verificationResult.isValid()) {
-            return new TradeResult("REJECTED", "Invalid instrument combination");
-        }
-
-        if (!verificationResult.isApprovedForDepartment()) {
-            return new TradeResult("REJECTED", "Instrument not approved for your department");
-        }
-
-        String instrumentGroup = verificationResult.getInstrument().getInstrumentGroup();
-        boolean limitAvailable = limitService.checkAndReserveLimit(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
-
-        if (!limitAvailable) {
-            return new TradeResult("REJECTED", "Insufficient limit for the counterparty and instrument group");
-        }
-
-        boolean tradeExecuted = executeTradeOnExternalPlatform(tradeRequest);
-
-        if (tradeExecuted) {
-            limitService.confirmLimitUsage(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
-            saveTrade(tradeRequest, "EXECUTED");
-            return new TradeResult("EXECUTED", "Trade executed successfully");
-        } else {
-            limitService.releaseLimitReservation(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
-            saveTrade(tradeRequest, "FAILED");
-            return new TradeResult("FAILED", "Trade execution failed on the external platform");
-        }
+    public TradeService(InstrumentService instruments, ReliableTradeStore store, TradeWorker worker) {
+        this.instruments = instruments;
+        this.store = store;
+        this.worker = worker;
     }
 
-    private void saveTrade(TradeRequest tradeRequest, String status) {
-        TradeHistory tradeHistory = new TradeHistory();
-        tradeHistory.setInstrumentVerificationRequest(tradeRequest.getInstrumentVerificationRequest());
-        tradeHistory.setCounterparty(tradeRequest.getCounterparty());
-        tradeHistory.setAmount(tradeRequest.getAmount());
-        tradeHistory.setTimestamp(LocalDateTime.now());
-        tradeHistory.setStatus(status);
-        tradeHistoryRepository.save(tradeHistory);
-    }
-
-    private boolean executeTradeOnExternalPlatform(TradeRequest tradeRequest) {
-        // Simulate external trade execution
-        try {
-            Thread.sleep(500); // Simulate network latency
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    public TradeResult processTrade(String key, TradeRequest request) {
+        // Validate before reading any instrument fields, including calls outside HTTP validation.
+        TradeOrder proposal = TradeOrder.proposal(key, request,
+            request != null && request.getInstrumentVerificationRequest() != null
+                ? request.getInstrumentVerificationRequest().getInstrumentGroup() : null,
+            request != null && request.getInstrumentVerificationRequest() != null
+                ? request.getInstrumentVerificationRequest().getTradeCurrency() : null, null);
+        java.util.Optional<TradeOrder> previous = store.existing(proposal);
+        if (previous.isPresent()) {
+            TradeOrder trade = previous.get();
+            return result(trade.getStatus().terminal() ? trade : worker.dispatch(trade.getId()));
         }
-        return Math.random() < 0.9; // 90% success rate for demonstration
+        InstrumentVerificationResult verification = instruments.verifyInstrument(request.getInstrumentVerificationRequest());
+        if (!verification.isValid() || !verification.isApprovedForDepartment()) {
+            proposal.setStatus(com.gic.reliability.TradeStatus.REJECTED);
+            proposal.setMessage("Instrument combination is not approved for this department");
+        }
+        TradeOrder trade = store.create(proposal);
+        return result(trade.getStatus().terminal() ? trade : worker.dispatch(trade.getId()));
     }
 
-    public List<TradeHistory> getTradeHistory() {
-        return tradeHistoryRepository.findAll();
+    public TradeOrder get(String id) { return store.get(id); }
+    public TradeResult reconcile(String id) { return result(worker.reconcile(id)); }
+    public List<TradeOrder> getTradeHistory() { return store.list(); }
+    public List<TradeEvent> events(String id) { return store.events(id); }
+
+    private TradeResult result(TradeOrder trade) {
+        return new TradeResult(trade.getStatus().name(), trade.getMessage(), trade.getId());
     }
 }

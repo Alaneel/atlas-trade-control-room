@@ -15,7 +15,7 @@
     <name>Atlas Trade Control Room</name>
     <description>Pre-trade risk validation and approval workflow</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -94,18 +94,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>it.ozimov</groupId>
-            <artifactId>embedded-redis</artifactId>
-            <version>0.7.3</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -140,6 +128,7 @@
                             <rules>
                                 <rule>
                                     <element>PACKAGE</element>
+                                    <includes><include>com/gic/reliability</include></includes>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>

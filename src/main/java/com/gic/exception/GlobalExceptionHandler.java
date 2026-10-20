@@ -20,6 +20,21 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleStatus(org.springframework.web.server.ResponseStatusException ex,
+                                                     WebRequest request) {
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorResponse(ex.getStatus().value(),
+            ex.getStatus().getReasonPhrase(), ex.getReason(), request.getDescription(false).replace("uri=", "")));
+    }
+
+    @ExceptionHandler({org.springframework.web.bind.MissingRequestHeaderException.class,
+        org.springframework.http.converter.HttpMessageNotReadableException.class,
+        org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleMalformedRequest(Exception ex, WebRequest request) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(400, "Bad Request",
+            "Malformed request or missing required header", request.getDescription(false).replace("uri=", "")));
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)

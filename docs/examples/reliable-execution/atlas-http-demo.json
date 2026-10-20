@@ -1,0 +1,1181 @@
+{
+  "schema_version": 1,
+  "run_id": "demo-08683b48f45848b3a727afa7be2fe2a5",
+  "scope": "local HTTP API with persisted simulated execution, not a real venue or capacity benchmark",
+  "python": "3.13.0",
+  "requests": [
+    {
+      "http_status": 200,
+      "latency_ms": 449.3791250279173,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4a82143ab79e891bb890c673854bbf57bab221955f418d3a4af67a3d382ca746"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-0",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 395.1022910187021,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-1",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 318.03391699213535,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "fda34424fb539570577a45732f4121ca32b8cdd156370bb5ba45ebf471239f1e"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-2",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 287.186959059909,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "9ddd4e99c62c935aa837a391081db1c2077cdf4d99447bdaa96a688c6c612760"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-3",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 355.7474169647321,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "7d7ce1439cf01c7c8f277d4c9518ecd1e07ae90c301179786a511121899a6317"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-4",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 436.5245000226423,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4f0bae6f760ec0bdf738a50e5eee180caeeeeb1834f3971526d88120da5ffe4f"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-5",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 448.1510838959366,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "bbf4b5c52834df179ab392a9b0ec1607f3fa01bcb15ff82c76586323714a053e"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-6",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 328.34991603158414,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "94e1ccf6f09999b20c215442f80789381d88059675d81268e3220b5db4df2067"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-7",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 479.3463749811053,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "6b8626d3ef08551e729f8324a8df23ff26e2a04c26d33cab0c874da3b842d08f"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-8",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 433.37474996224046,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "de20bf9ffe6d924aa5707152bc6abe56cb3981a1986a4745c01b70e7e427c8a8"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-9",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 344.65729200746864,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "4423e7dd686ece0b2c57ea399b950a8adf11a449f262219bdb4586f4ed498596"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-10",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 245.30320800840855,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "5cc49069ea1b0c47aeee914f794739bb638b3946de554869c133fadc0454fce2"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-11",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 287.82695799600333,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "725bcba582a470dffa0c97ad60dbce9692c657425d1681bf141e03daf7ad5982"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-12",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 127.4780830135569,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "1598df33b447b5abec57beff0ed74391f5940135a784d5f7c174b2ee9c5b7970"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-13",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 119.05983299948275,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "c7ff85705d92735c2c9aa63160e73259a79c1a693fcd2119d941c4e51408df47"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-14",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 61.269666999578476,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "736ebd3d1eb0fec2ca55c97d546198596ee4e8dd39c34100ad25ab51522c2b01"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-15",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 43.71504194568843,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "70d4fb6c3fc8a8ee93fccd6b0e8afad599ff4ff5b37e983eda939c3a4877a3cd"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-16",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 46.62520904093981,
+      "body": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "8f49efa4e2bba8f94abd4d0f515d4ace4b7e2dcf9a44dd4755085c6b261e92ed"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-17",
+      "observed_terminal_status": "EXECUTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 9.421832975931466,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "010acc17cdbfc4074665f4ca6fd6978d869ec60db4c81607dcbdc64b293e9f8f"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-18",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 9.83458396513015,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "9b3f5f816dfcfde38032f3a0e1de53b74dee562b1e5da7a673af033de7d0f40a"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-19",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 10.189208085648715,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "2a8e9dca95733e80a1594c449d26d8910dda72a3fab24153c6a138cdfa3e2926"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-20",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.21425005234778,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "09806a190bd4a0c4fc18d0b6a3246c6239f67d00477feba25a8d90f1048ea084"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-21",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 25.6941249826923,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "acdf3b8a7ea3502c79732f5dc825de6bae88e1fd1668c940f64fbb760a57f618"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-22",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 30.66654095891863,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "36e533fd7b7af4e791ea9ed46c812b131ef93f89a44bf4d809a193955caf7dd5"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-23",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 32.74637495633215,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "44ee667dd9bcdf56ffa37310291565a41fd29dc4396d544a7e2ef1d0e285f543"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-24",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 32.76766603812575,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "cde1ec6937602e55e079a0ec9689a4c96e4567f9489769b3410d401f92ab2425"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-25",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 31.449333066120744,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "7cdec5c754a76c68d4c7590b7b6c078241e23bd77e6148b947debf698335c5cb"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-26",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 29.39725003670901,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "93519669c1c8cda59db34668fe6f1d0866f597ee10a7fd3d92985c06ade4c700"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-27",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 27.812125044874847,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "54d974a2ef08cab14178c066a7bbcfef8f7c81f120480b896f00232299e853da"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-28",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 25.2339169383049,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "5e92001a32b63d79c8cc9b9bae71b73b64b3145f169118aea8cef0c6866cdbc0"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-29",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 24.46766698267311,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "657feaf7ba233d4262fe1332d7e7e505cba5dad36a9dfe140a77bc4de40565f0"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-30",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 23.685291991569102,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "5efeea73fd63f6d488b8603c3769546903561e949da147d22de07ea6b7b4f97f"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-31",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 23.51374994032085,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "d98158bda13da7ac287ef37c1edf514277311ce6257947f17a93f6451dafbbde"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-32",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 35.53154203109443,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "717df250313178153305a59b6d8cb499cf60815807611695ec656e06a4c6a19e"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-33",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 29.049457982182503,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "88a59545b600d625104a89dc85aa27b9a6425fe944f9c53a7133c006e85be537"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-34",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 32.25016605574638,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "32f355d8dc9c37812530ea0fa3d1cbe63d13623a4344ef96749540f34ef49854"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-35",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 32.05766610335559,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "0d0b723a2f6a74381ae95df4d51d70cd6265b459df5abeeb11436a9f36deed36"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-36",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 25.61783406417817,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "af687cc11987a36b63369705b553c8255e7c5e23745ce589a558b2c8016471d5"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-37",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 45.20333406981081,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4a223aac5088e6240c56b12d865777f930fedaa946a1bcd6b6f693235d2b8e96"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-38",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 45.853457995690405,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "9157fd9a6b7bcdb60ca4360fb94e282787da96eaa6fbdbcaa7fa122f28b8b6df"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-39",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 55.08295795880258,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "972c7dba1bafad72e2042b8e4bac394d35e61c6276173831c058997ce172fa65"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-40",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 53.885833942331374,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "7532539067275d888738286254c5dd0a87b4e7b69279633bdf5291377ca6c695"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-41",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 44.71883305814117,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "a987588dd000b202df09d52cc9561767ac2729221f3146f7b4d251804d6e75d0"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-42",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 51.340959034860134,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "ea0f6a690081c9f27104c03277e4098f26c0837ddc53cd5dfc3274740dd34620"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-43",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 44.38920901156962,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "b97fcb8e9aa879e4157d7b94729aa7c0ccb21cd7a312c0850129e7a94d94eb63"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-44",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 49.246958922594786,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "bb981aa9c9f9921c98c52155761d760327332fbc38a801b339fd79b173424ed5"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-45",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 49.4317919947207,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4355317b7374446f6efe3251d33c42475b8a50c37cfc399b8871baf0439874bf"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-46",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 48.47070807591081,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "fddb821195e29766e93669d6a790e2f7af03f26c2aa3f78ae65357ed7c172202"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-47",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 41.90537496469915,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "3ff06932cf383a1357d4ba841befcc3ef0db1440124957f8bf75eca27068f58c"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-48",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 30.371875036507845,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "6f51d8074b30a16a779ed57c4b58e88d61fcece683a01f45a799a0fce9f5d361"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-49",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 29.27804202772677,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "c0ae433407f46333184853a4e6443a72d8a0ee5c631918359b41574b1a178080"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-50",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 28.377332957461476,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "380a7bf6194e73db9246f7ac9b5f865ee278d226f31fee8ad2d69c81f099c260"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-51",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 21.66816603858024,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "043fe0850bf8ff241822e920b4ba9be79ea66035f261c795d9fa7a5894799348"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-52",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 19.48770903982222,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "75264ad29461e17b740dc29efb6d66bf334191e92695796216957296820a007f"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-53",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 18.266999977640808,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "568558b68311e49196a31daf8573acbc10e88120097d33fd4e277aa7b00a1d1a"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-54",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 18.30845803488046,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "71862297c2ba27798c7a4765ecf754e1b658eab4bc5f4c3a29d285c5ffb9b287"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-55",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.628125031478703,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "23c2e5cf5b365686877a8d3d4f75fbfd6eab8a28773a558ac2141b7299b98acb"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-56",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.438999959267676,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "0bd04a7131674674e82061d9c62b25e4714d867bb3fa1b9f13704899f73a3df7"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-57",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.030125039629638,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4f59d59599b821e15f90f35db24840ff1645ba68a8c0a88d98d2dc2762869aac"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-58",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.837542014196515,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "20ccfb49804e4c8f62c86c36610c91e9696de259cd222df5c9ac7f95a1aefb64"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-59",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.025207984261215,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "358317d1fd59aec5e1e047c6b8d66bfbd308a8d1e6f74372d4c7a2d21abc414b"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-60",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 12.27354200091213,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "cbf839fb772b110f6c84a46aeca6efcaf287a4d451200e13193d5fef1070c5aa"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-61",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.113999950699508,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "618b24064bc3626ffc1a431b5c4c3ac901fff1e1f2b4725a06ca763f8c736b7a"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-62",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 14.723666943609715,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "9b34847dabc9164224eb04c3f296ff52114ec528287be94042f04a673d4e00f9"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-63",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 14.283749973401427,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "2f4d5d60240d88a3f0087a3a8bbfffd14caf1f276bb0569033e11ce383f05438"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-64",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.827749972231686,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "47dd556e0dfa411726e58254e36584de0e8cb8aa7dfca949b98133284693137a"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-65",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 14.132915996015072,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "dfe7cfbe2b2fd6a532bbe8e197cd60a6289bfae7b6be9450feb3dff455d478d0"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-66",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 14.263207907788455,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "51b917aea1cf7b483f7e951871a0123d7aa389fe606fc5d6a08b5f5daccb7229"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-67",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.573082935996354,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "e5cfb0a61046f6298db4f9d3fa8db1e6ff71a92c49bf841f9be6012f8b651eee"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-68",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.671333996579051,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "d2c52b34ee46e7d01d80b22d6a4e6f49b033577453a4eb13752cbe21bdce2946"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-69",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 19.474292057566345,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "de7252bf1318574aaba76cdfb569a6393df7127e3c3c0b4bf6dc3b94ab175dae"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-70",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 19.11104202736169,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4d673dad77022b4df228b4a51e034985b841b6c6f7f6b44469695ac0635e1bcf"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-71",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 18.121707951650023,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "f24eae343205b67ee3bf503d271c8a2b69190cd664162c18078aa5b9ab2cae15"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-72",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 16.878749942407012,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "c63432f4ca17e161fdb48ad6bbc8aedd5ae95d28236b765c1d3627025aaf88fe"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-73",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.453499953262508,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "428ced9296bfc46c808f1485d0201000703eddb096c00f5ce084f83c2676ddf8"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-74",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 16.191542032174766,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "ec0718b0c4a78ecb2e3ec466708998da7625ee309e7786ff5f686b1daf0f90c3"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-75",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 18.138332990929484,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "e225921cf5ef6aaaa1e1674d2bce25ec492953591789150cc135b0f917db6847"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-76",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 17.227625008672476,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "07ee0a83328a9f5045c35514daa9f1b5a7dd83a36f03573adaabdb7029ad786c"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-77",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 19.320374936796725,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "3409c461df1ca40a3bd743934ffcc8342692aada24774935148863b2d89b2f2b"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-78",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 19.091708003543317,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "352f90199aad59162eeed126a2771ce393a23ba0466673dcdc811c77bb8526a8"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-79",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.379417105577886,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "c39426958cc5c769b2edbb1d50d803cc4d897bcd0a88adffbd6946e467f14eaa"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-80",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.108583029359579,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "f35ca520db520c4116b7930b0a3a4e4fadd1abdae0bed3f681a1be9bd7d27658"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-81",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 16.959707951173186,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "c40dfcb6529d42fb23bb636e34093211a03e568cb9a0a1676f7836738588a455"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-82",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 18.09233392123133,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "447ae065b9085832b60e141055dfc3c84a4182e40174cb1c6e1984f0808ceb3b"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-83",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 16.92825008649379,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "674aa08bb114526df35c023187461467d8fe85d1b4bac45704aa425585ee0842"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-84",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 13.62279208842665,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "5d1ffbae458abc5659ddce8722740ce58a6b0624f269c55ba6a0d292edfb68b1"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-85",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.444542048498988,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "70a91eda71492a25fd79629a6ad0f5f752c7311e8039f274b57e3898ff722ce7"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-86",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.754457912407815,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "f2f7e79681000f05f941069e3b70d8545e62bd73fa55dfeb5153b5b32bdb57b2"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-87",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 14.915082952938974,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "76c6a4cc5593174c45f3ce5fd1559153de7b0b1a26f9c1743aa7bbb813d9a3c1"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-88",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.112249995581806,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4a580fdc1bfd9cb18f44bed9aa955b578ee4a9c1ad7354c54b1eaf45fc45b960"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-89",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 16.4144579321146,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "f50b27e8638878a6669d0301bd2b03270932effabf18b953de257cb20c1d06fa"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-90",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.394542017020285,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "4ae17c84c64aebbaf354a46c95d92f01f552a7444cfa3c4038052a1bb04f5df9"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-91",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.041250037029386,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "5421692e4cc83b4936fd479b1e5776315867c8f9899de20ccc41aa766ae2bd0a"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-92",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.15604101587087,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "f4df954b3f37655ea5f246c1ffe16947a67c14a4898a85237952c9e2777ac3a9"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-93",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 12.519875075668097,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "954255d276fc7ebc0daf063db8fb966bbf811b5a6144a959bdee354864e189d2"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-94",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 14.91712499409914,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "01df76b1c4264fed854783a2cf3299534f4ea6f3ce90ebac502b6d91f08f1057"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-95",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 15.107500017620623,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "5ecf5800cc6bcb70e18aa52efd21af42aadeac623bdb8a7c465303ffd5880149"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-96",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 10.95274998806417,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "487ac6bbd8008f76fc900cdfe5bd8a1a7932092eb5e3b1d6afe3b9405c7397b5"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-97",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 12.507917010225356,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "b34979fdd224791a968e368440505892611a22f8f5ca9268243315c0df637091"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-98",
+      "observed_terminal_status": "REJECTED"
+    },
+    {
+      "http_status": 200,
+      "latency_ms": 13.518374995328486,
+      "body": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "ad18c6c3c8ce7f762484fe01bb972d2a1aa31c8d78e732329ed1c24b22b82d33"
+      },
+      "key": "demo-08683b48f45848b3a727afa7be2fe2a5-99",
+      "observed_terminal_status": "REJECTED"
+    }
+  ],
+  "checks": {
+    "limit_readable": true,
+    "fresh_100_unit_fixture": true,
+    "all_submissions_accounted": true,
+    "trade_identity_retained": true,
+    "ten_executed_ninety_rejected": true,
+    "hundred_replays_same_terminal_trade": true,
+    "changed_payload_conflicts": true,
+    "missing_key_rejected": true,
+    "fractional_cent_rejected": true,
+    "exact_money_conservation": true,
+    "ordered_audit_events": true
+  },
+  "mode": "concurrency",
+  "ledger_before": {
+    "id": "6ad77e54861165f1e13f22de",
+    "instrumentGroup": "EQUITY",
+    "counterparty": "NORTHSTAR",
+    "currency": "USD",
+    "availableLimit": 100.0,
+    "reservedLimit": 0.0,
+    "usedLimit": 0.0,
+    "totalLimit": 100.0,
+    "dataDate": "2026-10-20"
+  },
+  "http_status_counts": {
+    "200": 100
+  },
+  "terminal_status_counts": {
+    "REJECTED": 90,
+    "EXECUTED": 10
+  },
+  "replay_status_counts": {
+    "200": 100
+  },
+  "ledger_after": {
+    "id": "6ad77e54861165f1e13f22de",
+    "instrumentGroup": "EQUITY",
+    "counterparty": "NORTHSTAR",
+    "currency": "USD",
+    "availableLimit": 0.0,
+    "reservedLimit": 0.0,
+    "usedLimit": 100.0,
+    "totalLimit": 100.0,
+    "dataDate": "2026-10-20"
+  },
+  "successful_trade_events": [
+    {
+      "id": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e:0",
+      "tradeId": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e",
+      "sequence": 0,
+      "status": "RESERVED",
+      "message": "Capacity reserved; awaiting submission",
+      "createdAt": "2026-10-20T14:44:38.961Z"
+    },
+    {
+      "id": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e:1",
+      "tradeId": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e",
+      "sequence": 1,
+      "status": "SUBMITTED",
+      "message": "Submitted with stable execution identity",
+      "createdAt": "2026-10-20T14:44:39.071Z"
+    },
+    {
+      "id": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e:2",
+      "tradeId": "4d6fc69a98ef614ee72369949ae977fa10208d3195f0cae6aea9dcf82bda668e",
+      "sequence": 2,
+      "status": "EXECUTED",
+      "message": "Confirmed by execution receipt",
+      "createdAt": "2026-10-20T14:44:39.270Z"
+    }
+  ],
+  "passed": true
+}

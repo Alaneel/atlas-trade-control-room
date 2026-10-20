@@ -1,19 +1,17 @@
 spring:
-  mongodb:
-    embedded:
-      version: 4.0.12
   data:
     mongodb:
-      uri: mongodb://localhost:27017/atlas_trade_control_test
-
-  redis:
-    host: localhost
-    port: 6379
-
+      uri: ${ATLAS_MONGO_URI:mongodb://127.0.0.1:28027/atlas_context_test?replicaSet=atlas-rs&directConnection=true}
+  cache:
+    type: none
+atlas:
+  seed:
+    enabled: false
+  recovery:
+    enabled: false
 logging:
   level:
-    root: INFO
-    com.gic: DEBUG
-
+    root: WARN
+    com.gic: WARN
 server:
   port: 0

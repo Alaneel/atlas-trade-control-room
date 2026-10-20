@@ -6,7 +6,7 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/atlas_trade_control}
+      uri: ${MONGODB_URI:mongodb://127.0.0.1:27017/atlas_reliable?replicaSet=atlas-rs&directConnection=true}
       auto-index-creation: true
 
   redis:
@@ -64,3 +64,14 @@ app:
   bloom-filter:
     expected-insertions: 10000
     false-positive-probability: 0.01
+
+# Local simulator only. No real exchange connection is configured.
+atlas:
+  seed:
+    enabled: ${ATLAS_SEED_ENABLED:true}
+  execution:
+    scenario: ${ATLAS_EXECUTION_SCENARIO:SUCCESS}
+  recovery:
+    enabled: ${ATLAS_RECOVERY_ENABLED:true}
+    poll-ms: 1000
+    lease-ms: 5000
