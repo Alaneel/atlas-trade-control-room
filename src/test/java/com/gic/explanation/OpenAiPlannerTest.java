@@ -53,7 +53,7 @@ class OpenAiPlannerTest {
     }
     private Object message(String plan) { return Map.of("type", "message", "content", List.of(Map.of("type", "output_text", "text", plan))); }
     @Test void validResponseRequestsStrictSchemaWithoutToolsOrStorage() throws Exception {
-        String plan = json.writeValueAsString(ExplanationPlan.baseline(analysis));
+        String plan = "{\"attributions\":[]}";
         var planner = start(200, response(List.of(Map.of("type", "reasoning"), message(plan))), 0, Duration.ofSeconds(2));
         var reply = planner.propose(analysis);
         assertThat(reply.inputTokens()).isEqualTo(123); assertThat(reply.outputTokens()).isEqualTo(45);
@@ -61,18 +61,23 @@ class OpenAiPlannerTest {
         assertThat(reply.usage().resolvedModel()).isEqualTo("gpt-4.1-mini-2025-04-14");
         assertThat(reply.usage().cachedInputTokens()).isEqualTo(100);
         assertThat(reply.usage().reasoningTokens()).isEqualTo(5);
-        ExplanationPlan.parseAndValidate(reply.json(), analysis);
+        assertThat(reply.format()).isEqualTo(ModelPlanner.ReplyFormat.ATTRIBUTIONS_V4);
+        assertThat(reply.requestSnapshotHash()).isEqualTo(analysis.snapshotHash());
+        ExplanationPlan.parseAndValidate(reply, analysis);
         var request = json.readTree(requestBody.get());
         assertThat(request.path("store").asBoolean()).isFalse();
         assertThat(request.path("text").path("format").path("strict").asBoolean()).isTrue();
         assertThat(request.has("tools")).isFalse(); assertThat(request.has("previous_response_id")).isFalse();
         assertThat(request.path("max_output_tokens").asInt()).isEqualTo(OpenAiPlanner.MAX_OUTPUT_TOKENS);
         assertThat(request.path("text").path("format").path("schema").path("required").toString()).contains("attributions");
+        assertThat(request.at("/text/format/schema/properties").size()).isEqualTo(1);
+        assertThat(request.at("/text/format/schema/properties/attributions/maxItems").asInt()).isEqualTo(3);
         assertThat(requestBody.get()).contains("timeline", "relationDefinitions", "recordedAt");
         assertThat(request.path("service_tier").asText()).isEqualTo("default");
         assertThat(request.has("reasoning")).isFalse(); assertThat(request.has("prompt_cache_options")).isFalse();
         assertThat(requestBody.get()).doesNotContain("counterparty", "requestFingerprint", "Idempotency-Key", "leaseToken");
         assertThat(requestBody.get()).doesNotContain("expectedRelations", "reviewGoals", "forbiddenClaims");
+        assertThat(requestBody.get()).doesNotContain("snapshotHash", "headlineId", "findingIds", "checkIds", analysis.snapshotHash());
     }
     @Test void lunaUsesExplicitBoundedReasoningAndAccountsForCacheWritesWithoutEnablingTools() throws Exception {
         var root = (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(response(List.of(message("{}"))));
@@ -127,6 +132,26 @@ class OpenAiPlannerTest {
         var planner = new OpenAiPlanner("", "", Duration.ofSeconds(1));
         assertThatThrownBy(() -> planner.propose(analysis)).isInstanceOfSatisfying(ModelPlanner.Failure.class,
             ex -> { assertThat(ex.outcome()).isEqualTo("not_configured"); assertThat(ex.modelRequest()).isFalse(); });
+    }
+    @Test void anAbstainedSnapshotCannotReachTheProviderEvenWhenCalledDirectly() throws Exception {
+        var a = new ExplanationEngine(new RuleCatalog()).analyze(CrossEventFixtures.get("missing_event_control"));
+        var planner = new OpenAiPlanner("fixture-key", "fixture-model", Duration.ofSeconds(1));
+        assertThatThrownBy(() -> planner.propose(a)).isInstanceOfSatisfying(ModelPlanner.Failure.class,
+            failure -> { assertThat(failure.outcome()).isEqualTo("evidence_abstention"); assertThat(failure.modelRequest()).isFalse(); });
+    }
+    @Test void identicalContextAndSchemaHaveIdenticalRequestBytesDespiteMapInsertionOrder() throws Exception {
+        var planner = start(200, response(List.of(message("{}"))), 0, Duration.ofSeconds(2));
+        var first = new java.util.LinkedHashMap<String, Object>(); first.put("z", Map.of("b", 2, "a", 1)); first.put("a", "same");
+        var second = new java.util.LinkedHashMap<String, Object>(); second.put("a", "same"); second.put("z", Map.of("a", 1, "b", 2));
+        var properties = new java.util.LinkedHashMap<String, Object>();
+        properties.put("z", Map.of("type", "string")); properties.put("a", Map.of("type", "string"));
+        var schema = Map.<String, Object>of("type", "object", "properties", properties, "required", List.of("a", "z"), "additionalProperties", false);
+        planner.requestStructured("Fixed instruction", first, schema); String before = requestBody.get();
+        var reversed = new java.util.LinkedHashMap<String, Object>();
+        reversed.put("a", Map.of("type", "string")); reversed.put("z", Map.of("type", "string"));
+        planner.requestStructured("Fixed instruction", second,
+            Map.of("required", List.of("a", "z"), "properties", reversed, "type", "object", "additionalProperties", false));
+        assertThat(requestBody.get()).isEqualTo(before);
     }
     @Test void testEndpointCannotSendCredentialsToAnArbitraryHost() {
         assertThatThrownBy(() -> OpenAiPlanner.loopbackTest("fixture-key", "fixture", Duration.ofSeconds(1), URI.create("http://example.org/v1/responses")))

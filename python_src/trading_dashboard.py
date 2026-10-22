@@ -214,6 +214,8 @@ elif page == "New trade":
                           "rules_plus": "Cross-event rule explanation (no model request)",
                           "model_attributed": "Rule facts with AI cross-event interpretation",
                           "rules_fallback": "Rule explanation (model unavailable or output rejected)",
+                          "model_no_attribution": "AI returned no additional attribution",
+                          "fixture_no_attribution": "Test fixture",
                           "fixture_ordered": "Test fixture", "fixture_attributed": "Test fixture"}.get(explanation.get("mode"), "Explanation")
                 st.caption(source)
                 if explanation.get("abstained"):

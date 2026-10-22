@@ -34,4 +34,18 @@ class ModelEvidenceContextTest {
         assertThat(context.at("/timeline/events/2/recordedOffsetMillis").asLong()).isEqualTo(3000);
         assertThat(ModelEvidenceContext.operandAliases(analysis)).contains("E0", "E1", "E2", "Q").doesNotContain("R");
     }
+    @Test void v4KeepsIdenticalTypedEvidenceButNoModelOwnedFactualSelectionOrSnapshotCopy() throws Exception {
+        for (var row : CrossEventFixtures.rows()) {
+            var analysis = engine.analyze(CrossEventFixtures.get(row.path("id").asText()));
+            if (analysis.abstained()) continue;
+            var original = CrossEventFixtures.JSON.valueToTree(ModelEvidenceContext.create(analysis));
+            var current = CrossEventFixtures.JSON.valueToTree(ModelEvidenceContext.attributions(analysis));
+            assertThat(current.path("timeline")).isEqualTo(original.path("timeline"));
+            assertThat(current.path("evidence")).isEqualTo(original.path("evidence"));
+            assertThat(current.path("relationDefinitions")).isEqualTo(original.path("relationDefinitions"));
+            assertThat(current.toString()).doesNotContain(analysis.snapshotHash(), "snapshotHash", "headlineId", "required",
+                "findingIds", "checkIds", "expectedRelations", "reviewGoals", "availableRelations");
+            assertThat(current.path("authoritativeFacts").size()).isEqualTo(analysis.findings().size());
+        }
+    }
 }

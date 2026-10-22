@@ -62,13 +62,12 @@ class ExplanationMongoTest {
             .set("createdAt", java.util.Date.from(base.plusSeconds(4))), ExecutionReceipt.class);
         String before = documents();
         var result = service(analysis -> {
-            var baseline = ExplanationPlan.baseline(analysis);
             String receipt = "receipt:" + order.getId(), unknown = order.getId() + ":2";
             var attribution = new CrossEventVerifier.Proposal("RECEIPT_BEFORE_UNKNOWN", receipt, unknown, List.of(receipt, unknown),
                 "An acknowledgement or local commit gap is a possible explanation of the differing records.",
                 "The physical mechanism is not established. Inspect existing records only.");
-            var plan = new ExplanationPlan(baseline.snapshotHash(), baseline.headlineId(), baseline.findingIds(), baseline.checkIds(), List.of(attribution));
-            return new ModelPlanner.Reply(new ObjectMapper().valueToTree(plan).toString(), "fixture", null, null, false);
+            var raw = new ObjectMapper().valueToTree(java.util.Map.of("attributions", List.of(attribution))).toString();
+            return new ModelPlanner.Reply(raw, "fixture", null, null, false).boundAttributions(analysis.snapshotHash());
         }).explain(order.getId(), true);
         assertThat(result.mode()).isEqualTo("fixture_attributed");
         assertThat(result.attributions()).hasSize(1);
@@ -88,6 +87,19 @@ class ExplanationMongoTest {
         assertThat(explanation.mode()).isEqualTo("rules_fallback");
         assertThat(explanation.providerOutcome()).isEqualTo("invalid_output");
         assertThat(documents()).isEqualTo(before);
+    }
+    @Test void v4ExtraOperationFieldsAndForeignBindingCannotChangeMoneyOrSettleUnknown() {
+        var order = create(seed("100.00"), "10.00");
+        new TradeWorker(store, new MongoExecutionGateway(fixture.mongo, "TIMEOUT_AFTER_SUCCESS"), 5000L).dispatch(order.getId());
+        String before = documents();
+        for (boolean foreignBinding : List.of(false, true)) {
+            var result = service(a -> new ModelPlanner.Reply(foreignBinding ? "{\"attributions\":[]}"
+                : "{\"attributions\":[],\"executeTrade\":true,\"increaseLimit\":1000000}", "fixture", null, null, false)
+                .boundAttributions(foreignBinding ? "0".repeat(64) : a.snapshotHash())).explain(order.getId(), true);
+            assertThat(result.providerOutcome()).isEqualTo("invalid_output"); assertThat(result.attributions()).isEmpty();
+            assertThat(store.get(order.getId()).getStatus()).isEqualTo(TradeStatus.UNKNOWN);
+            assertThat(documents()).isEqualTo(before);
+        }
     }
     @Test void untrustedEventMessagesNeverReachThePlanner() throws Exception {
         var order = create(seed("5.00"), "10.00");

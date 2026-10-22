@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import signal
 from pathlib import Path
 import subprocess
@@ -56,7 +57,10 @@ def main():
                     *ROOT.glob("scripts/*cross*event*.py"), ROOT / "scripts/run-live-explanation-eval.py",
                     ROOT / "evals/explanations/cross-event-cases.json", ROOT / "evals/explanations/pricing.json",
                     ROOT / "src/main/resources/explanations/rules-v1.json", ROOT / "pom.xml"})
-    manifest = {"run_id": run_id, "source_commit": config.git("rev-parse", "HEAD"), "working_tree_dirty": bool(config.git("status", "--porcelain")),
+    prompt = re.search(r'PROMPT_VERSION = "([^"]+)"', (ROOT / "src/main/java/com/gic/explanation/OpenAiPlanner.java").read_text()).group(1)
+    manifest = {"run_id": run_id, "generator_prompt": prompt, "response_contract": "ATTRIBUTIONS_V4",
+                "request_serialization": "sorted-map-keys-v1",
+                "source_commit": config.git("rev-parse", "HEAD"), "working_tree_dirty": bool(config.git("status", "--porcelain")),
                 "tracked_diff_sha256": hashlib.sha256(config.git("diff", "HEAD").encode()).hexdigest(),
                 "model": values["OPENAI_MODEL"], "generation_limit": args.limit, "review_limit": 2 * args.limit,
                 "reviewer_model": reviewer, "max_usd": str(cap),

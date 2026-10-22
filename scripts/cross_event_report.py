@@ -80,6 +80,8 @@ def summarize(report):
         "cost": report["cost"], "cost_by_kind": report.get("cost_by_kind", {}),
         "mechanical": {
             "checked_attributions": sum(len(r["ai"].get("attributions", [])) for r in eligible),
+            "accepted_empty_attribution_plans": sum(r["ai"]["mode"] in {"model_ordered", "model_no_attribution"}
+                and not r["ai"].get("attributions") for r in eligible),
             "explicit_relation_recall": recalls,
             "original_rule_relation_count": 0,
             "rule_summaries_retained": sum(r["ai"]["summary"] == r["rules"]["summary"] for r in eligible),

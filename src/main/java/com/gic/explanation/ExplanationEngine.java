@@ -173,6 +173,18 @@ public final class ExplanationEngine {
             if (s.status() == TradeStatus.REJECTED && s.decisionCode() != DecisionCode.VENUE_REJECTED) return "a risk rejection has an unexpected venue receipt";
         }
         if ((s.decisionCode() == DecisionCode.VENUE_ACCEPTED || s.decisionCode() == DecisionCode.VENUE_REJECTED) && receipt == null) return "the confirming venue receipt is missing";
+        // Offsets and threshold comparisons must fit the documented millisecond read model.
+        var minimum = s.events().get(0).at(); var maximum = minimum;
+        for (var event : s.events()) {
+            if (event.at().isBefore(minimum)) minimum = event.at();
+            if (event.at().isAfter(maximum)) maximum = event.at();
+        }
+        if (receipt != null) {
+            if (receipt.at().isBefore(minimum)) minimum = receipt.at();
+            if (receipt.at().isAfter(maximum)) maximum = receipt.at();
+        }
+        try { java.time.Duration.between(minimum, maximum).toMillis(); }
+        catch (ArithmeticException ex) { return "the recorded timestamp span exceeds supported millisecond precision"; }
         return null;
     }
 

@@ -32,24 +32,36 @@ class CrossEventDiagnosticsTest {
             cases.add(item);
             if (!trace.has("returned_json")) { item.put("diagnosis", "provider_response_unavailable"); continue; }
             String raw = trace.path("returned_json").asText();
+            var format = ModelPlanner.ReplyFormat.valueOf(trace.path("reply_format").asText("LEGACY_PLAN"));
+            String binding = trace.path("request_snapshot_hash").isTextual() ? trace.path("request_snapshot_hash").asText() : null;
+            var reply = new ModelPlanner.Reply(raw, "offline-diagnostic", null, null, false, null, format, binding);
+            boolean attributionOnly = format == ModelPlanner.ReplyFormat.ATTRIBUTIONS_V4;
+            item.put("reply_format", format); item.put("snapshot_binding_source", attributionOnly ? "trusted_adapter_metadata" : "legacy_model_echo");
             boolean accepted;
-            try { ExplanationPlan.parseAndValidate(raw, analysis); accepted = true; }
+            try { ExplanationPlan.parseAndValidate(reply, analysis); accepted = true; }
             catch (ModelPlanner.Failure failure) { accepted = false; assertThat(failure.outcome()).isEqualTo("invalid_output"); }
             item.put("whole_plan_accepted", accepted);
             assertThat(accepted).isEqualTo("validated".equals(row.at("/ai/providerOutcome").asText()));
             if (!accepted) rejected++;
             var plan = json.readTree(raw);
-            item.put("snapshot_hash_matches", analysis.snapshotHash().equals(plan.path("snapshotHash").asText()));
-            item.put("headline_matches", analysis.headlineId().equals(plan.path("headlineId").asText()));
+            item.put("snapshot_hash_matches", analysis.snapshotHash().equals(attributionOnly ? binding : plan.path("snapshotHash").asText()));
+            item.put("headline_matches", attributionOnly || analysis.headlineId().equals(plan.path("headlineId").asText()));
             var actualFindings = new HashSet<String>(); plan.path("findingIds").forEach(n -> actualFindings.add(n.asText()));
             var actualChecks = new HashSet<String>(); plan.path("checkIds").forEach(n -> actualChecks.add(n.asText()));
+            if (attributionOnly) {
+                analysis.findings().forEach(f -> actualFindings.add(f.id()));
+                analysis.checks().forEach(c -> actualChecks.add(c.id()));
+            }
             item.put("missing_required_findings", analysis.findings().stream().filter(Explanation.Finding::required)
                 .map(Explanation.Finding::id).filter(f -> !actualFindings.contains(f)).toList());
             item.put("missing_required_checks", analysis.checks().stream().filter(Explanation.Check::required)
                 .map(Explanation.Check::id).filter(c -> !actualChecks.contains(c)).toList());
             var baseOnly = plan.deepCopy();
             ((com.fasterxml.jackson.databind.node.ObjectNode) baseOnly).putArray("attributions");
-            try { ExplanationPlan.parseAndValidate(baseOnly.toString(), analysis); item.put("base_contract_valid", true); }
+            try {
+                ExplanationPlan.parseAndValidate(new ModelPlanner.Reply(baseOnly.toString(), "offline-diagnostic", null, null, false,
+                    null, format, binding), analysis); item.put("base_contract_valid", true);
+            }
             catch (ModelPlanner.Failure failure) { item.put("base_contract_valid", false); }
             var proposals = new ArrayList<Map<String, Object>>(); item.put("proposals", proposals);
             var seen = new HashSet<String>();

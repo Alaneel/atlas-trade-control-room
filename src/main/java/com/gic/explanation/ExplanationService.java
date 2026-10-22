@@ -31,8 +31,10 @@ public class ExplanationService {
                 ModelPlanner.Reply reply = planner.propose(analysis);
                 calls = reply.modelRequest() ? 1 : 0;
                 model = reply.model(); input = reply.inputTokens(); output = reply.outputTokens();
-                plan = ExplanationPlan.parseAndValidate(reply.json(), analysis);
-                mode = plan.attributions().isEmpty() ? (reply.modelRequest() ? "model_ordered" : "fixture_ordered")
+                plan = ExplanationPlan.parseAndValidate(reply, analysis);
+                mode = plan.attributions().isEmpty() ? (reply.format() == ModelPlanner.ReplyFormat.ATTRIBUTIONS_V4
+                        ? (reply.modelRequest() ? "model_no_attribution" : "fixture_no_attribution")
+                        : (reply.modelRequest() ? "model_ordered" : "fixture_ordered"))
                     : (reply.modelRequest() ? "model_attributed" : "fixture_attributed");
                 outcome = "validated";
             } catch (ModelPlanner.Failure ex) {

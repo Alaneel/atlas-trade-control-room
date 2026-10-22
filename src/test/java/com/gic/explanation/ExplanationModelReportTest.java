@@ -56,4 +56,25 @@ class ExplanationModelReportTest {
         assertThat(unknown.at("/cost/requests_unpriced").asInt()).isEqualTo(1);
         assertThat(unknown.at("/cost/estimated_total_usd").isNull()).isTrue();
     }
+    @Test void ruleTextRetentionDoesNotMislabelNewHypothesesAsAnUnchangedOrSemanticallyVerifiedPresentation() throws Exception {
+        var snapshot = CrossEventFixtures.get("receipt_before_uncertainty");
+        var usage = usage("gpt-4.1-mini-2025-04-14", 100L, 0L, 50L);
+        var baseline = new ExplanationService(id -> snapshot, engine, a -> { throw new AssertionError(); }).explain(snapshot.tradeId(), false);
+        var proposal = new CrossEventVerifier.Proposal("RECEIPT_BEFORE_UNKNOWN", "R", "E2", List.of("R", "E2"),
+            "A gap is possible.", "The mechanism is not established.");
+        var actual = new ExplanationService(id -> snapshot, engine, a -> new ModelPlanner.Reply(
+            json.valueToTree(java.util.Map.of("attributions", List.of(proposal))).toString(), usage.requestedModel(), 100L, 50L, true, usage)
+            .boundAttributions(a.snapshotHash())).explain(snapshot.tradeId(), true);
+        var row = new ExplanationModelReport.CaseResult("fixture", "execution.unknown", baseline, actual, null, usage, 1L);
+        var report = report(List.of(row));
+        assertThat(report.at("/quality/unchanged_presentation_vs_rules").asInt()).isZero();
+        assertThat(report.at("/quality/final_application_output/reviewed_rule_text_retained/passed").asInt()).isEqualTo(1);
+        assertThat(report.at("/quality/independent_semantic_accuracy").isNull()).isTrue();
+        var empty = new ExplanationService(id -> snapshot, engine, a -> new ModelPlanner.Reply("{\"attributions\":[]}",
+            usage.requestedModel(), 100L, 50L, true, usage).boundAttributions(a.snapshotHash())).explain(snapshot.tradeId(), true);
+        var emptyReport = report(List.of(new ExplanationModelReport.CaseResult("empty", "execution.unknown", baseline, empty, null, usage, 1L)));
+        assertThat(empty.mode()).isEqualTo("model_no_attribution");
+        assertThat(emptyReport.at("/quality/accepted_empty_attribution_plans").asInt()).isEqualTo(1);
+        assertThat(emptyReport.at("/quality/unchanged_presentation_vs_rules").asInt()).isEqualTo(1);
+    }
 }

@@ -1,6 +1,6 @@
 # Read-only AI explanation layer
 
-Atlas explains recorded rejection and execution states using versioned rules and immutable evidence. The application renders authoritative decision facts and required checks. V2 additionally lets the optional model connect events and write labelled hypotheses with exact citations. The program verifies the cited temporal/state observations; model prose is not semantically certified. Approvals, capacity changes and trading actions are outside its capability.
+Atlas explains recorded rejection and execution states using versioned rules and immutable evidence. The application renders authoritative decision facts and required checks. The optional model connects events and writes labelled hypotheses with exact citations. V4 returns only attributions; snapshot binding and the complete rule findings/checks are owned by the server. The program verifies the cited temporal/state observations; model prose is not semantically certified. Approvals, capacity changes and trading actions are outside its capability.
 
 The deterministic transaction code continues to choose every business state. See [cross-event reasoning, proof checks and three-way comparison](CROSS_EVENT_EXPLANATIONS.md) for the current contract and the [GPT-5.6 Luna follow-up](LUNA_EVALUATION.md) for diagnosed failures and current measurements. Historical artifacts retain their original behavior and measurements.
 
@@ -65,7 +65,7 @@ The response includes:
 
 - trade reference, recorded state/version and snapshot hash;
 - rule and prompt versions;
-- mode: `rules`, `rules_plus`, `model_ordered`, `model_attributed`, `rules_fallback` or clearly labelled fixture modes;
+- mode: `rules`, `rules_plus`, `model_attributed`, `model_no_attribution`, `rules_fallback` or clearly labelled fixture modes; legacy adapters may still return `model_ordered`;
 - provider outcome and initiated model-request count;
 - grounded findings with rule IDs and evidence references;
 - read-only inspection checks, explicit uncertainty/abstention and scope limitations.
@@ -87,7 +87,9 @@ Rules are reviewed explanatory descriptions of deterministic code, not an editab
 
 The explanation service depends only on `ExplanationReader`, the rule engine and a planner. Its reader has a `load` method, and the Mongo adapter calls read operations only. It has no `TradeService`, `TradeWorker`, reservation, approval or gateway capability. No model output is dispatched as a function or HTTP operation.
 
-The model receives curated findings, rules, an allowlisted typed timeline and references. Raw event messages, instrument/counterparty names, keys, fingerprints and lease tokens are not model inputs. The plan must match the snapshot, preserve the reason and required checks, use valid IDs once and contain no extra fields. Function calls, invented IDs, omitted mandatory items, stale hashes and action fields are rejected. V2 attribution references and temporal/state predicates are separately checked. Interpretation text remains a labelled hypothesis, not a verified business fact. Failure returns the rules explanation.
+The model receives authoritative fact text, generic rules, an allowlisted typed timeline and short evidence aliases. Raw messages, names, credentials, fingerprints and lease tokens remain excluded. V4 asks only for `attributions`: it does not send or ask the model to copy the snapshot hash, choose findings or omit checks. The trusted adapter attaches its request snapshot hash to a typed reply; the service checks that binding and rereads evidence before returning. Raw JSON cannot choose its own reply format or binding. Legacy constructors retain strict full-plan validation for historical/scripted adapters; an attribution-only body never auto-downgrades into that path.
+
+All rule facts and checks are rendered by code. Extra fields, duplicate relations, false predicates, unrelated citations and stale request bindings reject the whole narrative. The complete absence of an added attribution has its own mode and is not evidence of semantic usefulness. Interpretation remains an unverified hypothesis. See [v4 hardening and offline evidence](ATTRIBUTION_V4.md) for conditional migration replay, temporal boundaries and selector performance. Latest paid measurements still describe the historical v3 prompt.
 
 This is an application capability boundary, not a separate-process or database-role security boundary: the local backend retains its existing database identity and unauthenticated development API. The adapter contract and tests do not prove general prompt-injection immunity or production tenant isolation.
 

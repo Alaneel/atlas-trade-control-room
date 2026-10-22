@@ -73,6 +73,8 @@ class LiveExplanationModelEvaluationTest {
         report.put("dataset_version", datasetRoot.path("datasetVersion").asText());
         report.put("dataset_sha256", com.gic.reliability.TradeOrder.hash(new String(dataset, java.nio.charset.StandardCharsets.UTF_8)));
         report.put("rule_version", new RuleCatalog().version()); report.put("prompt_version", OpenAiPlanner.PROMPT_VERSION);
+        report.put("response_contract", ModelPlanner.ReplyFormat.ATTRIBUTIONS_V4); report.put("proof_version", CrossEventVerifier.VERSION);
+        report.put("request_serialization", OpenAiPlanner.REQUEST_SERIALIZATION);
         report.put("summary", ExplanationModelReport.summarize(results, controls,
             json.readTree(Path.of("evals/explanations/pricing.json").toFile())));
         report.put("semantic_faithfulness", null); report.put("human_usefulness", null);
@@ -82,6 +84,6 @@ class LiveExplanationModelEvaluationTest {
         Path destination = Path.of(System.getProperty("atlas.explanation.report", "target/atlas-explanation-model-evaluation.json"));
         Files.createDirectories(destination.toAbsolutePath().getParent());
         json.enable(SerializationFeature.INDENT_OUTPUT).writeValue(destination.toFile(), report);
-        assertThat(results).anyMatch(result -> java.util.Set.of("model_ordered", "model_attributed").contains(result.explanation().mode()));
+        assertThat(results).anyMatch(result -> java.util.Set.of("model_ordered", "model_attributed", "model_no_attribution").contains(result.explanation().mode()));
     }
 }

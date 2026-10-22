@@ -59,4 +59,12 @@ final class ModelEvidenceContext {
             "evidence", a.evidence().stream().map(e -> Map.of("id", reverse.get(e.id()), "kind", e.kind(), "observation", e.observation())).toList(),
             "relationDefinitions", definitions);
     }
+    /** v4 has no model-owned factual selection, ordering or snapshot-copy task. */
+    static Map<String, Object> attributions(ExplanationEngine.Analysis a) {
+        var legacy = create(a);
+        return Map.of("timeline", legacy.get("timeline"), "evidence", legacy.get("evidence"),
+            "authoritativeFacts", a.findings().stream().map(Explanation.Finding::text).toList(),
+            "relationDefinitions", legacy.get("relationDefinitions"),
+            "offsetPrecision", "Numeric offsets are whole milliseconds. If offsets tie, compare the exact recordedAt instants; ties do not imply equal timestamps.");
+    }
 }

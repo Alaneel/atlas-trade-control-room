@@ -10,7 +10,7 @@ import java.util.Set;
 
 /** A proof checker, not a root-cause oracle. It can neither query nor mutate a business system. */
 public final class CrossEventVerifier {
-    public static final String VERSION = "atlas-cross-event-v1";
+    public static final String VERSION = "atlas-cross-event-v2";
     public static final String SCOPE = "Evidence identity, state and recorded temporal relation checked by code. "
         + "Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. "
         + "Recorded time order alone does not prove physical causation. No operations are authorized.";
@@ -80,7 +80,9 @@ public final class CrossEventVerifier {
                     && to.status() == TradeStatus.SUBMITTED, "reserved_to_submitted_required");
                 require(millis(from.at(), to.at()) >= 60000, "dispatch_below_inspection_threshold");
                 observation = "The RESERVED-to-SUBMITTED interval is " + seconds(from.at(), to.at())
-                    + " seconds, above the 60-second inspection threshold. This interval precedes the recorded venue outcome.";
+                    + (Duration.between(from.at(), to.at()).equals(Duration.ofSeconds(60))
+                        ? " seconds, at the 60-second inspection threshold." : " seconds, above the 60-second inspection threshold.")
+                    + " This interval precedes the recorded venue outcome.";
             }
             case "SETTLEMENT_GAP" -> {
                 require(receipt.equals(p.fromId()) && s.receipt() != null && to != null && to.equals(last)
@@ -105,29 +107,59 @@ public final class CrossEventVerifier {
         return new Explanation.Attribution(p.relation(), observation, p.interpretation(), p.uncertainty(), p.evidenceIds(), SCOPE);
     }
 
-    /** Strong deterministic comparator: same evidence and proof kernel, no provider/model-generated prose. */
+    /** Strong deterministic comparator: linear candidate discovery, unchanged proof kernel and priority. */
     public static List<Explanation.Attribution> strongBaseline(ExplanationEngine.Analysis a) {
         if (a.abstained()) return List.of();
         var s = a.snapshot();
-        List<Explanation.Attribution> result = new ArrayList<>();
-        List<String> refs = new ArrayList<>(s.events().stream().map(ExplanationSnapshot.Event::id).toList());
-        refs.add("receipt:" + s.tradeId()); refs.add("receipt_lookup:" + s.tradeId());
-        for (String relation : List.of("TEMPORAL_ORDER_UNRELIABLE", "DISPATCH_DELAY", "SETTLEMENT_GAP", "RECOVERY_COMPLETED",
-                "RECEIPT_BEFORE_UNKNOWN", "RECEIPT_AFTER_UNKNOWN", "REPEATED_UNKNOWN", "NO_RECEIPT_NOT_FAILURE")) {
-            Explanation.Attribution found = null;
-            outer: for (String from : refs) for (String to : refs) {
-                if (from.equals(to)) continue;
-                List<String> evidence = relation.equals("RECOVERY_COMPLETED") ? List.of(from, to, "receipt:" + s.tradeId()) : List.of(from, to);
-                try {
-                    var p = new Proposal(relation, from, to, evidence, interpretation(relation), uncertainty(relation));
-                    found = verify(p, a); break outer;
-                } catch (ModelPlanner.Failure | IllegalArgumentException ignored) { /* unsupported candidate */ }
-            }
-            if (found != null) result.add(new Explanation.Attribution(found.relation(), found.observedRelation(), found.interpretation(),
-                found.uncertainty(), found.evidenceIds(), "Program-checked observations and deterministic reviewed hypotheses. "
-                    + "Physical causation is not established. No model request or operation authority."));
+        var last = s.events().get(s.events().size() - 1);
+        ExplanationSnapshot.Event firstUnknown = null, lastUnknown = null;
+        for (var event : s.events()) if (event.status() == TradeStatus.UNKNOWN) {
+            if (firstUnknown == null) firstUnknown = event;
+            lastUnknown = event;
         }
-        return result.stream().limit(3).toList();
+        String receipt = s.receipt() == null ? null : "receipt:" + s.tradeId();
+        List<Proposal> candidates = new ArrayList<>();
+        var reversed = firstReversedPair(s.events());
+        if (!reversed.isEmpty()) candidate(candidates, "TEMPORAL_ORDER_UNRELIABLE", reversed.get(0).id(), reversed.get(1).id(), null);
+        if (s.events().size() > 1) candidate(candidates, "DISPATCH_DELAY", s.events().get(0).id(), s.events().get(1).id(), null);
+        candidate(candidates, "SETTLEMENT_GAP", receipt, last.id(), null);
+        candidate(candidates, "RECOVERY_COMPLETED", id(firstUnknown), last.id(), receipt);
+        candidate(candidates, "RECEIPT_BEFORE_UNKNOWN", receipt, id(firstUnknown), null);
+        candidate(candidates, "RECEIPT_AFTER_UNKNOWN", id(firstUnknown), receipt, null);
+        candidate(candidates, "REPEATED_UNKNOWN", id(firstUnknown), id(lastUnknown), null);
+        candidate(candidates, "NO_RECEIPT_NOT_FAILURE", last.id(), "receipt_lookup:" + s.tradeId(), null);
+        List<Explanation.Attribution> result = new ArrayList<>();
+        for (var p : candidates) {
+            try {
+                var found = verify(p, a);
+                result.add(new Explanation.Attribution(found.relation(), found.observedRelation(), found.interpretation(),
+                    found.uncertainty(), found.evidenceIds(), "Program-checked observations and deterministic reviewed hypotheses. "
+                        + "Physical causation is not established. No model request or operation authority."));
+                if (result.size() == 3) break;
+            } catch (ModelPlanner.Failure | IllegalArgumentException ignored) { /* unchanged proof rejection */ }
+        }
+        return List.copyOf(result);
+    }
+    private static String id(ExplanationSnapshot.Event event) { return event == null ? null : event.id(); }
+    private static void candidate(List<Proposal> target, String relation, String from, String to, String receipt) {
+        if (from == null || to == null || from.equals(to)) return;
+        List<String> evidence = receipt == null ? List.of(from, to) : List.of(from, to, receipt);
+        target.add(new Proposal(relation, from, to, evidence, interpretation(relation), uncertainty(relation)));
+    }
+    /** Same earliest (from,to) as lexicographic pair enumeration, including non-adjacent reversals. */
+    private static List<ExplanationSnapshot.Event> firstReversedPair(List<ExplanationSnapshot.Event> events) {
+        var minimumLater = events.get(events.size() - 1).at();
+        ExplanationSnapshot.Event from = null;
+        for (int i = events.size() - 2; i >= 0; i--) {
+            var event = events.get(i);
+            if (event.at().isAfter(minimumLater)) from = event;
+            if (event.at().isBefore(minimumLater)) minimumLater = event.at();
+        }
+        if (from == null) return List.of();
+        for (int i = (int) from.sequence() + 1; i < events.size(); i++) {
+            if (from.at().isAfter(events.get(i).at())) return List.of(from, events.get(i));
+        }
+        throw new IllegalStateException("Reversed-pair candidate inconsistent");
     }
     static String interpretation(String relation) {
         return switch (relation) {
@@ -159,7 +191,11 @@ public final class CrossEventVerifier {
         return false;
     }
     private static long millis(java.time.Instant from, java.time.Instant to) { return Duration.between(from, to).toMillis(); }
-    private static String seconds(java.time.Instant from, java.time.Instant to) { return java.math.BigDecimal.valueOf(millis(from, to), 3).stripTrailingZeros().toPlainString(); }
+    private static String seconds(java.time.Instant from, java.time.Instant to) {
+        var duration = Duration.between(from, to);
+        return java.math.BigDecimal.valueOf(duration.getSeconds()).add(java.math.BigDecimal.valueOf(duration.getNano(), 9))
+            .stripTrailingZeros().toPlainString();
+    }
     private static void text(String value, int max) {
         require(value != null && !value.isBlank() && value.length() <= max && value.chars().noneMatch(c -> Character.isISOControl(c))
             && !value.matches("(?is).*(https?://|```|[<>]).*"));

@@ -47,6 +47,18 @@ class CrossEventReportTest(unittest.TestCase):
         self.assertEqual(summary["model_ratings"]["ai"]["goal_coverage_rate"], 1)
         self.assertIsNone(summary["human_review"])
 
+    def test_accepted_empty_v4_reply_is_not_counted_as_a_useful_attribution(self):
+        rows = self.rows()
+        rows[0]["ai"]["mode"] = "model_no_attribution"
+        rows[0]["reviews"] = []
+        summary = summarize({"results": rows, "requests": [{"initiated": True}], "model": "fixture", "cost": {}, "complete": True})
+        self.assertEqual(summary["fallback_rate"], 0)
+        self.assertEqual(summary["mechanical"]["accepted_empty_attribution_plans"], 1)
+        self.assertEqual(summary["mechanical"]["checked_attributions"], 0)
+        self.assertEqual(summary["mechanical"]["explicit_relation_recall"]["ai"]["covered"], 0)
+        self.assertEqual(summary["valid_model_reviews"], 0)
+        self.assertIsNone(summary["model_ratings"]["ai"]["goal_coverage_rate"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,407 @@
+{
+  "real_model_requests" : 0,
+  "kind" : "counterfactual_adapter_projection_not_live_model_evaluation",
+  "rounds" : [ {
+    "v4_context_utf8_bytes" : 40619,
+    "cases" : [ {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "RECEIPT_BEFORE_UNKNOWN",
+        "observedRelation" : "A matching EXECUTED simulated receipt was recorded 1 seconds before the first UNKNOWN event. Latest recorded state=UNKNOWN.",
+        "interpretation" : "The receipt precedes the first UNKNOWN event, so the system received confirmation before the uncertainty was recorded. This temporal order suggests an acknowledgment gap but does not confirm network or venue fault.",
+        "uncertainty" : "The recorded receipt time precedes the first UNKNOWN event, indicating the receipt was logged before the trade entered an uncertain execution state, but this does not confirm message delivery or effective execution time.",
+        "evidenceIds" : [ "receipt:05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51", "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51:2" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "f6e040c25803a2911ab5b4e32c6332a3cabab53ea322a8ebead1dab31ecd7ce0",
+      "id" : "receipt_before_uncertainty",
+      "reference_relation_hits" : 1
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "ca426b4875fd7b0b46c54d31a3baf20ea28f78f2cf0f87c918931f6e9ef1a3cb",
+      "id" : "receipt_recorded_later",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "0b6d39f81447a4fc2f561fb584a7d43f7bfcb168e1dd161f4a32704fedaa5b13",
+      "id" : "persistent_unknown_without_receipt",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "1746130513c2f6218d0a6e74c8dd82a02cbe4227a422a64ac6fbdfa3ebd01dea",
+      "id" : "eventual_execution",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "e07681a4e1842865f0c125b0b0f4a2717444ec4bb2752796e34c394865b49798",
+      "id" : "eventual_venue_rejection",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "NO_RECEIPT_NOT_FAILURE",
+        "observedRelation" : "The latest recorded trade state is UNKNOWN and no local receipt was observed. Neither venue rejection nor absence of execution is established.",
+        "interpretation" : "The latest UNKNOWN event is supported by no matching venue receipt in the snapshot. This missing receipt does not prove a failure or execution rejection, only that no receipt was locally available at check time.",
+        "uncertainty" : "The absence of a venue receipt cannot confirm whether the trade was executed or rejected; it only confirms lack of local evidence.",
+        "evidenceIds" : [ "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:2", "receipt_lookup:36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "779df450153e663e07defc2ef88a87cd14c53274403cf60216f2070260031fe4",
+      "id" : "delay_before_submission",
+      "reference_relation_hits" : 1
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "cea7baa5cc4b4f6a467f46a840d85f464158e25a939420684a3ba014dc5a1ace",
+      "id" : "old_receipt_state_still_unknown",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "f5863cc12b96048b32818ee207a1f815d73d10fdc5cdce26dad6d4d7b4214955",
+      "id" : "rapid_terminal_counterexample",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "9fb4baf3646d72edcda6a2e1cb4740af771cca09251d5565de09db2fca798174",
+      "id" : "timestamp_sequence_disagreement",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "NO_RECEIPT_NOT_FAILURE",
+        "observedRelation" : "The latest recorded trade state is UNKNOWN and no local receipt was observed. Neither venue rejection nor absence of execution is established.",
+        "interpretation" : "While the trade status remains UNKNOWN and no receipt is present, this missing receipt does not prove that the trade failed or was never executed; it simply records no local confirmation.",
+        "uncertainty" : "The absence of a receipt neither confirms nor denies that the trade executed externally; it only records that no local evidence of execution was found.",
+        "evidenceIds" : [ "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0:2", "receipt_lookup:31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "ca86d20da81d98221ba8049317e5ec96478e627a13c25067df0fa6b6cd5506f3",
+      "id" : "sparse_unknown_counterexample",
+      "reference_relation_hits" : 1
+    } ],
+    "counterfactual_fallbacks" : 6,
+    "old_context_utf8_bytes" : 45159,
+    "counterfactual_accepted" : 4,
+    "source" : "cross-event-v2-first-round",
+    "source_sha256" : "296b3f09354b596fb50aef106595af1a97620930e1a8c481534b1cbfb23c0f1e",
+    "reference_relations_covered" : 3,
+    "reference_relations_total" : 17
+  }, {
+    "v4_context_utf8_bytes" : 40619,
+    "cases" : [ {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "36ffce8d8d6bfbc71a982a99161b3ef36d81b07b6ba1ae20ef8b33b6c2bd278a",
+      "id" : "receipt_before_uncertainty",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "04694981bf3fb379dd781218d275624d435bdc8d73c67160e738803496d74220",
+      "id" : "receipt_recorded_later",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "REPEATED_UNKNOWN",
+        "observedRelation" : "3 UNKNOWN events span 38 seconds in this history. Event count is not a count of venue submissions.",
+        "interpretation" : "Repeated UNKNOWN status events from earlier to later sequences indicate persistent uncertainty over time, showing no new execution confirmation or rejection.",
+        "uncertainty" : "While repeated UNKNOWN statuses confirm ongoing uncertainty, they do not prove multiple independent submissions or retries; the reason for persistence is not discernible.",
+        "evidenceIds" : [ "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:2", "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:4" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "1aba494fa7591d2c671faa650afcfcc20b2cd03c3748b276f7a18c0396b21e78",
+      "id" : "persistent_unknown_without_receipt",
+      "reference_relation_hits" : 1
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "ee1a04ba57f1a4f78728e3aa02620a4638b2177dcc7c5d989690f8c61cf339d3",
+      "id" : "eventual_execution",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "cd4695a01e1eab392b2e948525750c5b156f46556ef8f7d62c8700ee79fc3eee",
+      "id" : "eventual_venue_rejection",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "42982ee24e5d8bfb75c06bb65458625f26ec3c015c6fd7a4674d8710337720c0",
+      "id" : "delay_before_submission",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "e69e77e2090cbcc55c8372f19b39c8f5a1180c2e8f2ba4f06f070a2c7f9d82ee",
+      "id" : "old_receipt_state_still_unknown",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "9a4a4e507ca21881e7ff04c4abb4164deb168d189583b88e3132e2cfcab623c2",
+      "id" : "rapid_terminal_counterexample",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "ff4df5c45c70064a8d3ae2b18805961af1a0dcbf391f31739c6616d9d0f99108",
+      "id" : "timestamp_sequence_disagreement",
+      "reference_relation_hits" : 0
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "82758eb964c4c5b3d7a301448b34cd97854cd78a869eed0977780844f44acff6",
+      "id" : "sparse_unknown_counterexample",
+      "reference_relation_hits" : 0
+    } ],
+    "counterfactual_fallbacks" : 8,
+    "old_context_utf8_bytes" : 45159,
+    "counterfactual_accepted" : 2,
+    "source" : "cross-event-v3-second-round",
+    "source_sha256" : "08dfeebe8be57e38fff38a79eea20e9f26bbcef823782ac8d11d28bb9faaaae3",
+    "reference_relations_covered" : 1,
+    "reference_relations_total" : 17
+  }, {
+    "v4_context_utf8_bytes" : 40619,
+    "cases" : [ {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "RECEIPT_BEFORE_UNKNOWN",
+        "observedRelation" : "A matching EXECUTED simulated receipt was recorded 1 seconds before the first UNKNOWN event. Latest recorded state=UNKNOWN.",
+        "interpretation" : "The matching EXECUTED receipt was recorded before the trade entered UNKNOWN, showing an acknowledgement/commit gap in recorded evidence while the trade state remained uncertain.",
+        "uncertainty" : "The receipt’s local recorded time precedes the UNKNOWN event, but it does not establish physical execution or arrival timing.",
+        "evidenceIds" : [ "receipt:05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51", "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51:2" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "ce99c182ce50e6c536115640e7d53a9b9a9a60c6f20155daa8d1e6a85e61c40c",
+      "id" : "receipt_before_uncertainty",
+      "reference_relation_hits" : 1
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "RECEIPT_AFTER_UNKNOWN",
+        "observedRelation" : "A matching EXECUTED simulated receipt was recorded 28 seconds after the first UNKNOWN event. Receipt creation time is not a network-arrival measurement.",
+        "interpretation" : "The later matching EXECUTED receipt provides evidence to inspect alongside the still-recorded UNKNOWN state. It does not by itself prove execution timing, arrival latency, or a cause for the uncertainty.",
+        "uncertainty" : "The receipt was recorded after the UNKNOWN event; its local timestamp does not establish when execution or visibility occurred.",
+        "evidenceIds" : [ "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249:2", "receipt:e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "14d621c9ba22ad19d390f05f2eb8403722769912d9a0d5d77ee2e6fad19503f4",
+      "id" : "receipt_recorded_later",
+      "reference_relation_hits" : 1
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "REPEATED_UNKNOWN",
+        "observedRelation" : "3 UNKNOWN events span 38 seconds in this history. Event count is not a count of venue submissions.",
+        "interpretation" : "The sequence contains distinct UNKNOWN observations from the first through the latest UNKNOWN event, preserving uncertainty rather than proving multiple submissions.",
+        "uncertainty" : "Recorded UNKNOWN observations recur, but they do not establish repeated venue submissions or a physical fault.",
+        "evidenceIds" : [ "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:2", "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:4" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "NO_RECEIPT_NOT_FAILURE",
+        "observedRelation" : "The latest recorded trade state is UNKNOWN and no local receipt was observed. Neither venue rejection nor absence of execution is established.",
+        "interpretation" : "The latest recorded UNKNOWN state has no observed local receipt, so the outcome remains unresolved and should not be treated as a confirmed failure.",
+        "uncertainty" : "The bounded local query found no receipt; this does not prove rejection, non-execution, or absence of an external request.",
+        "evidenceIds" : [ "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:4", "receipt_lookup:5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "9b08b72fc4cbdba7be793775ffda922b7ca99070895803250730560e20bd0109",
+      "id" : "persistent_unknown_without_receipt",
+      "reference_relation_hits" : 2
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "RECEIPT_AFTER_UNKNOWN",
+        "observedRelation" : "A matching EXECUTED simulated receipt was recorded 27 seconds after the first UNKNOWN event. Receipt creation time is not a network-arrival measurement.",
+        "interpretation" : "The matching receipt was recorded after the first UNKNOWN observation, so recorded evidence shows uncertainty preceding receipt visibility without proving a venue or network fault.",
+        "uncertainty" : "Receipt recorded later; actual execution or visibility latency is not established.",
+        "evidenceIds" : [ "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:2", "receipt:8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "REPEATED_UNKNOWN",
+        "observedRelation" : "2 UNKNOWN events span 28 seconds in this history. Event count is not a count of venue submissions.",
+        "interpretation" : "Two distinct UNKNOWN events document repeated uncertain observations before the later terminal outcome; they do not establish multiple submissions.",
+        "uncertainty" : "Repeated UNKNOWN observations do not prove repeated venue submissions.",
+        "evidenceIds" : [ "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:2", "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:3" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "RECOVERY_COMPLETED",
+        "observedRelation" : "The first UNKNOWN was followed 29 seconds later by recorded EXECUTED settlement with a matching simulated receipt. The earlier UNKNOWN is historical; no new execution is authorized.",
+        "interpretation" : "The later EXECUTED terminal event and matching receipt resolve the earlier UNKNOWN state in the recorded simulator history.",
+        "uncertainty" : "The terminal state resolves recorded uncertainty, but does not prove how many submissions occurred or establish real-exchange finality.",
+        "evidenceIds" : [ "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:2", "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:4", "receipt:8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "cfbdbfbd6e5c881c30c3889a197e255cde1b865a58c45e3fdba5fb8b5667d3bf",
+      "id" : "eventual_execution",
+      "reference_relation_hits" : 2
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ {
+        "relation" : "RECEIPT_AFTER_UNKNOWN",
+        "observedRelation" : "A matching REJECTED simulated receipt was recorded 17 seconds after the first UNKNOWN event. Receipt creation time is not a network-arrival measurement.",
+        "interpretation" : "The matching rejected receipt was recorded after uncertainty began, so the local record shows later receipt evidence rather than an immediate outcome observation.",
+        "uncertainty" : "The receipt is recorded after the first UNKNOWN event; its recorded time does not establish when execution or visibility occurred.",
+        "evidenceIds" : [ "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:2", "receipt:350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "REPEATED_UNKNOWN",
+        "observedRelation" : "2 UNKNOWN events span 8 seconds in this history. Event count is not a count of venue submissions.",
+        "interpretation" : "Two distinct UNKNOWN events preserve uncertainty across observations while the recorded terminal status is later resolved as REJECTED.",
+        "uncertainty" : "The repeated UNKNOWN observations do not prove repeated venue submissions or a physical fault.",
+        "evidenceIds" : [ "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:2", "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:3" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "RECOVERY_COMPLETED",
+        "observedRelation" : "The first UNKNOWN was followed 18 seconds later by recorded REJECTED settlement with a matching simulated receipt. The earlier UNKNOWN is historical; no new execution is authorized.",
+        "interpretation" : "The latest terminal event is REJECTED and matches the rejected receipt, resolving the earlier UNKNOWN state in the local record.",
+        "uncertainty" : "The terminal event and receipt resolve the recorded workflow state, but do not prove how many submissions occurred or when the venue acted.",
+        "evidenceIds" : [ "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:2", "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:4", "receipt:350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "f60e916440be54cb233a7be7f32b459191b13dacb42efbe93d8c18a5c1c04f1a",
+      "id" : "eventual_venue_rejection",
+      "reference_relation_hits" : 2
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "DISPATCH_DELAY",
+        "observedRelation" : "The RESERVED-to-SUBMITTED interval is 120 seconds, above the 60-second inspection threshold. This interval precedes the recorded venue outcome.",
+        "interpretation" : "The recorded history shows RESERVED followed by SUBMITTED after the inspection threshold, indicating a dispatch delay in local state progression without proving venue latency.",
+        "uncertainty" : "Recorded timing shows dispatch progression, not venue processing or latency.",
+        "evidenceIds" : [ "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:0", "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:1" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "NO_RECEIPT_NOT_FAILURE",
+        "observedRelation" : "The latest recorded trade state is UNKNOWN and no local receipt was observed. Neither venue rejection nor absence of execution is established.",
+        "interpretation" : "The latest recorded UNKNOWN state has no locally observed receipt, so the missing receipt does not establish rejection or prove that no external execution occurred.",
+        "uncertainty" : "The bounded local query found no receipt; external execution or receipt visibility cannot be ruled out.",
+        "evidenceIds" : [ "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:2", "receipt_lookup:36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "ef54079df8f8f96b459a363588cf2efb677d530206ca94764e90ae7ad97ab0f6",
+      "id" : "delay_before_submission",
+      "reference_relation_hits" : 2
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "RECEIPT_BEFORE_UNKNOWN",
+        "observedRelation" : "A matching EXECUTED simulated receipt was recorded 1 seconds before the first UNKNOWN event. Latest recorded state=UNKNOWN.",
+        "interpretation" : "The receipt was recorded before the first UNKNOWN observation, indicating a possible acknowledgement or commit gap while the trade remained uncertain.",
+        "uncertainty" : "Recorded receipt time precedes the first UNKNOWN event; this does not establish physical execution or arrival timing.",
+        "evidenceIds" : [ "receipt:fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825", "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:2" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "REPEATED_UNKNOWN",
+        "observedRelation" : "2 UNKNOWN events span 117 seconds in this history. Event count is not a count of venue submissions.",
+        "interpretation" : "Two distinct UNKNOWN events preserve uncertainty across the recorded history without resolving the executed receipt against the current trade state.",
+        "uncertainty" : "These are repeated recorded observations, not evidence of repeated venue submissions.",
+        "evidenceIds" : [ "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:2", "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:3" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "SETTLEMENT_GAP",
+        "observedRelation" : "The matching simulated receipt predates the latest UNKNOWN event by 118 seconds. This is a recorded receipt-to-state gap, not the current age of the trade.",
+        "interpretation" : "The matching EXECUTED receipt and latest UNKNOWN event are separated in recorded time, so the receipt should be inspected alongside the unresolved terminal state.",
+        "uncertainty" : "This is a recorded receipt-to-state interval, not proof of current age or execution latency.",
+        "evidenceIds" : [ "receipt:fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825", "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:3" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "97b9c0b2f8a0dea50af82283b6556623f7b632d79c9c4ea727e0ff207addce74",
+      "id" : "old_receipt_state_still_unknown",
+      "reference_relation_hits" : 3
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "RECEIPT_AFTER_UNKNOWN",
+        "observedRelation" : "A matching EXECUTED simulated receipt was recorded 1 seconds after the first UNKNOWN event. Receipt creation time is not a network-arrival measurement.",
+        "interpretation" : "The matching receipt was recorded after the uncertain observation, so local evidence became available later without proving when execution occurred.",
+        "uncertainty" : "The receipt was recorded after the first UNKNOWN event; recorded time does not establish physical execution or visibility latency.",
+        "evidenceIds" : [ "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:2", "receipt:0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "RECOVERY_COMPLETED",
+        "observedRelation" : "The first UNKNOWN was followed 2 seconds later by recorded EXECUTED settlement with a matching simulated receipt. The earlier UNKNOWN is historical; no new execution is authorized.",
+        "interpretation" : "The later committed EXECUTED event, supported by the matching receipt, resolves the earlier UNKNOWN state in the recorded local history.",
+        "uncertainty" : "The terminal event resolves the recorded uncertainty, but does not establish how many submissions occurred or prove external settlement finality.",
+        "evidenceIds" : [ "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:2", "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:3", "receipt:0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "a39584c97bd6c3aa982f0b539ed75c37220021ff056262fa7cecff887763a582",
+      "id" : "rapid_terminal_counterexample",
+      "reference_relation_hits" : 2
+    }, {
+      "retained_outcome" : "validated",
+      "attributions" : [ {
+        "relation" : "TEMPORAL_ORDER_UNRELIABLE",
+        "observedRelation" : "Event sequence 1 precedes 2, but its timestamp is later. Sequence order and wall-clock order disagree; elapsed-time attribution is unreliable.",
+        "interpretation" : "The SUBMITTED event has a later recorded offset than the subsequent UNKNOWN event, so sequence and recorded time disagree. This limits temporal conclusions about the transition.",
+        "uncertainty" : "Recorded timestamps reverse between these sequenced events; physical ordering and cause are not established.",
+        "evidenceIds" : [ "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2:1", "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2:2" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      }, {
+        "relation" : "NO_RECEIPT_NOT_FAILURE",
+        "observedRelation" : "The latest recorded trade state is UNKNOWN and no local receipt was observed. Neither venue rejection nor absence of execution is established.",
+        "interpretation" : "The latest recorded state is UNKNOWN and no matching receipt was observed. Receipt absence leaves the execution outcome unresolved rather than proving failure.",
+        "uncertainty" : "The bounded local query found no receipt; this does not establish rejection, non-execution, or absence of an external request.",
+        "evidenceIds" : [ "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2:2", "receipt_lookup:50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2" ],
+        "validationScope" : "Evidence identity, state and recorded temporal relation checked by code. Interpretation and uncertainty prose are model-authored hypotheses, not semantically verified facts. Recorded time order alone does not prove physical causation. No operations are authorized."
+      } ],
+      "counterfactual_outcome" : "validated",
+      "retained_response_sha256" : "53868fe26d9043bd940beeac2faf94c17dae25255b945b15edfb7b3637eeb3aa",
+      "id" : "timestamp_sequence_disagreement",
+      "reference_relation_hits" : 1
+    }, {
+      "retained_outcome" : "invalid_output",
+      "attributions" : [ ],
+      "counterfactual_outcome" : "invalid_output",
+      "retained_response_sha256" : "bfa9473da27bada4f8a2b6b7e00afa492405f37a7e61cde5d8e45127095fec00",
+      "id" : "sparse_unknown_counterexample",
+      "reference_relation_hits" : 0
+    } ],
+    "counterfactual_fallbacks" : 1,
+    "old_context_utf8_bytes" : 45159,
+    "counterfactual_accepted" : 9,
+    "source" : "cross-event-luna-round",
+    "source_sha256" : "b7f960cd35c03f45e0c834e32e027965a55e152f4c17bc5cf6e5088b4d6a50e7",
+    "reference_relations_covered" : 16,
+    "reference_relations_total" : 17
+  } ],
+  "scope" : "Only the attributions subtree of retained v2/v3 responses is projected into a server-bound v4 reply. No claim, citation, order or prose is repaired. Required facts come from the deterministic baseline. The model has NOT seen the new v4 prompt. These conditional adapter outcomes are not measured v4 fallback/quality/cost/latency."
+}

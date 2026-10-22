@@ -22,6 +22,20 @@ public record ExplanationPlan(String snapshotHash, String headlineId, List<Strin
         return new ExplanationPlan(analysis.snapshotHash(), analysis.headlineId(), analysis.findings().stream()
             .map(Explanation.Finding::id).toList(), analysis.checks().stream().map(Explanation.Check::id).toList());
     }
+    public static ExplanationPlan parseAndValidate(ModelPlanner.Reply reply, ExplanationEngine.Analysis analysis) {
+        if (reply.format() == ModelPlanner.ReplyFormat.LEGACY_PLAN) return parseAndValidate(reply.json(), analysis);
+        if (reply.format() != ModelPlanner.ReplyFormat.ATTRIBUTIONS_V4) throw new ModelPlanner.Failure("invalid_output", false);
+        try {
+            if (analysis.abstained() || !analysis.snapshotHash().equals(reply.requestSnapshotHash())) throw new IllegalArgumentException();
+            String raw = reply.json();
+            if (raw == null || raw.length() > 8192) throw new IllegalArgumentException();
+            JsonNode node = JSON.readTree(raw);
+            if (!node.isObject() || node.size() != 1 || !node.has("attributions")) throw new IllegalArgumentException();
+            var base = baseline(analysis);
+            return new ExplanationPlan(base.snapshotHash(), base.headlineId(), base.findingIds(), base.checkIds(),
+                proposals(node.path("attributions"), analysis));
+        } catch (Exception ex) { throw new ModelPlanner.Failure("invalid_output", false); }
+    }
     public static ExplanationPlan parseAndValidate(String raw, ExplanationEngine.Analysis analysis) {
         try {
             if (raw == null || raw.length() > 8192) throw new IllegalArgumentException();
@@ -42,7 +56,7 @@ public record ExplanationPlan(String snapshotHash, String headlineId, List<Strin
         } catch (Exception ex) { throw new ModelPlanner.Failure("invalid_output", false); }
     }
     private static List<CrossEventVerifier.Proposal> proposals(JsonNode rows, ExplanationEngine.Analysis analysis) throws Exception {
-        if (rows == null) return List.of(); // Legacy scripted contracts remain readable; real requests use v2.
+        if (rows == null) return List.of(); // Historical full-plan contracts may omit this field.
         if (!rows.isArray() || rows.size() > 3) throw new IllegalArgumentException();
         List<CrossEventVerifier.Proposal> results = new ArrayList<>();
         Set<String> seen = new HashSet<>();

@@ -4,9 +4,18 @@ package com.gic.explanation;
 @FunctionalInterface
 public interface ModelPlanner {
     Reply propose(ExplanationEngine.Analysis analysis);
-    record Reply(String json, String model, Long inputTokens, Long outputTokens, boolean modelRequest, Usage usage) {
+    enum ReplyFormat { LEGACY_PLAN, ATTRIBUTIONS_V4 }
+    /** Format and binding are supplied by the trusted adapter, never inferred from model JSON. */
+    record Reply(String json, String model, Long inputTokens, Long outputTokens, boolean modelRequest, Usage usage,
+                 ReplyFormat format, String requestSnapshotHash) {
+        public Reply(String json, String model, Long inputTokens, Long outputTokens, boolean modelRequest, Usage usage) {
+            this(json, model, inputTokens, outputTokens, modelRequest, usage, ReplyFormat.LEGACY_PLAN, null);
+        }
         public Reply(String json, String model, Long inputTokens, Long outputTokens, boolean modelRequest) {
             this(json, model, inputTokens, outputTokens, modelRequest, null);
+        }
+        public Reply boundAttributions(String snapshotHash) {
+            return new Reply(json, model, inputTokens, outputTokens, modelRequest, usage, ReplyFormat.ATTRIBUTIONS_V4, snapshotHash);
         }
     }
     /** Allowlisted response metadata only; never retains credentials, reasoning text or raw provider errors. */

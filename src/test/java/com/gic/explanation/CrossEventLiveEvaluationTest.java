@@ -55,6 +55,8 @@ class CrossEventLiveEvaluationTest {
             "prompt_cache_mode", "gpt-5.6-luna".equals(model) ? "explicit_without_breakpoints" : "not_sent"));
         report.put("dataset_sha256", TradeOrder.hash(new String(dataset, StandardCharsets.UTF_8)));
         report.put("generator_prompt", OpenAiPlanner.PROMPT_VERSION); report.put("reviewer_prompt", CrossEventJudge.VERSION);
+        report.put("response_contract", ModelPlanner.ReplyFormat.ATTRIBUTIONS_V4); report.put("proof_version", CrossEventVerifier.VERSION);
+        report.put("request_serialization", OpenAiPlanner.REQUEST_SERIALIZATION);
         report.put("request_cap", 3 * limit); report.put("requested_generation_limit", limit); report.put("complete", false);
         report.put("blinding_seed", 6102026); report.put("results", results); report.put("requests", traces);
         report.put("scope", "Development-visible synthetic cases. Reference goals are withheld from generation, visible to the model reviewer. "
@@ -127,6 +129,7 @@ class CrossEventLiveEvaluationTest {
         try {
             reservation = budget.reserve(model); trace.put("reserved_ceiling_usd", reservation);
             var reply = request.get(); trace.put("initiated", reply.modelRequest()); trace.put("usage", reply.usage());
+            trace.put("reply_format", reply.format()); trace.put("request_snapshot_hash", reply.requestSnapshotHash());
             trace.put("outcome", "response_completed"); trace.put("returned_json", reply.json()); return reply;
         } catch (ModelPlanner.Failure ex) {
             trace.put("initiated", ex.modelRequest()); trace.put("usage", ex.usage()); trace.put("outcome", ex.outcome()); throw ex;

@@ -1,0 +1,210 @@
+{
+  "full_verify": {
+    "exit_code": 0,
+    "command": "mvn -o -q verify",
+    "scope": "Full offline database suite passed; a final parser-mutation test and benchmark metadata were subsequently verified with targeted checks.",
+    "log_sha256": "ef8fda332408469f2d6cb414e1db094fdcd1b26039b8e42bac6b9d6633998a97"
+  },
+  "latest_class_reports": {
+    "tests": 134,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3,
+    "passed": 131
+  },
+  "classes": [
+    {
+      "class": "com.gic.AtlasTradeControlApplicationTests",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.controller.TraderControllerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.exception.GlobalExceptionHandlerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.AttributionMigrationReplayTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.AttributionReplyTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventBoundaryTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventDiagnosticsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventJudgeTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventLiveEvaluationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "class": "com.gic.explanation.CrossEventReplayTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventRuleBenchmarkTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventVerifierTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.EvaluationBudgetTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationControllerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationEvaluationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationModelReportTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.LiveExplanationModelEvaluationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "class": "com.gic.explanation.ModelEvidenceContextTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.OpenAiPlannerTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.ExplanationMongoTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.LedgerSchemaMongoTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.MongoCommitFailureTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.ReliableExecutionBenchmarkTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "class": "com.gic.reliability.integration.ReliableExecutionMongoTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.unit.TradeValidationTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.unit.TradeWorkerTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "python_tests_passed": 4,
+  "real_model_requests": 0,
+  "new_provider_cost_usd": "0",
+  "scope": "Latest class reports combine the full verify and subsequent targeted parser-mutation, transport byte-order and benchmark checks. No paid suite or load benchmark was enabled."
+}

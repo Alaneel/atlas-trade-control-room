@@ -17,8 +17,9 @@ final class ExplanationModelReport {
 
     static Map<String, Object> summarize(List<CaseResult> rows, List<Explanation> controls, JsonNode prices) {
         Map<String, Object> result = new LinkedHashMap<>();
+        result.put("report_schema", "atlas-explanation-report-v2");
         long calls = rows.stream().mapToInt(r -> r.explanation().modelCalls()).sum();
-        List<CaseResult> accepted = rows.stream().filter(r -> Set.of("model_ordered", "model_attributed").contains(r.explanation().mode())).toList();
+        List<CaseResult> accepted = rows.stream().filter(r -> Set.of("model_ordered", "model_attributed", "model_no_attribution").contains(r.explanation().mode())).toList();
         long fallbacks = rows.stream().filter(r -> "rules_fallback".equals(r.explanation().mode())).count();
         result.put("cases", rows.size()); result.put("initiated_requests", calls);
         result.put("validated_plans", accepted.size()); result.put("fallbacks", fallbacks);
@@ -32,12 +33,16 @@ final class ExplanationModelReport {
         quality.put("raw_plan_acceptance", fraction(accepted.size(), rows.size()));
         quality.put("final_application_output", quality(rows));
         quality.put("accepted_model_output", quality(accepted));
-        quality.put("unchanged_presentation_vs_rules", rows.stream().filter(r -> r.explanation().findings().equals(r.rules().findings())
-            && r.explanation().nextChecks().equals(r.rules().nextChecks())).count());
+        quality.put("accepted_empty_attribution_plans", accepted.stream().filter(r -> r.explanation().attributions().isEmpty()).count());
+        quality.put("unchanged_presentation_vs_rules", rows.stream().filter(r -> r.explanation().summary().equals(r.rules().summary())
+            && r.explanation().findings().equals(r.rules().findings()) && r.explanation().nextChecks().equals(r.rules().nextChecks())
+            && r.explanation().attributions().equals(r.rules().attributions()) && r.explanation().limitations().equals(r.rules().limitations())).count());
         quality.put("abstention_controls", fraction(controls.stream().filter(r -> r.abstained() && r.modelCalls() == 0).count(), controls.size()));
         quality.put("abstention_control_requests", controls.stream().mapToInt(Explanation::modelCalls).sum());
         quality.put("human_usefulness", null); quality.put("independent_semantic_accuracy", null);
-        quality.put("scope", "Frozen development-visible synthetic cases. Contract/text/citation checks use reviewed rule output, not an independent semantic grader. Final application scores include rule fallback; accepted-model scores exclude it. No human rating or unrestricted model reasoning claim.");
+        quality.put("scope", "Frozen development-visible synthetic cases. Reviewed text checks cover rule facts/checks only, not model-authored hypotheses. "
+            + "Citation integrity checks source identity, not prose entailment. Final scores include fallback; accepted-model scores exclude it. "
+            + "Empty accepted plans are counted explicitly. No independent semantic grader, human rating or unrestricted model reasoning claim.");
         result.put("quality", quality);
         return result;
     }
@@ -51,12 +56,13 @@ final class ExplanationModelReport {
         score.put("required_findings_and_checks", count(rows, row -> row.rules().findings().stream().filter(Explanation.Finding::required)
             .allMatch(row.explanation().findings()::contains) && row.rules().nextChecks().stream().filter(Explanation.Check::required)
             .allMatch(row.explanation().nextChecks()::contains)));
-        score.put("exact_reviewed_text_only", count(rows, row -> row.rules().findings().containsAll(row.explanation().findings())
+        score.put("reviewed_rule_text_retained", count(rows, row -> row.rules().findings().containsAll(row.explanation().findings())
             && row.rules().nextChecks().containsAll(row.explanation().nextChecks()) && row.explanation().limitations().equals(row.rules().limitations())));
         score.put("citation_integrity", count(rows, row -> {
             Set<String> ids = row.explanation().evidence().stream().map(Explanation.Evidence::id).collect(Collectors.toSet());
             return row.explanation().findings().stream().allMatch(f -> !f.evidenceIds().isEmpty() && ids.containsAll(f.evidenceIds()))
-                && row.explanation().nextChecks().stream().allMatch(c -> !c.evidenceIds().isEmpty() && ids.containsAll(c.evidenceIds()));
+                && row.explanation().nextChecks().stream().allMatch(c -> !c.evidenceIds().isEmpty() && ids.containsAll(c.evidenceIds()))
+                && row.explanation().attributions().stream().allMatch(a -> !a.evidenceIds().isEmpty() && ids.containsAll(a.evidenceIds()));
         }));
         List<CaseResult> uncertain = rows.stream().filter(r -> "execution.unknown".equals(r.expectedHeadline())).toList();
         score.put("unknown_remains_uncertain", count(uncertain, row -> "UNKNOWN".equals(row.explanation().tradeStatus())

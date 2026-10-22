@@ -47,6 +47,8 @@ The [initial two-round comparison](docs/CROSS_EVENT_EVALUATION.md) did not show 
 
 The [GPT-5.6 Luna follow-up](docs/LUNA_EVALUATION.md) reproduced every failure and held cases, proof checks and reviewer fixed. Fallback fell to 20%, explicit reference-relation recall rose from 1/17 to 14/17, and generation cost fell to $0.0082502 ($0.0396046 with reviews). P50/P95 rose to 4.388/6.289 seconds. Strong rules still cover 17/17, and position-sensitive model reviews do not establish a stable AI advantage. The control room defaults to `rules_plus`; AI stays experimental and read only.
 
+The [v4 follow-up](docs/ATTRIBUTION_V4.md) moves snapshot binding and every rule fact/check out of model output, retains atomic proof rejection, and replaces pair enumeration with linear candidate discovery for the default rule path. It adds 64 development boundary cases, overflow abstention and exact sub-millisecond rendering. Its migration replay is **not a new model benchmark**; no new provider requests were made.
+
 The first [real-model round](docs/examples/ai-explanations/live-20261020/report.md) used six `gpt-4.1-mini-2025-04-14` requests: estimated cost **$0.0034696**, P50 **2.108 s**, P95 **3.746 s**, fallback **0/6**, and all required claims/checks and citations retained. All six presentations matched the rules baseline, so added usefulness is not established. Configure a private `.env.local`, then run `python3 scripts/run-live-explanation-eval.py --limit 6` to archive a separate round; ordinary CI stays offline.
 
 ## Inspect the failure path
