@@ -1,4 +1,6 @@
-# Project Improvements Summary
+# Historical Project Improvement Notes
+
+This file records earlier plans and implementation notes. It is not a checklist of verified behavior. Use [README.md](README.md) and [ARCHITECTURE.md](ARCHITECTURE.md) for the current request path, tested guarantees, and known limitations.
 
 This document outlines the improvements made to evolve Atlas Trade Control Room into a production-minded reference project.
 

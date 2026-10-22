@@ -8,12 +8,15 @@ Spring Boot API and keeps the same interaction model.
 from __future__ import annotations
 
 import os
-from datetime import datetime, timedelta
+from html import escape
 from typing import Any
+from urllib.parse import quote
 
 import pandas as pd
 import requests
 import streamlit as st
+
+from demo_state import DEMO_LIMITS, new_demo_state, submit_demo_trade
 
 
 API_ROOT = os.getenv("BACKEND_API_URL", "http://localhost:8080").rstrip("/")
@@ -61,20 +64,7 @@ st.markdown(
 )
 
 
-DEMO_TRADES = [
-    {"time": "09:42:18", "counterparty": "NORTHSTAR", "instrument": "AAPL", "group": "EQUITY", "amount": 1_250_000, "status": "APPROVED"},
-    {"time": "09:38:04", "counterparty": "MERIDIAN", "instrument": "US10Y", "group": "BOND", "amount": 3_800_000, "status": "APPROVED"},
-    {"time": "09:31:55", "counterparty": "NORTHSTAR", "instrument": "EURUSD", "group": "FX", "amount": 5_400_000, "status": "REVIEW"},
-    {"time": "09:27:20", "counterparty": "APEX", "instrument": "MSFT", "group": "EQUITY", "amount": 920_000, "status": "APPROVED"},
-    {"time": "09:14:07", "counterparty": "MERIDIAN", "instrument": "XAUUSD", "group": "COMMODITY", "amount": 2_100_000, "status": "DECLINED"},
-]
-
-DEMO_LIMITS = {
-    ("NORTHSTAR", "EQUITY"): (18_750_000, "USD"),
-    ("NORTHSTAR", "FX"): (12_600_000, "USD"),
-    ("MERIDIAN", "BOND"): (31_200_000, "USD"),
-    ("APEX", "EQUITY"): (8_450_000, "USD"),
-}
+TRADE_COLUMNS = ["time", "counterparty", "instrument", "group", "amount", "status"]
 
 
 def api(method: str, path: str, **kwargs: Any) -> Any:
@@ -85,8 +75,8 @@ def api(method: str, path: str, **kwargs: Any) -> Any:
 
 def metric(label: str, value: str, delta: str) -> None:
     st.markdown(
-        f'<div class="metric-card"><div class="metric-label">{label}</div>'
-        f'<div class="metric-value">{value}</div><div class="metric-delta">{delta}</div></div>',
+        f'<div class="metric-card"><div class="metric-label">{escape(label)}</div>'
+        f'<div class="metric-value">{escape(value)}</div><div class="metric-delta">{escape(delta)}</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -103,11 +93,45 @@ def normalized_trades(raw: list[dict[str, Any]]) -> pd.DataFrame:
             "amount": trade.get("amount", 0),
             "status": trade.get("status", "—"),
         })
-    return pd.DataFrame(rows)
+    result = pd.DataFrame(rows, columns=TRADE_COLUMNS)
+    result["amount"] = pd.to_numeric(result["amount"], errors="coerce").fillna(0)
+    return result
 
 
-if "demo_trades" not in st.session_state:
-    st.session_state.demo_trades = DEMO_TRADES.copy()
+def api_error(exc: requests.RequestException) -> str:
+    """Keep backend validation messages visible instead of only showing HTTP 400."""
+    if exc.response is not None:
+        try:
+            body = exc.response.json()
+            message = body.get("message") or str(exc)
+            details = body.get("details")
+            if isinstance(details, list) and details:
+                message += ": " + "; ".join(str(item) for item in details)
+            return message
+        except (ValueError, AttributeError):
+            pass
+    return str(exc)
+
+
+def instrument_fields(prefix: str) -> dict[str, str]:
+    """The default is an exact combination from the bundled instrument CSV."""
+    a, b = st.columns(2)
+    with a:
+        group = st.text_input("Product group", "Bonds", key=f"{prefix}_group")
+        instrument = st.text_input("Instrument", "0% Convertible Bonds", key=f"{prefix}_instrument")
+        department = st.text_input("Department", "RE", key=f"{prefix}_department")
+        country = st.text_input("Risk country", "ASIA PACIFIC REGION", key=f"{prefix}_country")
+    with b:
+        exchange = st.text_input("Venue", "Colombo", key=f"{prefix}_exchange")
+        trade_currency = st.text_input("Trade currency", "CHF", key=f"{prefix}_trade_currency")
+        settlement_currency = st.text_input("Settlement currency", "MXN", key=f"{prefix}_settlement_currency")
+    return {"instrumentGroup": group, "instrument": instrument, "department": department,
+            "country": country, "exchange": exchange, "tradeCurrency": trade_currency,
+            "settlementCurrency": settlement_currency}
+
+
+if "atlas_demo" not in st.session_state:
+    st.session_state.atlas_demo = new_demo_state()
 
 with st.sidebar:
     st.markdown("## ◈ ATLAS")
@@ -119,6 +143,10 @@ with st.sidebar:
     if demo_mode:
         st.markdown('<span class="status-dot"></span>Demo environment', unsafe_allow_html=True)
         st.caption("No backend required")
+        st.caption("Synthetic, session-local data. Demo decisions are not backend decisions.")
+        if st.button("Reset demo", use_container_width=True):
+            st.session_state.atlas_demo = new_demo_state()
+            st.rerun()
     else:
         try:
             healthy = requests.get(f"{API_ROOT}/actuator/health", timeout=2).ok
@@ -131,14 +159,14 @@ with st.sidebar:
     st.caption("Spring Boot · MongoDB · Redis")
 
 st.markdown(
-    '<div class="hero"><div class="eyebrow">Risk operations / live desk</div>'
+    '<div class="hero"><div class="eyebrow">Pre-trade workflow / prototype</div>'
     '<h1>Trade decisions, without the guesswork.</h1>'
-    '<p>Validate instruments, inspect counterparty exposure and route exceptions through one auditable control plane.</p></div>',
+    '<p>Explore instrument eligibility, counterparty capacity and exception requests in one control room.</p></div>',
     unsafe_allow_html=True,
 )
 
 if demo_mode:
-    trades = pd.DataFrame(st.session_state.demo_trades)
+    trades = pd.DataFrame(st.session_state.atlas_demo["trades"], columns=TRADE_COLUMNS)
 else:
     try:
         trades = normalized_trades(api("GET", "/trades"))
@@ -148,14 +176,14 @@ else:
 
 if page == "Overview":
     total = float(trades["amount"].sum()) if not trades.empty else 0
-    approved = int((trades["status"] == "APPROVED").sum()) if not trades.empty else 0
+    approved = int(trades["status"].isin(["APPROVED", "EXECUTED"]).sum()) if not trades.empty else 0
     review = int((trades["status"].isin(["REVIEW", "PENDING"])).sum()) if not trades.empty else 0
     approval_rate = approved / len(trades) * 100 if len(trades) else 0
     c1, c2, c3, c4 = st.columns(4)
-    with c1: metric("Gross notional", f"${total / 1_000_000:.1f}M", "+8.2% today")
-    with c2: metric("Approval rate", f"{approval_rate:.0f}%", f"{approved} auto-approved")
-    with c3: metric("Needs review", str(review), "Within desk SLA")
-    with c4: metric("Decision latency", "84 ms", "p95 · last hour")
+    with c1: metric("Recorded notional", f"{total / 1_000_000:.1f}M", "Demo USD" if demo_mode else "No FX conversion applied")
+    with c2: metric("Recorded success rate", f"{approval_rate:.0f}%", f"{approved} of {len(trades)} records")
+    with c3: metric("Demo review queue" if demo_mode else "Approval queue", str(review) if demo_mode else "—", "Session exceptions" if demo_mode else "No queue API available")
+    with c4: metric("Recorded trades", str(len(trades)), "Synthetic sample + this session" if demo_mode else "Stored decisions")
 
     st.markdown("### Activity")
     left, right = st.columns([1.65, 1])
@@ -164,85 +192,103 @@ if page == "Overview":
             st.info("No trades have been recorded yet.")
         else:
             display = trades.copy()
-            display["amount"] = display["amount"].map(lambda value: f"${value:,.0f}")
+            display["amount"] = display["amount"].map(lambda value: f"{value:,.0f}")
             display.columns = ["Time", "Counterparty", "Instrument", "Group", "Notional", "Decision"]
             st.dataframe(display, hide_index=True, use_container_width=True)
     with right:
-        st.markdown("#### Exposure by product")
+        st.markdown("#### Recorded notional by product")
         if not trades.empty:
             chart = trades.groupby("group", as_index=False)["amount"].sum().set_index("group")
             st.bar_chart(chart, color="#0b6b4d", height=250)
-        st.caption("Notional distribution across today's recorded decisions.")
+        st.caption("Includes all recorded outcomes, including failures; not a live exposure measure.")
 
 elif page == "New trade":
     st.markdown("### Pre-trade check")
-    st.markdown('<div class="callout">Atlas evaluates instrument eligibility and available limit before the order reaches execution.</div>', unsafe_allow_html=True)
+    st.caption("Demo checks are deterministic. API mode validates the full instrument definition and simulates execution.")
     with st.form("trade_form"):
-        a, b, c = st.columns(3)
-        with a:
-            counterparty = st.selectbox("Counterparty", ["NORTHSTAR", "MERIDIAN", "APEX"])
-            instrument_group = st.selectbox("Product group", ["EQUITY", "BOND", "FX", "COMMODITY"])
-        with b:
-            instrument = st.text_input("Instrument", "AAPL")
-            amount = st.number_input("Notional (USD)", min_value=1_000.0, value=500_000.0, step=50_000.0)
-        with c:
-            country = st.selectbox("Risk country", ["US", "GB", "SG", "JP"])
-            exchange = st.selectbox("Venue", ["NASDAQ", "NYSE", "LSE", "SGX"])
+        if demo_mode:
+            a, b = st.columns(2)
+            with a:
+                counterparty = st.selectbox("Counterparty", ["NORTHSTAR", "MERIDIAN", "APEX"])
+                instrument_group = st.selectbox("Product group", ["EQUITY", "BOND", "FX", "COMMODITY"])
+            with b:
+                instrument = st.text_input("Instrument", "AAPL")
+                amount = st.number_input("Notional (USD)", min_value=1_000.0, value=500_000.0, step=50_000.0)
+        else:
+            st.caption("Defaults match the bundled CSV seed. Change any field to test another combination.")
+            counterparty = st.text_input("Counterparty", "Abbey National Treasury Services PLC")
+            request = instrument_fields("trade")
+            amount = st.number_input("Notional in the counterparty limit currency", min_value=1.0, value=500_000.0, step=50_000.0)
         submitted = st.form_submit_button("Run checks & submit", use_container_width=True)
 
     if submitted:
-        request = {
-            "instrumentGroup": instrument_group, "instrument": instrument,
-            "settlementCurrency": "USD", "tradeCurrency": "USD",
-            "country": country, "exchange": exchange, "department": "GLOBAL_MARKETS",
-        }
         if demo_mode:
-            available = DEMO_LIMITS.get((counterparty, instrument_group), (10_000_000, "USD"))[0]
-            status = "APPROVED" if amount <= available else "REVIEW"
-            st.session_state.demo_trades.insert(0, {
-                "time": datetime.now().strftime("%H:%M:%S"), "counterparty": counterparty,
-                "instrument": instrument, "group": instrument_group, "amount": amount, "status": status,
-            })
-            if status == "APPROVED":
-                st.success(f"Approved · ${amount:,.0f} reserved against a ${available:,.0f} available limit.")
-            else:
-                st.warning("Routed to manual review · requested notional exceeds the available limit.")
+            try:
+                status, message = submit_demo_trade(st.session_state.atlas_demo, counterparty, instrument_group, instrument, amount)
+                if status == "APPROVED":
+                    st.success(f"Demo approved · {message}")
+                elif status == "REVIEW":
+                    st.warning(message)
+                else:
+                    st.error(message)
+            except ValueError as exc:
+                st.error(str(exc))
         else:
             try:
                 result = api("POST", "/trade", json={"instrumentVerificationRequest": request, "counterparty": counterparty, "amount": amount})
-                st.success(f"{result.get('status', 'Submitted')} · {result.get('message', 'Decision recorded')}")
+                message = f"{result.get('status', 'Submitted')} · {result.get('message', '')}"
+                if result.get("status") == "EXECUTED":
+                    st.success(message)
+                else:
+                    st.warning(message)
             except requests.RequestException as exc:
-                st.error(f"Trade could not be submitted: {exc}")
+                st.error(f"Trade could not be submitted: {api_error(exc)}")
 
 elif page == "Limit explorer":
     st.markdown("### Counterparty capacity")
     x, y, z = st.columns([1, 1, .6])
-    with x: counterparty = st.selectbox("Counterparty", ["NORTHSTAR", "MERIDIAN", "APEX"])
-    with y: instrument_group = st.selectbox("Product group", ["EQUITY", "BOND", "FX", "COMMODITY"])
+    with x:
+        counterparty = st.selectbox("Counterparty", ["NORTHSTAR", "MERIDIAN", "APEX"]) if demo_mode else st.text_input("Counterparty", "Abbey National Treasury Services PLC")
+    with y:
+        instrument_group = st.selectbox("Product group", ["EQUITY", "BOND", "FX", "COMMODITY"]) if demo_mode else st.text_input("Product group", "Bonds")
     with z:
         st.write("")
         st.write("")
         lookup = st.button("Check limit", use_container_width=True)
     if lookup:
         if demo_mode:
-            available, currency = DEMO_LIMITS.get((counterparty, instrument_group), (10_000_000, "USD"))
-            st.metric("Available capacity", f"{currency} {available:,.0f}", "Refreshed just now")
-            st.progress(min(available / 40_000_000, 1.0), text="Remaining against desk ceiling")
+            key = (counterparty, instrument_group)
+            available = st.session_state.atlas_demo["limits"].get(key)
+            if available is None:
+                st.warning("No demo limit exists for this counterparty and product group.")
+            else:
+                st.metric("Available capacity", f"USD {available:,.0f}")
+                st.progress(min(available / DEMO_LIMITS[key], 1.0), text="Remaining against the opening demo capacity")
         else:
             try:
-                result = api("GET", f"/limit/{counterparty}/{instrument_group}")
-                st.metric("Available capacity", f"{result.get('currency', 'USD')} {result.get('availableLimit', 0):,.0f}")
+                result = api("GET", f"/limit/{quote(counterparty, safe='')}/{quote(instrument_group, safe='')}")
+                st.metric("Available capacity", f"{result.get('currency', '')} {result.get('availableLimit', 0):,.0f}")
             except requests.RequestException as exc:
-                st.error(f"Limit could not be loaded: {exc}")
+                st.error(f"Limit could not be loaded: {api_error(exc)}")
 
 else:
     st.markdown("### Exception queue")
-    approvals = pd.DataFrame([
-        {"age": "04m", "instrument": "EURUSD", "reason": "Limit exception", "owner": "FX Risk", "priority": "High"},
-        {"age": "18m", "instrument": "NVDA", "reason": "New instrument", "owner": "Product Control", "priority": "Normal"},
-        {"age": "31m", "instrument": "JP10Y", "reason": "Venue mismatch", "owner": "Rates Risk", "priority": "Normal"},
-    ])
-    if not demo_mode:
-        st.info("The current backend exposes approval creation; queue management is shown here as the next API milestone.")
-    st.dataframe(approvals.rename(columns={"age":"Age", "instrument":"Instrument", "reason":"Reason", "owner":"Owner", "priority":"Priority"}), hide_index=True, use_container_width=True)
-    st.caption(f"Queue snapshot · {(datetime.now() - timedelta(minutes=1)).strftime('%d %b %Y, %H:%M')}")
+    if demo_mode:
+        approvals = trades[trades["status"] == "REVIEW"]
+        if approvals.empty:
+            st.info("No demo exceptions in this session.")
+        else:
+            st.dataframe(approvals, hide_index=True, use_container_width=True)
+        st.caption("Synthetic sample exceptions plus trades routed to review in this session. Reviewer decisions are not implemented.")
+    else:
+        st.info("The API supports creating pending requests. Listing requests and reviewer decisions are not implemented.")
+        with st.form("approval_form"):
+            request = instrument_fields("approval")
+            submitted = st.form_submit_button("Create pending approval request")
+        if submitted:
+            try:
+                result = api("POST", "/approval-request", json=request)
+                st.success("Pending approval request created.")
+                st.json(result)
+            except requests.RequestException as exc:
+                st.error(f"Approval request could not be created: {api_error(exc)}")

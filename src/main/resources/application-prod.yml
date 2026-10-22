@@ -1,21 +1,17 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_URI}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/atlas_trade_control}
 
   redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
 
 logging:
   level:
     root: WARN
     com.gic: INFO
-  file:
-    name: /var/log/atlas-trade-control-room/application.log
-    max-size: 10MB
-    max-history: 30
 
 server:
   port: ${SERVER_PORT:8080}

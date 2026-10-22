@@ -1,58 +1,67 @@
 package com.gic.service;
 
+import com.gic.exception.BusinessException;
 import com.gic.model.Limit;
-import com.gic.repository.LimitRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class LimitService {
 
-    @Autowired
-    private LimitRepository limitRepository;
+    private final MongoTemplate mongoTemplate;
+
+    public LimitService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     public Limit getAvailableLimit(String counterparty, String instrumentGroup) {
-        List<Limit> limits = limitRepository.findByCounterpartyAndInstrumentGroup(counterparty, instrumentGroup);
-        if (limits.isEmpty()) {
-            return null;
-        }
-        // You might want to add some logic here to handle multiple limits if needed
-        return limits.get(0);
-
-        // Option 3: Use this instead if you want to get only the first result
-        // return limitRepository.findFirstByCounterpartyAndInstrumentGroup(counterparty, instrumentGroup);
+        Query query = new Query(Criteria.where("counterparty").is(counterparty)
+                .and("instrumentGroup").is(instrumentGroup));
+        // Older seed loaders could create duplicate rows. Keep reads, reservations,
+        // and releases on one canonical row instead of pooling duplicate capacity.
+        query.with(Sort.by(Sort.Direction.ASC, "_id"));
+        return mongoTemplate.findOne(query, Limit.class);
     }
 
-    @Transactional
     public boolean checkAndReserveLimit(String counterparty, String instrumentGroup, Double amount) {
-        List<Limit> limits = limitRepository.findByCounterpartyAndInstrumentGroup(counterparty, instrumentGroup);
-        if (limits.isEmpty()) {
+        validateAmount(amount);
+        Limit limit = getAvailableLimit(counterparty, instrumentGroup);
+        if (limit == null) {
             return false;
         }
-        Limit limit = limits.get(0); // You might want to add some logic here to handle multiple limits if needed
-        if (limit.getAvailableLimit() >= amount) {
-            limit.setAvailableLimit(limit.getAvailableLimit() - amount);
-            limitRepository.save(limit);
-            return true;
-        }
-        return false;
+
+        // The balance predicate and decrement execute together on MongoDB. A stale
+        // read can identify the row, but cannot authorize an overspending write.
+        Query query = new Query(Criteria.where("_id").is(limit.getId())
+                .and("availableLimit").gte(amount).lte(Double.MAX_VALUE));
+        Limit reserved = mongoTemplate.findAndModify(query,
+                new Update().inc("availableLimit", -amount),
+                FindAndModifyOptions.options().returnNew(true), Limit.class);
+        return reserved != null;
     }
 
-    @Transactional
     public void confirmLimitUsage(String counterparty, String instrumentGroup, Double amount) {
-        // The limit has already been updated in checkAndReserveLimit, so we don't need to do anything here
+        // The reservation already consumed capacity; execution does not debit twice.
+        validateAmount(amount);
     }
 
-    @Transactional
     public void releaseLimitReservation(String counterparty, String instrumentGroup, Double amount) {
-        List<Limit> limits = limitRepository.findByCounterpartyAndInstrumentGroup(counterparty, instrumentGroup);
-        if (!limits.isEmpty()) {
-            Limit limit = limits.get(0); // You might want to add some logic here to handle multiple limits if needed
-            limit.setAvailableLimit(limit.getAvailableLimit() + amount);
-            limitRepository.save(limit);
+        validateAmount(amount);
+        Limit limit = getAvailableLimit(counterparty, instrumentGroup);
+        if (limit != null) {
+            mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(limit.getId())),
+                    new Update().inc("availableLimit", amount), Limit.class);
+        }
+    }
+
+    private void validateAmount(Double amount) {
+        if (amount == null || !Double.isFinite(amount) || amount <= 0) {
+            throw new BusinessException("INVALID_TRADE_AMOUNT", "Amount must be finite and greater than zero");
         }
     }
 }

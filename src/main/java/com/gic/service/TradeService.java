@@ -2,9 +2,7 @@ package com.gic.service;
 
 import com.gic.model.*;
 import com.gic.repository.TradeHistoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,24 +10,29 @@ import java.util.List;
 @Service
 public class TradeService {
 
-    @Autowired
-    private InstrumentService instrumentService;
+    private final InstrumentService instrumentService;
+    private final LimitService limitService;
+    private final TradeHistoryRepository tradeHistoryRepository;
+    private final TradeExecutor tradeExecutor;
 
-    @Autowired
-    private LimitService limitService;
+    public TradeService(InstrumentService instrumentService, LimitService limitService,
+                        TradeHistoryRepository tradeHistoryRepository, TradeExecutor tradeExecutor) {
+        this.instrumentService = instrumentService;
+        this.limitService = limitService;
+        this.tradeHistoryRepository = tradeHistoryRepository;
+        this.tradeExecutor = tradeExecutor;
+    }
 
-    @Autowired
-    private TradeHistoryRepository tradeHistoryRepository;
-
-    @Transactional
     public TradeResult processTrade(TradeRequest tradeRequest) {
         InstrumentVerificationResult verificationResult = instrumentService.verifyInstrument(tradeRequest.getInstrumentVerificationRequest());
 
         if (!verificationResult.isValid()) {
+            saveTrade(tradeRequest, "REJECTED");
             return new TradeResult("REJECTED", "Invalid instrument combination");
         }
 
         if (!verificationResult.isApprovedForDepartment()) {
+            saveTrade(tradeRequest, "REJECTED");
             return new TradeResult("REJECTED", "Instrument not approved for your department");
         }
 
@@ -37,10 +40,13 @@ public class TradeService {
         boolean limitAvailable = limitService.checkAndReserveLimit(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
 
         if (!limitAvailable) {
+            saveTrade(tradeRequest, "REJECTED");
             return new TradeResult("REJECTED", "Insufficient limit for the counterparty and instrument group");
         }
 
-        boolean tradeExecuted = executeTradeOnExternalPlatform(tradeRequest);
+        // An exception has an unknown outcome: retain capacity rather than credit
+        // it speculatively. Durable reconciliation requires a reservation ledger.
+        boolean tradeExecuted = tradeExecutor.execute(tradeRequest);
 
         if (tradeExecuted) {
             limitService.confirmLimitUsage(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
@@ -61,16 +67,6 @@ public class TradeService {
         tradeHistory.setTimestamp(LocalDateTime.now());
         tradeHistory.setStatus(status);
         tradeHistoryRepository.save(tradeHistory);
-    }
-
-    private boolean executeTradeOnExternalPlatform(TradeRequest tradeRequest) {
-        // Simulate external trade execution
-        try {
-            Thread.sleep(500); // Simulate network latency
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        return Math.random() < 0.9; // 90% success rate for demonstration
     }
 
     public List<TradeHistory> getTradeHistory() {

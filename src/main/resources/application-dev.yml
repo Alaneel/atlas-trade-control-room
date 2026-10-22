@@ -1,14 +1,4 @@
-spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/atlas_trade_control_dev
-
 logging:
   level:
-    root: DEBUG
-    com.gic: TRACE
-    org.springframework.web: DEBUG
-    org.springframework.data.mongodb: DEBUG
-
-server:
-  port: 8080
+    root: INFO
+    com.gic: DEBUG
