@@ -2,11 +2,13 @@ package com.gic.controller;
 
 import com.gic.model.*;
 import com.gic.service.*;
+import com.gic.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/trader")
@@ -25,7 +27,7 @@ public class TraderController {
     private TradeService tradeService;
 
     @PostMapping("/verify-instrument")
-    public ResponseEntity<?> verifyInstrument(@RequestBody InstrumentVerificationRequest request) {
+    public ResponseEntity<?> verifyInstrument(@Valid @RequestBody InstrumentVerificationRequest request) {
         InstrumentVerificationResult result = instrumentService.verifyInstrument(request);
         return ResponseEntity.ok(result);
     }
@@ -36,7 +38,7 @@ public class TraderController {
     }
 
     @PostMapping("/approval-request")
-    public ResponseEntity<ApprovalRequest> createApprovalRequest(@RequestBody InstrumentVerificationRequest request) {
+    public ResponseEntity<ApprovalRequest> createApprovalRequest(@Valid @RequestBody InstrumentVerificationRequest request) {
         ApprovalRequest approvalRequest = approvalService.createApprovalRequest(request);
         return ResponseEntity.ok(approvalRequest);
     }
@@ -44,11 +46,14 @@ public class TraderController {
     @GetMapping("/limit/{counterparty}/{instrumentGroup}")
     public ResponseEntity<Limit> getAvailableLimit(@PathVariable String counterparty, @PathVariable String instrumentGroup) {
         Limit limit = limitService.getAvailableLimit(counterparty, instrumentGroup);
+        if (limit == null) {
+            throw new ResourceNotFoundException("No limit exists for this counterparty and instrument group");
+        }
         return ResponseEntity.ok(limit);
     }
 
     @PostMapping("/trade")
-    public ResponseEntity<TradeResult> executeTrade(@RequestBody TradeRequest tradeRequest) {
+    public ResponseEntity<TradeResult> executeTrade(@Valid @RequestBody TradeRequest tradeRequest) {
         TradeResult result = tradeService.processTrade(tradeRequest);
         return ResponseEntity.ok(result);
     }

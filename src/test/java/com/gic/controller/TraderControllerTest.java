@@ -36,6 +36,7 @@ class TraderControllerTest {
     void testVerifyInstrument() throws Exception {
         InstrumentVerificationRequest request = new InstrumentVerificationRequest();
         request.setInstrumentGroup("EQUITY");
+        request.setInstrument("AAPL");
         request.setSettlementCurrency("USD");
         request.setTradeCurrency("USD");
         request.setCountry("US");
@@ -51,7 +52,7 @@ class TraderControllerTest {
     @Test
     void testGetLimit() throws Exception {
         mockMvc.perform(get("/api/trader/limit/COUNTERPARTY1/EQUITY"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
     }
 
     @Test

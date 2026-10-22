@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Reliability and demo correctness
+
+- Replace read/modify/save limit writes with atomic conditional MongoDB debits and atomic credits.
+- Reject missing instrument attributes and nonfinite, zero, or negative trade amounts at the API boundary.
+- Preserve spent capacity across restarts with stable, insert-only seed records.
+- Record service rejections, inject the execution simulator for deterministic tests, and handle cancellation as failure.
+- Make demo trades consume session capacity, add reset, and remove fabricated live performance metrics.
+- Fix container Java argument order, frontend health probe, profile precedence, and production stdout logging.
+- Add concurrent MongoDB tests, seed restart tests, trade outcome tests, and real Streamlit interaction tests.
+- Smoke-test the complete Compose stack and run frontend tests in CI.
+
 ### Added
 - Environment-based configuration with multiple profiles (dev, test, prod)
 - Global exception handling with standardized error responses
@@ -30,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - Added Spring Security with basic configuration
-- Implemented CSRF protection
+- Configured API security headers; authentication and CSRF protection are not implemented
 - Added security headers (XSS, frame options)
 - Dependency vulnerability scanning in CI/CD
 

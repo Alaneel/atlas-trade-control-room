@@ -1,176 +1,78 @@
-# Architecture Documentation
+# Atlas architecture
 
-## System Architecture
+This document describes the implemented request path. Atlas is a single Spring Boot service with a Streamlit client, not a collection of independently deployed microservices.
 
-### Overview
+## Boundaries
 
-Atlas Trade Control Room follows a service-oriented architecture with clear separation of concerns.
-
-### Component Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Frontend Layer                        │
-│  ┌────────────────────────────────────────────────────┐     │
-│  │            Streamlit Dashboard (Python)             │     │
-│  └────────────────────────────────────────────────────┘     │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ REST API
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      Application Layer                       │
-│  ┌────────────────────────────────────────────────────┐     │
-│  │              Spring Boot Backend (Java)             │     │
-│  │                                                      │     │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐ │     │
-│  │  │ Controllers  │  │   Services   │  │  Models  │ │     │
-│  │  └──────────────┘  └──────────────┘  └──────────┘ │     │
-│  │                                                      │     │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐ │     │
-│  │  │   DTOs       │  │  Exceptions  │  │   Utils  │ │     │
-│  │  └──────────────┘  └──────────────┘  └──────────┘ │     │
-│  └────────────────────────────────────────────────────┘     │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                       Data Layer                             │
-│  ┌──────────────────┐           ┌──────────────────┐        │
-│  │    MongoDB       │           │      Redis       │        │
-│  │  (Primary Store) │           │    (Cache)       │        │
-│  └──────────────────┘           └──────────────────┘        │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    Demo["Demo session"] --> State["In-memory demo decisions"]
+    UI["Connected control room"] --> API["Validated REST API"]
+    API --> Instruments["InstrumentService"]
+    Instruments --> Cache["Spring instrument cache"]
+    Cache --> Mongo[("MongoDB")]
+    API --> Trades["TradeService"]
+    Trades --> Limits["Atomic capacity operations"]
+    Limits --> Mongo
+    Trades --> Simulator["SimulatedTradeExecutor"]
+    Trades --> History["Trade history"]
+    History --> Mongo
+    API --> Approval["Pending approval requests"]
+    Approval --> Mongo
 ```
 
-### Design Patterns
+The demo is session-local and uses no backend. Its data and decisions reset with the session or the reset button. Connected mode uses real API responses; it does not fall back to demo records when the API is unavailable.
 
-#### 1. Repository Pattern
-- Abstract data access logic
-- Interfaces: `LimitRepository`, `TradeHistoryRepository`, `InstrumentRepository`
+## Decision sequence
 
-#### 2. Service Layer Pattern
-- Business logic separated from controllers
-- Services: `LimitService`, `TradeService`, `InstrumentService`
+1. Bean validation checks the nested instrument, counterparty, and finite positive amount. Malformed JSON and invalid requests return `400` before service code runs.
+2. InstrumentService queries the complete instrument definition, including department. Spring caching wraps this lookup.
+3. LimitService identifies the canonical limit record for a counterparty and product group, sorted by `_id`. This ensures legacy duplicate snapshots do not become independent spendable pools.
+4. MongoDB atomically evaluates `availableLimit >= amount` and applies `$inc: -amount` to that record. The preceding read selects identity; only this conditional update grants capacity.
+5. TradeService calls the simulated executor. A success consumes the reservation; a definite failure credits it back with atomic `$inc`. Rejected, failed, and executed service outcomes are saved to history.
 
-#### 3. Circuit Breaker Pattern
-- Resilience4j for fault tolerance
-- Applied to Redis operations
+The API returns `404` for an absent limit. An insufficient balance is a recorded `REJECTED` trade decision, not an execution attempt.
 
-#### 4. Caching Strategy
-- L1: Caffeine (in-memory, JVM-local)
-- L2: Redis (distributed)
+## Concurrency and failures
 
-#### 5. Bloom Filter
-- Fast instrument existence checks
-- Reduces database queries
+Single-document MongoDB updates serialize competing reservations. A regression test starts 32 concurrent requests for 75 against 1,000: exactly 13 reserve successfully and the remaining balance is 25. A second test verifies 64 concurrent releases retain all credits. These run against MongoDB, not a mocked repository.
 
-### Data Flow
+This is not a transaction spanning capacity, execution, and history. Important limits remain:
 
-#### Trade Execution Flow
+- A crash after reservation can leave capacity held. There is no durable reservation ledger or recovery worker.
+- Request retries are not idempotent; compensation assumes a caller releases once.
+- An unknown executor outcome retains the reservation rather than assuming execution failed. No automatic reconciliation is implemented.
+- A history write can fail after capacity or execution has changed. Those writes are not coordinated by a Mongo transaction.
+- Amounts use `Double`; decimal precision, rounding, and currency conversion are not modeled.
+- The canonical-row rule assumes limit records are not deleted or replaced during an in-flight reservation. Administrative limit mutation requires a versioned identity design.
 
+The simulated executor sleeps for 500 ms and selects success with probability 0.9. Unit tests inject an executor so both paths are deterministic. Cancellation returns failure and preserves the interruption signal; timings and probabilities are not performance results.
+
+## Seed data
+
+CSV rows are decoded as UTF-8. Natural-key lookups preserve existing legacy records. Fresh records receive deterministic string IDs and use `$setOnInsert`, preventing concurrent starts from multiplying a limit pool or overwriting its consumed balance. Repeated, concurrent, and legacy-data cases have integration tests.
+
+Fixtures are loaded by default. `APP_SEED_DATA_ENABLED=false` disables the initializer. Seeding is not a migration system and does not delete old duplicate records or reconcile changed external limit snapshots.
+
+## Supporting components
+
+MongoDB holds instruments, limits, trade history, and pending approval requests. Caffeine is configured for local Spring caching. Redis configuration, a Redis circuit-breaker helper, and a Bloom-filter utility remain in the codebase, but the implemented trade decision path does not call those helpers. Redis is not an authority for available capacity, and the presence of these utilities does not establish a tested two-level cache.
+
+The API currently permits unauthenticated requests. Approvals can be created as `PENDING`, but there are no reviewer roles or approve/reject actions. Security headers and CORS do not provide authentication.
+
+## Running and checking
+
+Compose runs MongoDB 7, Redis 7, the Java API, and Streamlit. The frontend waits for backend health. Java heap options precede `-jar`; both images run as non-root users and provide health probes available inside their images. Production logs use stdout unless `LOGGING_FILE_NAME` explicitly selects a writable file.
+
+`application.yml` supplies shared defaults, and development/production YAML honors environment overrides. A duplicate properties file no longer silently forces a different profile.
+
+CI runs Java tests, Python unit/Streamlit AppTest cases, Trivy reporting, Docker builds, and a full Compose health/API/UI smoke check. The legacy Checkstyle job remains advisory (`continue-on-error`); its green job status is not proof that every formatting rule passed.
+
+Local checks:
+
+```bash
+mvn -B clean test
+python3 -m unittest discover -s python_src -p 'test_*.py' -v
+docker compose config --quiet
+docker compose up --build --wait
 ```
-User Request
-    ↓
-Streamlit UI
-    ↓
-REST API (TraderController)
-    ↓
-Service Layer (TradeService)
-    ↓
-┌─────────────────────────┐
-│ 1. Verify Instrument    │ → Bloom Filter → MongoDB
-│ 2. Check Limit          │ → Redis Cache → MongoDB
-│ 3. Execute Trade        │ → MongoDB
-│ 4. Update Limit         │ → Redis + MongoDB
-└─────────────────────────┘
-    ↓
-Response to UI
-```
-
-#### Caching Strategy
-
-```
-Request for Limit
-    ↓
-Check Caffeine Cache
-    ↓ (miss)
-Check Redis Cache
-    ↓ (miss)
-Query MongoDB
-    ↓
-Store in Redis
-    ↓
-Store in Caffeine
-    ↓
-Return to Client
-```
-
-### Security Architecture
-
-1. **CORS Configuration**: Controlled cross-origin requests
-2. **Input Validation**: Spring Validation annotations
-3. **Error Handling**: Global exception handler
-4. **Security Headers**: XSS protection, frame options
-
-### Monitoring & Observability
-
-1. **Health Checks**: Spring Actuator endpoints
-2. **Metrics**: Micrometer + Prometheus
-3. **Logging**: SLF4J with structured logging
-4. **Distributed Tracing**: (Future: OpenTelemetry)
-
-### Scalability Considerations
-
-#### Horizontal Scaling
-- Stateless backend services
-- Redis for distributed caching
-- MongoDB replica sets
-
-#### Vertical Scaling
-- JVM heap tuning
-- Connection pooling
-- Thread pool optimization
-
-### Performance Optimizations
-
-1. **Bloom Filter**: O(1) instrument verification
-2. **Multi-level Caching**: Reduced database load
-3. **Connection Pooling**: MongoDB and Redis
-4. **Async Processing**: (Future: @Async for notifications)
-
-### Reliability Features
-
-1. **Circuit Breaker**: Prevents cascade failures
-2. **Health Checks**: Early problem detection
-3. **Retry Logic**: Resilience4j retry mechanism
-4. **Graceful Shutdown**: Spring Boot lifecycle
-
-### Technology Choices
-
-#### Why MongoDB?
-- Flexible schema for trading instruments
-- Document model fits domain entities
-- Horizontal scalability
-
-#### Why Redis?
-- High-performance caching
-- Distributed cache support
-- Rich data structures
-
-#### Why Streamlit?
-- Rapid UI development
-- Python data science ecosystem
-- Real-time updates
-
-#### Why Spring Boot?
-- Production-ready features
-- Strong ecosystem
-- Excellent monitoring support
-
-### Future Enhancements
-
-1. **Event-Driven Architecture**: Kafka for event streaming
-2. **CQRS Pattern**: Separate read/write models
-3. **API Gateway**: Kong or Spring Cloud Gateway
-4. **Service Mesh**: Istio for advanced traffic management
-5. **Database Sharding**: MongoDB sharding for massive scale

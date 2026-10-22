@@ -1,4 +1,4 @@
-.PHONY: help build test clean run docker-up docker-down docker-build install
+.PHONY: help install build test test-coverage clean run-backend run-frontend docker-build docker-up docker-down docker-logs docker-clean lint security-scan dev health-check metrics format package
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -28,7 +28,6 @@ test-coverage: ## Run tests with coverage report
 clean: ## Clean build artifacts
 	@echo "Cleaning..."
 	mvn clean
-	rm -rf target/
 
 run-backend: ## Run Spring Boot backend
 	@echo "Starting backend..."
@@ -40,12 +39,11 @@ run-frontend: ## Run Streamlit frontend
 
 docker-build: ## Build Docker images
 	@echo "Building Docker images..."
-	docker build -t atlas-trade-api:latest .
-	docker build -f Dockerfile.streamlit -t atlas-control-room:latest .
+	docker compose build
 
 docker-up: ## Start all services with Docker Compose
 	@echo "Starting services..."
-	docker-compose up -d
+	docker compose up --build -d --wait
 	@echo "Services started. Access:"
 	@echo "  Frontend: http://localhost:8501"
 	@echo "  Backend:  http://localhost:8080"
@@ -53,15 +51,15 @@ docker-up: ## Start all services with Docker Compose
 
 docker-down: ## Stop all services
 	@echo "Stopping services..."
-	docker-compose down
+	docker compose down
 
 docker-logs: ## View Docker logs
-	docker-compose logs -f
+	docker compose logs -f
 
 docker-clean: ## Remove all containers, volumes, and images
 	@echo "Cleaning Docker resources..."
-	docker-compose down -v
-	docker rmi atlas-trade-api:latest atlas-control-room:latest 2>/dev/null || true
+	docker compose down -v
+	docker rmi atlas-trade-api:local atlas-control-room:local 2>/dev/null || true
 
 lint: ## Run code quality checks
 	@echo "Running checkstyle..."
