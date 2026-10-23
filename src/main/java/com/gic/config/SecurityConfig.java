@@ -17,7 +17,7 @@ public class SecurityConfig {
                         .allowedOrigins("http://localhost:8501", "http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .exposedHeaders("Authorization")
+                        .exposedHeaders("Authorization", "Idempotency-Replayed", "X-Trade-Operation-Id")
                         .allowCredentials(true)
                         .maxAge(3600);
             }

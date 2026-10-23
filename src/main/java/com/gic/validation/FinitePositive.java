@@ -8,13 +8,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** Rejects zero, negative values, NaN, and infinity without imposing a desk ceiling. */
+/** Positive exact decimal with a range that fits MongoDB Decimal128. */
 @Documented
 @Constraint(validatedBy = FinitePositiveValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FinitePositive {
-    String message() default "Amount must be finite and greater than zero";
+    String message() default "Amount must be positive with at most 26 integral and 8 fractional digits";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

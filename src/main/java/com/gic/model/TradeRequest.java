@@ -8,6 +8,9 @@ import com.gic.validation.FinitePositive;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +25,7 @@ public class TradeRequest {
 
     @NotNull(message = "Amount is required")
     @FinitePositive
-    private Double amount;
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal amount;
     private boolean confirmed;
 }

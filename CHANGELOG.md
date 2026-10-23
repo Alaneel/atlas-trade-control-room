@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Exact money and retry admission
+
+- Store new requests, histories, limits, and operation snapshots as decimal values with a 26 integral / 8 fractional digit contract and no implicit rounding.
+- Convert supported legacy balances using value-and-type compare-and-set; require explicit reconciliation for unsafe floating-point artifacts.
+- Add durable `Idempotency-Key` admission, cached final responses, pending replay, payload-conflict detection, and correlated history IDs.
+- Keep pending operations after execution/history uncertainty; retries never take over automatically.
+- Preserve decimal text and the same frozen API request across Streamlit timeout/pending retries.
+- Add parallel same-key HTTP tests, fault-injection replay tests, exact-money cases, and migration race tests.
+- Reject malformed Unicode before request fingerprinting and test valid Unicode replay without replacement-character collisions.
+- Exercise form edits as batched submissions across older and newer Streamlit AppTest versions.
+- Run pull-request checks for stacked review branches as well as main/develop targets.
+- Connect CI Java tests to the MongoDB 7 service instead of silently starting the older embedded test database.
+
 ### Reliability and demo correctness
 
 - Replace read/modify/save limit writes with atomic conditional MongoDB debits and atomic credits.
