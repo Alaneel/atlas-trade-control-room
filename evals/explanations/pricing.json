@@ -1,6 +1,6 @@
 {
-  "version": "atlas-openai-standard-prices-2026-10-21-luna",
-  "verified_on": "2026-10-21",
+  "version": "atlas-openai-standard-prices-2026-10-23-luna",
+  "verified_on": "2026-10-23",
   "source": "https://developers.openai.com/api/docs/pricing",
   "currency": "USD",
   "service_tier": "default",
