@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-20T14:44:15.742408+00:00",
+  "passed": true,
+  "scope": "Actual JVM SIGKILL after UNKNOWN response with persisted simulated execution, same-database restart, query-only reconciliation and identical-key replay",
+  "limits": [
+    "One process boundary after UNKNOWN202, not every crash boundary",
+    "Local Mongo replica set and simulated venue; no independent-node failover or real exchange",
+    "No production identity or authorization acceptance"
+  ],
+  "database": "atlas_process_b7c3d82c9dfd4015b9951f6cb01b28d8",
+  "database_cleanup": "retained for root-owned container cleanup",
+  "mongo_container": "atlas-acceptance-20261020",
+  "http_base": "http://127.0.0.1:18081",
+  "jar_sha256": "d88c01304c72033acc3681ba5f8ee4e57c2147ea0ea9a25ab4ebd5aaa8615847",
+  "source_revision": "8785398a8cce195fbf16befc563302bafafcc3eb",
+  "working_tree_dirty": true,
+  "script_sha256": "649505b51651c8e4d731c8506e7f54e72acddb814f9c125f057d21523bfb5574",
+  "java_version": "openjdk 17.0.14 2025-01-21 LTS\nOpenJDK Runtime Environment Corretto-17.0.14.7.1 (build 17.0.14+7-LTS)\nOpenJDK 64-Bit Server VM Corretto-17.0.14.7.1 (build 17.0.14+7-LTS, mixed mode, sharing)",
+  "idempotency_key": "process-smoke-38c9d84b93f94fe7aac543e47e884cbc",
+  "initial_jvm_pid": 94110,
+  "initial_counts": {
+    "instruments": 4066,
+    "limits": 440,
+    "trades": 0,
+    "receipts": 0,
+    "events": 0
+  },
+  "initial_ledger": {
+    "id": "6ad77e4e861165f1e13f19d6",
+    "instrumentGroup": "EQUITY",
+    "counterparty": "NORTHSTAR",
+    "currency": "USD",
+    "availableLimit": 100.0,
+    "reservedLimit": 0.0,
+    "usedLimit": 0.0,
+    "totalLimit": 100.0,
+    "dataDate": "2026-10-20"
+  },
+  "uncertain_response": {
+    "http_status": 202,
+    "status": "UNKNOWN",
+    "message": "Execution outcome unknown; capacity remains reserved",
+    "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40"
+  },
+  "before_kill_ledger": {
+    "id": "6ad77e4e861165f1e13f19d6",
+    "instrumentGroup": "EQUITY",
+    "counterparty": "NORTHSTAR",
+    "currency": "USD",
+    "availableLimit": 90.0,
+    "reservedLimit": 10.0,
+    "usedLimit": 0.0,
+    "totalLimit": 100.0,
+    "dataDate": "2026-10-20"
+  },
+  "before_kill_counts": {
+    "instruments": 4066,
+    "limits": 440,
+    "trades": 1,
+    "receipts": 1,
+    "events": 3
+  },
+  "before_kill_events": [
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:0",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 0,
+      "status": "RESERVED",
+      "message": "Capacity reserved; awaiting submission",
+      "createdAt": "2026-10-20T14:44:31.807Z"
+    },
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:1",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 1,
+      "status": "SUBMITTED",
+      "message": "Submitted with stable execution identity",
+      "createdAt": "2026-10-20T14:44:31.873Z"
+    },
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:2",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 2,
+      "status": "UNKNOWN",
+      "message": "Execution outcome unknown; capacity remains reserved",
+      "createdAt": "2026-10-20T14:44:31.906Z"
+    }
+  ],
+  "killed_jvm_returncode": -9,
+  "restarted_jvm_pid": 94184,
+  "after_restart_ledger": {
+    "id": "6ad77e4e861165f1e13f19d6",
+    "instrumentGroup": "EQUITY",
+    "counterparty": "NORTHSTAR",
+    "currency": "USD",
+    "availableLimit": 90.0,
+    "reservedLimit": 10.0,
+    "usedLimit": 0.0,
+    "totalLimit": 100.0,
+    "dataDate": "2026-10-20"
+  },
+  "after_restart_counts": {
+    "instruments": 4066,
+    "limits": 440,
+    "trades": 1,
+    "receipts": 1,
+    "events": 3
+  },
+  "persisted_status_after_restart": "UNKNOWN",
+  "reconciliation_response": {
+    "http_status": 200,
+    "status": "EXECUTED",
+    "message": "Confirmed by execution receipt",
+    "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40"
+  },
+  "replayed_requests": 20,
+  "final_ledger": {
+    "id": "6ad77e4e861165f1e13f19d6",
+    "instrumentGroup": "EQUITY",
+    "counterparty": "NORTHSTAR",
+    "currency": "USD",
+    "availableLimit": 90.0,
+    "reservedLimit": 0.0,
+    "usedLimit": 10.0,
+    "totalLimit": 100.0,
+    "dataDate": "2026-10-20"
+  },
+  "final_counts": {
+    "instruments": 4066,
+    "limits": 440,
+    "trades": 1,
+    "receipts": 1,
+    "events": 4
+  },
+  "final_events": [
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:0",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 0,
+      "status": "RESERVED",
+      "message": "Capacity reserved; awaiting submission",
+      "createdAt": "2026-10-20T14:44:31.807Z"
+    },
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:1",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 1,
+      "status": "SUBMITTED",
+      "message": "Submitted with stable execution identity",
+      "createdAt": "2026-10-20T14:44:31.873Z"
+    },
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:2",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 2,
+      "status": "UNKNOWN",
+      "message": "Execution outcome unknown; capacity remains reserved",
+      "createdAt": "2026-10-20T14:44:31.906Z"
+    },
+    {
+      "id": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40:3",
+      "tradeId": "02296ec7d004f1f389a10c6fe8545550d2bd9786c47482446c321f853f73ba40",
+      "sequence": 3,
+      "status": "EXECUTED",
+      "message": "Confirmed by execution receipt",
+      "createdAt": "2026-10-20T14:44:43.744Z"
+    }
+  ],
+  "final_jvm_returncode": 143,
+  "own_child_cleanup_succeeded": true,
+  "finished_at": "2026-10-20T14:44:44.368993+00:00"
+}

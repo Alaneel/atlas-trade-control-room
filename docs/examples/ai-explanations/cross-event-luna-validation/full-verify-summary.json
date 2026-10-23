@@ -1,0 +1,14 @@
+{
+  "command": "mvn -o -q verify",
+  "exit_code": 0,
+  "results": {
+    "tests": 113,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3,
+    "passed": 110
+  },
+  "real_model_calls": 0,
+  "database": "Owned disposable Mongo replica set with failure injection",
+  "scope": "Full suite completed before the final additional budget-drift test. Later targeted tests and retained-output diagnostics are recorded separately."
+}

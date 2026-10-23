@@ -1,0 +1,23 @@
+{
+  "kind" : "retained_provider_output_regression_replay",
+  "rounds" : [ {
+    "provider_responses_replayed" : 10,
+    "real_model_requests" : 0,
+    "round" : "cross-event-v2-first-round",
+    "abstention_controls" : 2,
+    "all_outcomes_preserved" : true
+  }, {
+    "provider_responses_replayed" : 10,
+    "real_model_requests" : 0,
+    "round" : "cross-event-v3-second-round",
+    "abstention_controls" : 2,
+    "all_outcomes_preserved" : true
+  }, {
+    "provider_responses_replayed" : 10,
+    "real_model_requests" : 0,
+    "round" : "cross-event-luna-round",
+    "abstention_controls" : 2,
+    "all_outcomes_preserved" : true
+  } ],
+  "scope" : "Current guards retain the same accepted/rejected observations and text. This is not a new model run or new semantic quality evidence."
+}

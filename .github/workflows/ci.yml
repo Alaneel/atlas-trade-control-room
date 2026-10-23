@@ -16,16 +16,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mongodb:
-        image: mongo:7.0
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
       redis:
         image: redis:7-alpine
         ports:
@@ -40,10 +30,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         cache: maven
 
@@ -54,18 +44,47 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
-    - name: Build with Maven
-      run: mvn clean install -DskipTests
+    - name: Start disposable MongoDB replica set
+      run: |
+        docker run -d --name atlas-ci-mongo --label io.github.alaneel.atlas.task=atlas-ai-ci -p 127.0.0.1:28027:27017 mongo:7.0 --replSet atlas-rs --bind_ip_all --setParameter enableTestCommands=1
+        for attempt in $(seq 1 40); do
+          if docker exec atlas-ci-mongo mongosh --quiet --eval 'try { rs.status() } catch(e) { if(e.code === 94) rs.initiate({_id:"atlas-rs",members:[{_id:0,host:"localhost:27017"}]}); else throw e; } if(!db.hello().isWritablePrimary) quit(1);'; then
+            exit 0
+          fi
+          sleep 1
+        done
+        docker logs atlas-ci-mongo
+        exit 1
 
     - name: Run tests
-      run: mvn test
+      run: mvn -B verify
       env:
-        MONGODB_URI: mongodb://localhost:27017/atlas_trade_control_test
+        ATLAS_MONGO_FAILPOINTS: "true"
+        ATLAS_MONGO_URI: mongodb://127.0.0.1:28027/atlas_context_test?replicaSet=atlas-rs&directConnection=true
         REDIS_HOST: localhost
         REDIS_PORT: 6379
 
-    - name: Generate test coverage report
-      run: mvn jacoco:report
+    - name: Read-only explanation HTTP demonstration
+      run: python3 scripts/explanation-demo.py --mongo-container atlas-ci-mongo --owner-value atlas-ai-ci
+
+    - name: Evaluation report contracts (offline)
+      run: |
+        python3 -m unittest discover -s scripts/tests
+        python3 -m py_compile scripts/run-cross-event-eval.py scripts/cross_event_report.py scripts/build-cross-event-demo.py scripts/build-human-review.py scripts/score-human-review.py scripts/human_review.py scripts/human_review_ui.py python_src/trading_dashboard.py
+
+    - name: Remove owned test database container
+      if: always()
+      run: docker rm -f atlas-ci-mongo || true
+
+    - name: Upload acceptance results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: atlas-acceptance
+        path: |
+          target/surefire-reports
+          target/site/jacoco
+          target/atlas-*.json
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -80,10 +99,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Run Checkstyle
@@ -132,7 +151,7 @@ jobs:
     - name: Set up JDK and Maven cache
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         cache: maven
 

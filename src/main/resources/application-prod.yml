@@ -13,7 +13,7 @@ logging:
     root: WARN
     com.gic: INFO
   file:
-    name: /var/log/atlas-trade-control-room/application.log
+    name: /app/logs/application.log
     max-size: 10MB
     max-history: 30
 

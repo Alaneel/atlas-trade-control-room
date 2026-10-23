@@ -1,0 +1,16 @@
+{
+  "version": "atlas-trade-rules-v1",
+  "rules": {
+    "RISK_INSTRUMENT": "Only the deterministic eligibility check may approve an instrument and department combination.",
+    "RISK_CAPACITY": "A new reservation requires available exact-currency capacity greater than or equal to the requested amount. A rejection uses the balance captured inside that decision transaction.",
+    "RISK_CURRENCY": "Capacity is scoped by counterparty, instrument group and currency. Another currency account cannot fund this request.",
+    "EXEC_RESERVATION": "A durable reservation holds capacity until a definitive execution result is settled.",
+    "EXEC_SUBMISSION": "A submission record is intent, not a confirmed venue execution.",
+    "EXEC_UNKNOWN": "A timeout does not prove rejection or execution. Reserved capacity must remain held until deterministic reconciliation.",
+    "EXEC_RECEIPT": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger.",
+    "EXEC_ACCEPTED": "A matching executed receipt and committed EXECUTED state establish recorded simulated execution, not real-exchange or settlement finality.",
+    "EXEC_REJECTED": "A matching rejected receipt allows the deterministic settlement path to return the reservation once.",
+    "EVIDENCE_REQUIRED": "Missing, legacy, conflicting or changing evidence cannot establish a unique rejection or execution cause. Do not infer a past decision from the current balance.",
+    "READ_ONLY": "Explanations may describe evidence and suggest read-only checks. They cannot grant approval, increase capacity, submit, retry, reconcile or execute trades."
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "schema": "atlas-v4-live-comparison-v1",
+  "prior_run": "20261020T162703Z-fcbda53a",
+  "current_run": "20261023T115759Z-b292183d",
+  "case_sha256": "05190bfdd3e6d9519af9b5cb14a6f9d7208a5e4c1353b68f7883d94bb58d10bf",
+  "same_dataset": true,
+  "generator_model_unchanged": true,
+  "reviewer_model_unchanged": true,
+  "generation_parameters_unchanged": true,
+  "baselines": [
+    {
+      "case_id": "receipt_before_uncertainty",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "04491911b3371ceaeec2bbfea959b55ad9aeede93d8fd19026e1b2f3fd47ae2f",
+        "new_sha256": "04491911b3371ceaeec2bbfea959b55ad9aeede93d8fd19026e1b2f3fd47ae2f"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "7c05ac8b654960f6029dce8a71e79cc13f23e85609b83d61784e972a2889ad08",
+        "new_sha256": "7c05ac8b654960f6029dce8a71e79cc13f23e85609b83d61784e972a2889ad08"
+      }
+    },
+    {
+      "case_id": "receipt_recorded_later",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "04491911b3371ceaeec2bbfea959b55ad9aeede93d8fd19026e1b2f3fd47ae2f",
+        "new_sha256": "04491911b3371ceaeec2bbfea959b55ad9aeede93d8fd19026e1b2f3fd47ae2f"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "21512a6a5310db2c45a708e6be611a8de3f6c69f01e8b10a1e130f4c76de26b8",
+        "new_sha256": "21512a6a5310db2c45a708e6be611a8de3f6c69f01e8b10a1e130f4c76de26b8"
+      }
+    },
+    {
+      "case_id": "persistent_unknown_without_receipt",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "3624aecd11e5d03e5c3258e4fdd4a314fb15e99eac0e1f693ffda7760f832759",
+        "new_sha256": "3624aecd11e5d03e5c3258e4fdd4a314fb15e99eac0e1f693ffda7760f832759"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "e9f654012d4aa4700dd7dae74aea1a9738442ed9ed59aa451bd0b671ce2a4268",
+        "new_sha256": "e9f654012d4aa4700dd7dae74aea1a9738442ed9ed59aa451bd0b671ce2a4268"
+      }
+    },
+    {
+      "case_id": "eventual_execution",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "7a1d498569a9fb92ae2b82ed5209dbf85f4520409954519127d25e6c4a89810a",
+        "new_sha256": "7a1d498569a9fb92ae2b82ed5209dbf85f4520409954519127d25e6c4a89810a"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "fa0ceabc658d599e1105712d4d43775ed18e1ba37ca76c1f65b863d55022a785",
+        "new_sha256": "fa0ceabc658d599e1105712d4d43775ed18e1ba37ca76c1f65b863d55022a785"
+      }
+    },
+    {
+      "case_id": "eventual_venue_rejection",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "d3b99da9d6663d4977993f18f6fee2b2c48c6942308076271f9d31508f1a4b1d",
+        "new_sha256": "d3b99da9d6663d4977993f18f6fee2b2c48c6942308076271f9d31508f1a4b1d"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "33dc49e17264f1b10e9ca5e6ec7043aa3261db5bb55c7d950ce108461eb07ed8",
+        "new_sha256": "33dc49e17264f1b10e9ca5e6ec7043aa3261db5bb55c7d950ce108461eb07ed8"
+      }
+    },
+    {
+      "case_id": "delay_before_submission",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "dc1d807aed5f47765d12827ae0101138fd7d39b6fc8f93cb49c25905f1d2d0ad",
+        "new_sha256": "dc1d807aed5f47765d12827ae0101138fd7d39b6fc8f93cb49c25905f1d2d0ad"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "87baacecc88f09b272dc82abb328a73bb2ce14b6fb7fbf96249ed0be76f3b203",
+        "new_sha256": "87baacecc88f09b272dc82abb328a73bb2ce14b6fb7fbf96249ed0be76f3b203"
+      }
+    },
+    {
+      "case_id": "old_receipt_state_still_unknown",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "65a8741838746e027718abc92b6e360e41e559dd79a7c9200583314141cd3b9e",
+        "new_sha256": "65a8741838746e027718abc92b6e360e41e559dd79a7c9200583314141cd3b9e"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "ae557efad0107e35a2e4ade4604a3cd22ac8b54fda691986e887d46128d7e0cd",
+        "new_sha256": "ae557efad0107e35a2e4ade4604a3cd22ac8b54fda691986e887d46128d7e0cd"
+      }
+    },
+    {
+      "case_id": "rapid_terminal_counterexample",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "329d13656024188e9aa44be15a95c7e62f54c8ad3cc858f4109ae26d070cff6b",
+        "new_sha256": "329d13656024188e9aa44be15a95c7e62f54c8ad3cc858f4109ae26d070cff6b"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "651dc1138bb54a517ce98481bd6b1f5e721ded590923048b360c6f3da34d58ab",
+        "new_sha256": "651dc1138bb54a517ce98481bd6b1f5e721ded590923048b360c6f3da34d58ab"
+      }
+    },
+    {
+      "case_id": "timestamp_sequence_disagreement",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "dc1d807aed5f47765d12827ae0101138fd7d39b6fc8f93cb49c25905f1d2d0ad",
+        "new_sha256": "dc1d807aed5f47765d12827ae0101138fd7d39b6fc8f93cb49c25905f1d2d0ad"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "b7005f2ae7e612e09c6c0414cc93f5c8eefb88086444d5a5d607160d51dc79ec",
+        "new_sha256": "b7005f2ae7e612e09c6c0414cc93f5c8eefb88086444d5a5d607160d51dc79ec"
+      }
+    },
+    {
+      "case_id": "sparse_unknown_counterexample",
+      "rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "dc1d807aed5f47765d12827ae0101138fd7d39b6fc8f93cb49c25905f1d2d0ad",
+        "new_sha256": "dc1d807aed5f47765d12827ae0101138fd7d39b6fc8f93cb49c25905f1d2d0ad"
+      },
+      "strong_rules": {
+        "same_review_visible_content": true,
+        "old_sha256": "4f2b7c083d0d503baca2da82285a1de9f9c253d443a1f7711abbcc8b86fba1b2",
+        "new_sha256": "4f2b7c083d0d503baca2da82285a1de9f9c253d443a1f7711abbcc8b86fba1b2"
+      }
+    }
+  ],
+  "comparison_scope": "Protocol migration: prompt, attribution-only binding/renderer, serialization and proof precision changed. Not an isolated causal model comparison. Review-visible baseline content is compared after trade-ID normalization and exclusion of source metadata; no ratings or source labels are part of this identity check."
+}

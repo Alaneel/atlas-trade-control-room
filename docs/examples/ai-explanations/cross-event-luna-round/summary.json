@@ -1,0 +1,338 @@
+{
+  "complete": true,
+  "model": "gpt-5.6-luna",
+  "reviewer_model": "gpt-4.1-mini-2025-04-14",
+  "budget": {
+    "scope": "Pre-request conservative text-token reservation; unknown usage retains its reservation and stops further dispatch. Not an account billing limit. Excludes taxes/account-specific prices. No retries/tools/parallel dispatch.",
+    "stopped": false,
+    "committed_or_reserved_usd": 0.0396046,
+    "cap_usd": 0.1
+  },
+  "eligible_cases": 10,
+  "controls": 2,
+  "request_attempts": 30,
+  "initiated_requests": 30,
+  "generation_requests": 10,
+  "fallbacks": 2,
+  "fallback_rate": 0.2,
+  "generation_latency_ms": {
+    "count": 10,
+    "p50": 4388,
+    "p95": 6289,
+    "max": 6289,
+    "mean": 4526
+  },
+  "strong_rules_latency_ms": {
+    "count": 10,
+    "p50": 3,
+    "p95": 23,
+    "max": 23,
+    "mean": 7.4
+  },
+  "cost": {
+    "currency": "USD",
+    "initiated_requests": 30,
+    "requests_missing_usage": 0,
+    "requests_unpriced": 0,
+    "requests_missing_cache_breakdown": 0,
+    "requests_missing_cache_write_breakdown": 0,
+    "reported_input_tokens": 72931,
+    "reported_cached_input_tokens": 0,
+    "reported_cache_write_tokens": 0,
+    "reported_output_tokens": 9712,
+    "reported_reasoning_tokens": 1351,
+    "known_usage_estimate_usd_min": 0.0396046,
+    "known_usage_estimate_usd_max": 0.0396046,
+    "estimated_total_usd": 0.0396046,
+    "status": "complete_usage_estimate",
+    "pricing_version": "atlas-openai-standard-prices-2026-10-21-luna",
+    "pricing_source": "https://developers.openai.com/api/docs/pricing",
+    "pricing_verified_on": "2026-10-21",
+    "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens. Cache-write tokens replace ordinary input tokens at the cache-write rate; they are not an additive fee."
+  },
+  "cost_by_kind": {
+    "generation": {
+      "currency": "USD",
+      "initiated_requests": 10,
+      "requests_missing_usage": 0,
+      "requests_unpriced": 0,
+      "requests_missing_cache_breakdown": 0,
+      "requests_missing_cache_write_breakdown": 0,
+      "reported_input_tokens": 17677,
+      "reported_cached_input_tokens": 0,
+      "reported_cache_write_tokens": 0,
+      "reported_output_tokens": 3929,
+      "reported_reasoning_tokens": 1351,
+      "known_usage_estimate_usd_min": 0.0082502,
+      "known_usage_estimate_usd_max": 0.0082502,
+      "estimated_total_usd": 0.0082502,
+      "status": "complete_usage_estimate",
+      "pricing_version": "atlas-openai-standard-prices-2026-10-21-luna",
+      "pricing_source": "https://developers.openai.com/api/docs/pricing",
+      "pricing_verified_on": "2026-10-21",
+      "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens. Cache-write tokens replace ordinary input tokens at the cache-write rate; they are not an additive fee."
+    },
+    "review": {
+      "currency": "USD",
+      "initiated_requests": 20,
+      "requests_missing_usage": 0,
+      "requests_unpriced": 0,
+      "requests_missing_cache_breakdown": 0,
+      "requests_missing_cache_write_breakdown": 0,
+      "reported_input_tokens": 55254,
+      "reported_cached_input_tokens": 0,
+      "reported_cache_write_tokens": 0,
+      "reported_output_tokens": 5783,
+      "reported_reasoning_tokens": 0,
+      "known_usage_estimate_usd_min": 0.0313544,
+      "known_usage_estimate_usd_max": 0.0313544,
+      "estimated_total_usd": 0.0313544,
+      "status": "complete_usage_estimate",
+      "pricing_version": "atlas-openai-standard-prices-2026-10-21-luna",
+      "pricing_source": "https://developers.openai.com/api/docs/pricing",
+      "pricing_verified_on": "2026-10-21",
+      "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens. Cache-write tokens replace ordinary input tokens at the cache-write rate; they are not an additive fee."
+    }
+  },
+  "mechanical": {
+    "checked_attributions": 16,
+    "explicit_relation_recall": {
+      "ai": {
+        "covered": 14,
+        "total": 17,
+        "rate": 0.8235294117647058
+      },
+      "strong_rules": {
+        "covered": 17,
+        "total": 17,
+        "rate": 1.0
+      }
+    },
+    "original_rule_relation_count": 0,
+    "rule_summaries_retained": 10,
+    "controls_abstain_without_request": 2,
+    "scope": "Checked relation recall measures explicit proof objects, not prose usefulness or independent semantic accuracy. Original rules may express some relevant meaning without proof objects."
+  },
+  "valid_model_reviews": 20,
+  "expected_model_reviews": 20,
+  "model_ratings": {
+    "rules": {
+      "goals_covered": 46,
+      "goals_total": 60,
+      "unsupported_claim_flags": 0,
+      "citation_error_flags": 0,
+      "unsafe_advice_flags": 0,
+      "flagged_case_ids": [],
+      "goal_coverage_rate": 0.7666666666666667,
+      "clarity_mean_1_to_5": 4.15,
+      "rated_presentations": 20,
+      "calibration_mean_1_to_5": 4.7
+    },
+    "strong_rules": {
+      "goals_covered": 57,
+      "goals_total": 60,
+      "unsupported_claim_flags": 0,
+      "citation_error_flags": 0,
+      "unsafe_advice_flags": 0,
+      "flagged_case_ids": [],
+      "goal_coverage_rate": 0.95,
+      "clarity_mean_1_to_5": 4.85,
+      "rated_presentations": 20,
+      "calibration_mean_1_to_5": 4.95
+    },
+    "ai": {
+      "goals_covered": 57,
+      "goals_total": 60,
+      "unsupported_claim_flags": 0,
+      "citation_error_flags": 0,
+      "unsafe_advice_flags": 0,
+      "flagged_case_ids": [],
+      "goal_coverage_rate": 0.95,
+      "clarity_mean_1_to_5": 4.6,
+      "rated_presentations": 20,
+      "calibration_mean_1_to_5": 4.85
+    }
+  },
+  "ai_vs_rules": {
+    "wins": 1,
+    "ties": 1,
+    "losses": 0,
+    "order_sensitive_or_disagreement": 8,
+    "incomplete": 0,
+    "case_count": 10,
+    "cases": [
+      {
+        "case_id": "receipt_before_uncertainty",
+        "outcome": "wins",
+        "orientation_winners": [
+          "ai",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "receipt_recorded_later",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "persistent_unknown_without_receipt",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "rules"
+        ]
+      },
+      {
+        "case_id": "eventual_execution",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "eventual_venue_rejection",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "rules",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "delay_before_submission",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "rules",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "old_receipt_state_still_unknown",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "ai",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "rapid_terminal_counterexample",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "timestamp_sequence_disagreement",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "ai",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "sparse_unknown_counterexample",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      }
+    ]
+  },
+  "ai_vs_strong_rules": {
+    "wins": 0,
+    "ties": 0,
+    "losses": 2,
+    "order_sensitive_or_disagreement": 8,
+    "incomplete": 0,
+    "case_count": 10,
+    "cases": [
+      {
+        "case_id": "receipt_before_uncertainty",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "receipt_recorded_later",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "persistent_unknown_without_receipt",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "ai",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "eventual_execution",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "eventual_venue_rejection",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "delay_before_submission",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "strong_rules",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "old_receipt_state_still_unknown",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "strong_rules",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "rapid_terminal_counterexample",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "strong_rules",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "timestamp_sequence_disagreement",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "ai",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "sparse_unknown_counterexample",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      }
+    ]
+  },
+  "human_review": null,
+  "review_scope": "Generator and reviewer model IDs are recorded; source labels hidden, positions reversed. Each case is counted once for stable pair preference; rating counts include both presentations. Same-provider preference, correlated error and order effects remain (including self-preference when IDs match). Not human, heldout or production evidence."
+}

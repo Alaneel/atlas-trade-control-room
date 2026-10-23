@@ -81,3 +81,5 @@ logs/
 # Temporary files
 tmp/
 temp/
+# Local task tooling and benchmark scratch
+work/

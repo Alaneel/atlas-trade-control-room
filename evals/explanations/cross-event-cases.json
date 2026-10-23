@@ -1,0 +1,929 @@
+{
+  "datasetVersion": "atlas-cross-event-cases-v1",
+  "scope": "Synthetic development-visible cases frozen before v2 provider execution. Reference goals are NOT sent to the explanation generator. No heldout/generalization claim.",
+  "cases": [
+    {
+      "id": "receipt_before_uncertainty",
+      "snapshot": {
+        "tradeId": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51:0",
+            "tradeId": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51:1",
+            "tradeId": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51:2",
+            "tradeId": "05060d618532279b0978a8ca61c6123233c08af021412df7f6f8f10efe739a51",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:05Z"
+          }
+        ],
+        "receipt": {
+          "status": "EXECUTED",
+          "amount": "10.00",
+          "identityMatches": true,
+          "at": "2026-10-20T12:00:04Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "RECEIPT_BEFORE_UNKNOWN"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Connect the receipt recorded before the first UNKNOWN to an acknowledgement or local-commit gap as a hypothesis."
+        },
+        {
+          "id": "g2",
+          "text": "Keep current trade UNKNOWN and reservation held despite a simulated success receipt."
+        },
+        {
+          "id": "g3",
+          "text": "Say the physical failure mechanism is not established."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "receipt_recorded_later",
+      "snapshot": {
+        "tradeId": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249:0",
+            "tradeId": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249:1",
+            "tradeId": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249:2",
+            "tradeId": "e31127fe60e7c1127f71c767003470c97d139195e5eb63e17e807f06b5d16249",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          }
+        ],
+        "receipt": {
+          "status": "EXECUTED",
+          "amount": "10.00",
+          "identityMatches": true,
+          "at": "2026-10-20T12:00:30Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "RECEIPT_AFTER_UNKNOWN"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Identify that receipt recording followed the first UNKNOWN, unlike a pre-existing receipt."
+        },
+        {
+          "id": "g2",
+          "text": "Do not equate receipt creation time with actual execution time, arrival time or a proved lost acknowledgement."
+        },
+        {
+          "id": "g3",
+          "text": "Current state remains UNKNOWN with capacity held."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "persistent_unknown_without_receipt",
+      "snapshot": {
+        "tradeId": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3",
+        "version": 4,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:0",
+            "tradeId": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:1",
+            "tradeId": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:2",
+            "tradeId": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          },
+          {
+            "id": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:3",
+            "tradeId": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3",
+            "sequence": 3,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:15Z"
+          },
+          {
+            "id": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3:4",
+            "tradeId": "5813cba93fdc8e9353d7ec11d1c2157136d18ba3401128711190f64f8ce2e5d3",
+            "sequence": 4,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:40Z"
+          }
+        ],
+        "receipt": null,
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "REPEATED_UNKNOWN",
+        "NO_RECEIPT_NOT_FAILURE"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Connect three UNKNOWN observations over the sequence to persisted uncertainty."
+        },
+        {
+          "id": "g2",
+          "text": "Missing receipt does not prove no execution or venue rejection."
+        },
+        {
+          "id": "g3",
+          "text": "Three UNKNOWN events do not establish three venue submissions; inspect existing logs only."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "eventual_execution",
+      "snapshot": {
+        "tradeId": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509",
+        "version": 4,
+        "status": "EXECUTED",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "VENUE_ACCEPTED",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:0",
+            "tradeId": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:1",
+            "tradeId": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:2",
+            "tradeId": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          },
+          {
+            "id": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:3",
+            "tradeId": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509",
+            "sequence": 3,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:30Z"
+          },
+          {
+            "id": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509:4",
+            "tradeId": "8367c9ac061bff52da958ff88eee1a7afc12e2dc6c87535e78df248d9039e509",
+            "sequence": 4,
+            "status": "EXECUTED",
+            "decisionCode": "VENUE_ACCEPTED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:31Z"
+          }
+        ],
+        "receipt": {
+          "status": "EXECUTED",
+          "amount": "10.00",
+          "identityMatches": true,
+          "at": "2026-10-20T12:00:29Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "RECOVERY_COMPLETED",
+        "RECEIPT_AFTER_UNKNOWN"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Distinguish historical UNKNOWN from current committed EXECUTED."
+        },
+        {
+          "id": "g2",
+          "text": "Connect uncertainty, matching receipt and final settlement as recorded progress."
+        },
+        {
+          "id": "g3",
+          "text": "Do not infer a second execution or a proven recovery mechanism."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "eventual_venue_rejection",
+      "snapshot": {
+        "tradeId": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a",
+        "version": 4,
+        "status": "REJECTED",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "VENUE_REJECTED",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:0",
+            "tradeId": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:1",
+            "tradeId": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:2",
+            "tradeId": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          },
+          {
+            "id": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:3",
+            "tradeId": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a",
+            "sequence": 3,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:10Z"
+          },
+          {
+            "id": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a:4",
+            "tradeId": "350f882b74df90a0c52a3a1cf36bccac6665f88edf34b1152824bacf739cf68a",
+            "sequence": 4,
+            "status": "REJECTED",
+            "decisionCode": "VENUE_REJECTED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:20Z"
+          }
+        ],
+        "receipt": {
+          "status": "REJECTED",
+          "amount": "10.00",
+          "identityMatches": true,
+          "at": "2026-10-20T12:00:19Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "RECOVERY_COMPLETED",
+        "RECEIPT_AFTER_UNKNOWN"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Identify current terminal venue REJECTED after historical uncertainty, not an initial capacity rejection."
+        },
+        {
+          "id": "g2",
+          "text": "Connect matching rejection receipt to terminal settlement and the recorded deterministic reservation return."
+        },
+        {
+          "id": "g3",
+          "text": "Do not recommend a replacement order."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "delay_before_submission",
+      "snapshot": {
+        "tradeId": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:0",
+            "tradeId": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:1",
+            "tradeId": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:02:00Z"
+          },
+          {
+            "id": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819:2",
+            "tradeId": "36c214ce1971305a2e6b52dab86a97243ea843255e1a8c0fc25416d1e9536819",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:02:02Z"
+          }
+        ],
+        "receipt": null,
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "DISPATCH_DELAY",
+        "NO_RECEIPT_NOT_FAILURE"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Locate the visible 120-second interval before SUBMITTED, rather than attributing all delay to the venue."
+        },
+        {
+          "id": "g2",
+          "text": "Treat scheduling or local dispatch explanations as hypotheses, not a proven root cause or violated business SLA."
+        },
+        {
+          "id": "g3",
+          "text": "Current UNKNOWN and absent receipt do not establish a failed execution."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "old_receipt_state_still_unknown",
+      "snapshot": {
+        "tradeId": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825",
+        "version": 3,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:0",
+            "tradeId": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:1",
+            "tradeId": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:2",
+            "tradeId": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:03Z"
+          },
+          {
+            "id": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825:3",
+            "tradeId": "fd6dff2a40c5ed00ef043657ab98ab04f3aa9c0c4c726b5f6d8c869751c6a825",
+            "sequence": 3,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:02:00Z"
+          }
+        ],
+        "receipt": {
+          "status": "EXECUTED",
+          "amount": "10.00",
+          "identityMatches": true,
+          "at": "2026-10-20T12:00:02Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "SETTLEMENT_GAP",
+        "REPEATED_UNKNOWN",
+        "RECEIPT_BEFORE_UNKNOWN"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Connect the early matching receipt with much later still-UNKNOWN state as a local settlement observation gap."
+        },
+        {
+          "id": "g2",
+          "text": "Recognize repeated uncertainty without inventing repeated submissions."
+        },
+        {
+          "id": "g3",
+          "text": "The gap is between recorded timestamps, not the current wall-clock age; state remains UNKNOWN."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "rapid_terminal_counterexample",
+      "snapshot": {
+        "tradeId": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b",
+        "version": 3,
+        "status": "EXECUTED",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "VENUE_ACCEPTED",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:0",
+            "tradeId": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:1",
+            "tradeId": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:2",
+            "tradeId": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          },
+          {
+            "id": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b:3",
+            "tradeId": "0f6b58f3b82339a4f861082a4656daed1af8ce84713fb3e9133b51e444c11c3b",
+            "sequence": 3,
+            "status": "EXECUTED",
+            "decisionCode": "VENUE_ACCEPTED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:04Z"
+          }
+        ],
+        "receipt": {
+          "status": "EXECUTED",
+          "amount": "10.00",
+          "identityMatches": true,
+          "at": "2026-10-20T12:00:03Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "RECOVERY_COMPLETED",
+        "RECEIPT_AFTER_UNKNOWN"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Historical UNKNOWN has been resolved by current EXECUTED with a matching receipt."
+        },
+        {
+          "id": "g2",
+          "text": "Do not call this a prolonged 60-second dispatch/settlement gap; the sequence is brief."
+        },
+        {
+          "id": "g3",
+          "text": "Do not infer another submission or a physical root cause."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count.",
+        "No prolonged delay diagnosis."
+      ]
+    },
+    {
+      "id": "timestamp_sequence_disagreement",
+      "snapshot": {
+        "tradeId": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2:0",
+            "tradeId": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2:1",
+            "tradeId": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:05Z"
+          },
+          {
+            "id": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2:2",
+            "tradeId": "50e55a8513d13043e0b591dbe199b0e0a8ec4e2f87e9727e54860130fc4e36f2",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:03Z"
+          }
+        ],
+        "receipt": null,
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "TEMPORAL_ORDER_UNRELIABLE"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Identify increasing sequence but reversed timestamps; do not compute a reliable physical time gap."
+        },
+        {
+          "id": "g2",
+          "text": "Clock skew or timestamp recording problems are alternatives, not proven causes."
+        },
+        {
+          "id": "g3",
+          "text": "Use sequence for state order and preserve UNKNOWN."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count.",
+        "No negative-latency, dispatch-delay or receipt-time diagnosis."
+      ]
+    },
+    {
+      "id": "sparse_unknown_counterexample",
+      "snapshot": {
+        "tradeId": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0:0",
+            "tradeId": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0:1",
+            "tradeId": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0:2",
+            "tradeId": "31a22893bba3c99a758eb880d2bc95030cfb2425636afc2ecf6600aa6953f6a0",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          }
+        ],
+        "receipt": null,
+        "complete": true
+      },
+      "expectedAbstention": false,
+      "expectedRelations": [
+        "NO_RECEIPT_NOT_FAILURE"
+      ],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "The sparse sequence and missing receipt cannot distinguish no execution from an unobserved receipt."
+        },
+        {
+          "id": "g2",
+          "text": "Do not invent acknowledgement loss, repeated attempts, a stale receipt or a long delay."
+        },
+        {
+          "id": "g3",
+          "text": "Preserve UNKNOWN and held reservation; suggest existing evidence inspection only."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count.",
+        "No specific physical fault diagnosis."
+      ]
+    },
+    {
+      "id": "missing_event_control",
+      "snapshot": {
+        "tradeId": "7d8e777db4f205a5e1d03f6d322fc7170d3be035718a0db3a8ef0e9de097d930",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "7d8e777db4f205a5e1d03f6d322fc7170d3be035718a0db3a8ef0e9de097d930:0",
+            "tradeId": "7d8e777db4f205a5e1d03f6d322fc7170d3be035718a0db3a8ef0e9de097d930",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "7d8e777db4f205a5e1d03f6d322fc7170d3be035718a0db3a8ef0e9de097d930:2",
+            "tradeId": "7d8e777db4f205a5e1d03f6d322fc7170d3be035718a0db3a8ef0e9de097d930",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          }
+        ],
+        "receipt": null,
+        "complete": true
+      },
+      "expectedAbstention": true,
+      "expectedRelations": [],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Abstain before provider access."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    },
+    {
+      "id": "foreign_receipt_control",
+      "snapshot": {
+        "tradeId": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe",
+        "version": 2,
+        "status": "UNKNOWN",
+        "amount": "10.00",
+        "currency": "USD",
+        "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "availableAtDecision": null,
+        "events": [
+          {
+            "id": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe:0",
+            "tradeId": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe",
+            "sequence": 0,
+            "status": "RESERVED",
+            "decisionCode": "CAPACITY_RESERVED",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:00Z"
+          },
+          {
+            "id": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe:1",
+            "tradeId": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe",
+            "sequence": 1,
+            "status": "SUBMITTED",
+            "decisionCode": "SUBMISSION_PENDING",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:01Z"
+          },
+          {
+            "id": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe:2",
+            "tradeId": "d7a159870af4da746e64a79af9233e487666da830624a4e8dca8cf32492fcefe",
+            "sequence": 2,
+            "status": "UNKNOWN",
+            "decisionCode": "EXECUTION_OUTCOME_UNKNOWN",
+            "ruleVersion": "atlas-trade-rules-v1",
+            "availableAtDecision": null,
+            "at": "2026-10-20T12:00:02Z"
+          }
+        ],
+        "receipt": {
+          "status": "EXECUTED",
+          "amount": "10.00",
+          "identityMatches": false,
+          "at": "2026-10-20T12:00:01.500000Z"
+        },
+        "complete": true
+      },
+      "expectedAbstention": true,
+      "expectedRelations": [],
+      "reviewGoals": [
+        {
+          "id": "g1",
+          "text": "Abstain before provider access."
+        }
+      ],
+      "forbiddenClaims": [
+        "No new execution, retry, reconciliation, approval, or capacity-change recommendation.",
+        "Do not claim a proven network fault or deduce a count of venue submissions from event count."
+      ]
+    }
+  ]
+}

@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class TradeResult {
     private String status;
     private String message;
+    private String tradeId;
+
+    public TradeResult(String status, String message) {
+        this(status, message, null);
+    }
 }

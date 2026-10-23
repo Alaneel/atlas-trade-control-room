@@ -1,74 +1,100 @@
 # Atlas Trade Control Room
 
-**Explore a pre-trade decision workflow: instrument checks, counterparty capacity, and exception requests.**
+**A Java trade workflow that keeps capacity correct through concurrent requests, duplicate submissions and uncertain execution outcomes.**
 
-Atlas pairs a Java / Spring Boot API with a Streamlit control room. It is a learning prototype for making a decision path visible, from an instrument query to a simulated execution result and stored trade history.
+Java 17 · Spring Boot · MongoDB transactions · Decimal128 · Streamlit
 
-[Architecture notes](ARCHITECTURE.md) · [Backend services](src/main/java/com/gic/service) · [Dashboard](python_src/trading_dashboard.py) · [Contributing](CONTRIBUTING.md)
+Atlas checks instrument eligibility, reserves exact-currency capacity and records a durable execution intent. A timeout keeps the reservation until the outcome is known. Stable execution identities, leased recovery and an ordered audit trail make the failure path inspectable.
 
-## Start with the control room
+[Reliable execution design and API](docs/RELIABLE_EXECUTION.md) · [Validation and benchmark](docs/VALIDATION.md) · [Acceptance tests](src/test/java/com/gic/reliability/integration) · [Original architecture notes](ARCHITECTURE.md)
 
-The dashboard defaults to **Demo data** and runs without the backend. Its sample records let you inspect the interface; they are not observations from a trading system.
+## Run the connected simulator
 
-```bash
+```sh
+docker compose up --build
+```
+
+Open the control room at [localhost:8501](http://localhost:8501). The API runs at [localhost:8080](http://localhost:8080), with [Swagger](http://localhost:8080/swagger-ui.html). Compose initializes a single-node MongoDB replica set and uses a new `mongodb_reliable_data` volume, separate from the prototype's data volume.
+
+The connected fixture has `NORTHSTAR / EQUITY / USD` capacity of **100.00**, with `AAPL / GLOBAL_MARKETS / US / NASDAQ`. Submit an amount such as **10.00** and explicitly confirm. Repeated demonstrations consume the fixture; restarting preserves the balance. External execution is a deterministic local simulator, not a live exchange.
+
+For the browser-only sample interface without a backend:
+
+```sh
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r python_src/requirements.txt
 streamlit run python_src/trading_dashboard.py
 ```
 
-Open [localhost:8501](http://localhost:8501).
+The standalone dashboard defaults to **Demo data**. Sample activity is labelled; connected mode uses backend records and does not invent performance measurements.
 
-For the API, MongoDB, Redis, and dashboard together:
+## Explain rejection and anomalies
 
-```bash
-docker compose up --build
+The read-only explanation layer joins versioned rules, the recorded decision and ordered events. It explains insufficient capacity using the balance captured inside that decision transaction. UNKNOWN outcomes remain unknown even when a matching receipt is present.
+
+`GET /api/trader/trades/{id}/explanation` defaults to rules. Optional `?mode=ai` adds cited cross-event interpretations: receipt order, repeated UNKNOWN, eventual settlement and recorded delays. The server checks cited state/time observations while separately labelling model-authored hypotheses. Rule facts stay authoritative; invalid or unavailable output falls back explicitly. There is no AI approval, capacity, reconciliation or execution capability. Legacy/conflicting evidence abstains.
+
+```sh
+python3 scripts/explanation-demo.py --offline
 ```
 
-Switch off **Demo data** in the sidebar to call the backend. The API is exposed at `localhost:8080`; its [Swagger UI](http://localhost:8080/swagger-ui.html) describes the request schemas.
+[Configuration, API and capability boundary](docs/AI_EXPLANATIONS.md) · [Executed evaluation](docs/AI_EXPLANATION_VALIDATION.md) · [Frozen cases](evals/explanations/cases.json)
 
-## Follow a request through the code
+[Cross-event contract and three-way comparison](docs/CROSS_EVENT_EXPLANATIONS.md) covers the new generation contract, a stronger deterministic comparator, blinded reversed-position model review and a standalone read-only replay. It retains failed rounds and distinguishes provisional model ratings from human evidence.
 
-1. [InstrumentService](src/main/java/com/gic/service/InstrumentService.java) queries MongoDB for matching instrument attributes, including department. Spring caching wraps the lookup.
-2. [LimitService](src/main/java/com/gic/service/LimitService.java) reads a counterparty / instrument-group limit, checks available capacity, subtracts the amount, and saves the record.
-3. [TradeService](src/main/java/com/gic/service/TradeService.java) simulates execution. On simulated success it records an executed trade; on failure it releases the reservation and records a failed trade.
-4. [ApprovalService](src/main/java/com/gic/service/ApprovalService.java) stores an explicit exception request with `PENDING` status. A completed reviewer decision workflow is not implemented here.
+The [initial two-round comparison](docs/CROSS_EVENT_EVALUATION.md) did not show stable AI gains. Its second round had 80% fallback; against stronger rules, AI had zero stable wins, two ties, seven losses and one disagreement. Both initial rounds cost an estimated $0.0940124 across 60 requests, including reviews.
 
-Instrument or capacity checks that reject a trade return a decision before execution; the current service saves history for execution outcomes, not every rejection.
+The [GPT-5.6 Luna follow-up](docs/LUNA_EVALUATION.md) reproduced every failure and held cases, proof checks and reviewer fixed. Fallback fell to 20%, explicit reference-relation recall rose from 1/17 to 14/17, and generation cost fell to $0.0082502 ($0.0396046 with reviews). P50/P95 rose to 4.388/6.289 seconds. Strong rules still cover 17/17, and position-sensitive model reviews do not establish a stable AI advantage. The control room defaults to `rules_plus`; AI stays experimental and read only.
 
-| Method | Route | Purpose |
-|---|---|---|
-| `POST` | `/api/trader/verify-instrument` | Query a permitted instrument combination |
-| `GET` | `/api/trader/instruments` | List instrument IDs |
-| `GET` | `/api/trader/limit/{counterparty}/{instrumentGroup}` | Read available capacity |
-| `POST` | `/api/trader/trade` | Evaluate a request and simulate execution |
-| `GET` | `/api/trader/trades` | Read stored trade history |
-| `POST` | `/api/trader/approval-request` | Create a pending exception request |
+The [v4 contract hardening](docs/ATTRIBUTION_V4.md) moves snapshot binding and every rule fact/check out of model output, retains atomic proof rejection, and replaces pair enumeration with linear candidate discovery for the default rule path. It adds 64 development boundary cases, overflow abstention and exact sub-millisecond rendering. Its offline migration replay is separate from live measurements.
 
-## What this prototype does not establish
+The subsequent [v4 real-model run and human review tools](docs/ATTRIBUTION_V4_LIVE_EVALUATION.md) use the same Luna configuration, frozen cases and fixed reviewer: 0/10 fallbacks, 17/17 explicit relations, P50/P95 4.823/6.508 seconds, USD 0.0068078 for generation and USD 0.0395750 including reviews. Against strong rules, reversed reviews give zero stable wins, three ties, one loss and six disagreements. The offline human review page hides source identities, supports local annotation import/export, and validates incomplete/duplicate ratings; actual human review is still absent. The default remains `rules_plus`.
 
-Limit consumption is **read → modify → save**, not an atomic conditional database update. `@Transactional` annotations alone do not establish concurrent reservation correctness; the implementation needs an explicit concurrency design and verification before multiple requests can safely compete for capacity.
+The first [real-model round](docs/examples/ai-explanations/live-20261020/report.md) used six `gpt-4.1-mini-2025-04-14` requests: estimated cost **$0.0034696**, P50 **2.108 s**, P95 **3.746 s**, fallback **0/6**, and all required claims/checks and citations retained. All six presentations matched the rules baseline, so added usefulness is not established. Configure a private `.env.local`, then run `python3 scripts/run-live-explanation-eval.py --limit 6` to archive a separate round; ordinary CI stays offline.
 
-“External execution” is `Thread.sleep(500)` followed by `Math.random() < 0.9`. The delay and probability are simulation parameters, not latency measurements or reliability results. Amounts use `Double`; this is not an exact-money ledger.
+## Inspect the failure path
 
-A Bloom-filter utility and Redis circuit-breaker service exist in the repository, but the inspected instrument/trade decision path does not invoke them. Their presence is not evidence of an integrated fast path or tested failover. Authentication and role-based approval controls should not be inferred from the interface. This project is not a live trading or production risk platform.
+| Concern | Implementation |
+|---|---|
+| Exact money and conserved capacity | [Money](src/main/java/com/gic/reliability/Money.java), [Limit](src/main/java/com/gic/model/Limit.java) |
+| Atomic reservation and settlement | [ReliableTradeStore](src/main/java/com/gic/reliability/ReliableTradeStore.java) |
+| Duplicate request detection | [TradeOrder](src/main/java/com/gic/reliability/TradeOrder.java), [TradeService](src/main/java/com/gic/service/TradeService.java) |
+| Unknown outcomes and recovery | [TradeWorker](src/main/java/com/gic/reliability/TradeWorker.java) |
+| Durable simulated execution identity | [MongoExecutionGateway](src/main/java/com/gic/reliability/MongoExecutionGateway.java) |
+| Transient errors versus uncertain commit | [TransactionRunner](src/main/java/com/gic/reliability/TransactionRunner.java), [configuration](src/main/java/com/gic/reliability/ReliabilityConfiguration.java) |
 
-## Work on the backend
+The invariant is `available + reserved + used = total`, with nonnegative exact-cent balances. Reservation, trade and event commit together. A durable `RESERVED` trade is also pending work; no separate broker is required in this milestone.
 
-Backend development uses Java 11+, Maven 3.6+, MongoDB, and Redis. The Compose file selects MongoDB 7 and Redis 7.
+`POST /api/trader/trade` now requires `Idempotency-Key` and `confirmed: true`. The same canonical payload/key retrieves the same trade; a different payload returns 409. Pending outcomes return 202 and a stable `tradeId`. Read the trade and its events with `GET /api/trader/trades/{id}` and `GET /api/trader/trades/{id}/events`. Manual `POST .../{id}/reconcile` queries an existing receipt and never submits a new execution. [Complete contract and request body](docs/RELIABLE_EXECUTION.md#api).
 
-```bash
+## Validate
+
+Use Java 17 and Maven 3.6+. Unit and HTTP contract tests require no database; real transaction tests are explicitly skipped without `ATLAS_MONGO_URI`.
+
+```sh
 mvn clean test
-mvn spring-boot:run
+# Against a disposable loopback replica set:
+export ATLAS_MONGO_URI='mongodb://127.0.0.1:28027/?replicaSet=atlas-rs&directConnection=true'
+./scripts/run-acceptance.sh
+./scripts/run-acceptance.sh --benchmark -Datlas.benchmark.requests=500 -Datlas.benchmark.threads=8
 ```
 
-To start the dashboard in API mode:
+Acceptance tests create uniquely named databases and remove only their own databases. They exercise contention, repeated keys, exact cents, rollback, stale workers, persisted receipts and recovery. The optional benchmark retains per-request samples for one hot account and 64 accounts. Its results cover the durable Java/Mongo service path, excluding HTTP and real venue latency. [Actual executed results and limits](docs/VALIDATION.md).
 
-```bash
-DEMO_MODE=false BACKEND_API_URL=http://localhost:8080 \
-  streamlit run python_src/trading_dashboard.py
+For the full HTTP demonstration against a fresh fixture:
+
+```sh
+python3 scripts/reliability-demo.py --help
 ```
 
-See [.env.example](.env.example), [docker-compose.yml](docker-compose.yml), and [architecture notes](ARCHITECTURE.md) for configuration. Existing architecture documentation also describes design intentions; use the linked service implementations to distinguish those intentions from the current path.
+## Boundaries
 
-Released under the [MIT license](LICENSE).
+- This is an unauthenticated local simulator. Production desk identity, authorization and real venue integration are unfinished.
+- Single-node replica-set tests demonstrate transaction behavior, not multi-node failover or power-loss durability.
+- The repository retains its existing Spring Boot 2.6 dependency line; framework and dependency modernization remain separate work.
+- Old binary-double ledgers require an explicit audited migration. Startup rejects incompatible records; no opening balances are invented.
+- Audit events record status transitions. Full event-sourced ledger reconstruction is not implemented.
+- Approval-request creation remains a prototype. A complete exception-review workflow is unfinished. Model explanations are read-only and require separately configured API access; offline contract results do not establish model usefulness.
+
+[Contributing](CONTRIBUTING.md) · [Environment example](.env.example) · [MIT license](LICENSE)

@@ -1,0 +1,15 @@
+{
+  "checks": [
+    {
+      "model": "gpt-5.6-luna",
+      "http_status": 200,
+      "exact_model_available": true
+    },
+    {
+      "model": "gpt-4.1-mini-2025-04-14",
+      "http_status": 200,
+      "exact_model_available": true
+    }
+  ],
+  "billable_generation_requests": 0
+}

@@ -1,14 +1,14 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/atlas_trade_control_dev
+      uri: ${MONGODB_URI:mongodb://127.0.0.1:27017/atlas_reliable?replicaSet=atlas-rs&directConnection=true}
 
 logging:
   level:
-    root: DEBUG
-    com.gic: TRACE
-    org.springframework.web: DEBUG
-    org.springframework.data.mongodb: DEBUG
+    root: INFO
+    com.gic: INFO
+    org.springframework.web: INFO
+    org.springframework.data.mongodb: INFO
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}

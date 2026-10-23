@@ -1,0 +1,1594 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-20T16:10:33.675695+00:00",
+  "passed": true,
+  "database": "atlas_explain_521fd293abbb49668892441ec29ab91b",
+  "database_cleanup": "retained for caller-owned container cleanup",
+  "mongo_container": "atlas-cross-event-final-20261021",
+  "jar_sha256": "945fd9c81162c040f6ec3051b4227ed2cd16baa2eb5e7ba7cfacfb904a5fae22",
+  "source_revision": "af3bf680f055b3379e3febb889b291a4251b9c45",
+  "working_tree_dirty": true,
+  "script_sha256": "744be3cc6009f5edca2621416cd9efef8fcbd114295a41ac8ae0b08449721d39",
+  "mode": "real_http_rules_and_disabled_provider_fallback",
+  "real_model_calls": 0,
+  "cases": [
+    {
+      "id": "capacity_rejection",
+      "trade_response": {
+        "status": "REJECTED",
+        "message": "Insufficient capacity or no initialized exact-currency limit",
+        "tradeId": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c"
+      },
+      "rules": {
+        "tradeId": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+        "tradeVersion": 0,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "d440ba6002a8ce7bba44096ade2c9fccd5ef54cfe228c05cc1a5f695d9dc4448",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 21,
+        "abstained": false,
+        "summary": "Rejected: requested 150.00 USD, but available capacity recorded at that decision was 100.00. No capacity was reserved for this request.",
+        "findings": [
+          {
+            "id": "decision.insufficient_capacity",
+            "ruleId": "RISK_CAPACITY",
+            "text": "Rejected: requested 150.00 USD, but available capacity recorded at that decision was 100.00. No capacity was reserved for this request.",
+            "evidenceIds": [
+              "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+              "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+              "rule:RISK_CAPACITY@atlas-trade-rules-v1"
+            ],
+            "required": true
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.decision_balance",
+            "text": "Inspect the balance captured in the rejection event. Today's available balance cannot explain a past decision.",
+            "evidenceIds": [
+              "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+              "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+            "kind": "trade",
+            "source": "/reliable_trades/1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+            "observation": "Recorded status=REJECTED; version=0; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "No receipt observed by the bounded read query."
+          },
+          {
+            "id": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+            "kind": "event",
+            "source": "/trade_events/1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+            "observation": "sequence=0; status=REJECTED; decision=INSUFFICIENT_CAPACITY; recordedAt=2026-10-20T16:10:45.965Z"
+          },
+          {
+            "id": "rule:RISK_CAPACITY@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/RISK_CAPACITY",
+            "observation": "A new reservation requires available exact-currency capacity greater than or equal to the requested amount. A rejection uses the balance captured inside that decision transaction."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:46.697222Z",
+        "attributions": []
+      },
+      "strong_rules": {
+        "tradeId": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+        "tradeVersion": 0,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "d440ba6002a8ce7bba44096ade2c9fccd5ef54cfe228c05cc1a5f695d9dc4448",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_plus",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 17,
+        "abstained": false,
+        "summary": "Rejected: requested 150.00 USD, but available capacity recorded at that decision was 100.00. No capacity was reserved for this request.",
+        "findings": [
+          {
+            "id": "decision.insufficient_capacity",
+            "ruleId": "RISK_CAPACITY",
+            "text": "Rejected: requested 150.00 USD, but available capacity recorded at that decision was 100.00. No capacity was reserved for this request.",
+            "evidenceIds": [
+              "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+              "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+              "rule:RISK_CAPACITY@atlas-trade-rules-v1"
+            ],
+            "required": true
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.decision_balance",
+            "text": "Inspect the balance captured in the rejection event. Today's available balance cannot explain a past decision.",
+            "evidenceIds": [
+              "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+              "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+            "kind": "trade",
+            "source": "/reliable_trades/1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+            "observation": "Recorded status=REJECTED; version=0; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "No receipt observed by the bounded read query."
+          },
+          {
+            "id": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+            "kind": "event",
+            "source": "/trade_events/1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+            "observation": "sequence=0; status=REJECTED; decision=INSUFFICIENT_CAPACITY; recordedAt=2026-10-20T16:10:45.965Z"
+          },
+          {
+            "id": "rule:RISK_CAPACITY@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/RISK_CAPACITY",
+            "observation": "A new reservation requires available exact-currency capacity greater than or equal to the requested amount. A rejection uses the balance captured inside that decision transaction."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:46.736221Z",
+        "attributions": []
+      },
+      "ai_fallback": {
+        "tradeId": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+        "tradeVersion": 0,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "d440ba6002a8ce7bba44096ade2c9fccd5ef54cfe228c05cc1a5f695d9dc4448",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_fallback",
+        "providerOutcome": "disabled",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 12,
+        "abstained": false,
+        "summary": "Rejected: requested 150.00 USD, but available capacity recorded at that decision was 100.00. No capacity was reserved for this request.",
+        "findings": [
+          {
+            "id": "decision.insufficient_capacity",
+            "ruleId": "RISK_CAPACITY",
+            "text": "Rejected: requested 150.00 USD, but available capacity recorded at that decision was 100.00. No capacity was reserved for this request.",
+            "evidenceIds": [
+              "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+              "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+              "rule:RISK_CAPACITY@atlas-trade-rules-v1"
+            ],
+            "required": true
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.decision_balance",
+            "text": "Inspect the balance captured in the rejection event. Today's available balance cannot explain a past decision.",
+            "evidenceIds": [
+              "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+              "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c@0",
+            "kind": "trade",
+            "source": "/reliable_trades/1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+            "observation": "Recorded status=REJECTED; version=0; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "No receipt observed by the bounded read query."
+          },
+          {
+            "id": "1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+            "kind": "event",
+            "source": "/trade_events/1d08fc668faef4bee8da89d8dfb0ee9f596ffa85356af3b456934ae38784ad8c:0",
+            "observation": "sequence=0; status=REJECTED; decision=INSUFFICIENT_CAPACITY; recordedAt=2026-10-20T16:10:45.965Z"
+          },
+          {
+            "id": "rule:RISK_CAPACITY@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/RISK_CAPACITY",
+            "observation": "A new reservation requires available exact-currency capacity greater than or equal to the requested amount. A rejection uses the balance captured inside that decision transaction."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:46.716488Z",
+        "attributions": []
+      },
+      "mutation_route_status": 405,
+      "documents_before_sha256": "9b66ecfba29176e718ef0b3ef1e8566f7758bfb97362c19bfdb2ed5ea30c8752",
+      "documents_after_sha256": "9b66ecfba29176e718ef0b3ef1e8566f7758bfb97362c19bfdb2ed5ea30c8752",
+      "all_business_documents_unchanged": true,
+      "ledger_after": {
+        "id": "6ad79285def0c50b3336eedf",
+        "instrumentGroup": "EQUITY",
+        "counterparty": "NORTHSTAR",
+        "currency": "USD",
+        "availableLimit": 100.0,
+        "reservedLimit": 0.0,
+        "usedLimit": 0.0,
+        "totalLimit": 100.0,
+        "dataDate": "2026-10-20"
+      }
+    },
+    {
+      "id": "eligibility_rejection",
+      "trade_response": {
+        "status": "REJECTED",
+        "message": "Instrument combination is not approved for this department",
+        "tradeId": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c"
+      },
+      "rules": {
+        "tradeId": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+        "tradeVersion": 0,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "7890028f3fb4288730f6addda9718962669c9a2a6815468f14e048cccaa8b5a1",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 7,
+        "abstained": false,
+        "summary": "Rejected: the deterministic instrument/department eligibility check did not approve the submitted combination. No capacity was reserved for this request.",
+        "findings": [
+          {
+            "id": "decision.instrument_not_approved",
+            "ruleId": "RISK_INSTRUMENT",
+            "text": "Rejected: the deterministic instrument/department eligibility check did not approve the submitted combination. No capacity was reserved for this request.",
+            "evidenceIds": [
+              "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+              "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+              "rule:RISK_INSTRUMENT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.eligibility",
+            "text": "Read the instrument eligibility configuration and the submitted combination; an explanation cannot approve an exception.",
+            "evidenceIds": [
+              "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+              "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+            "kind": "trade",
+            "source": "/reliable_trades/218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+            "observation": "Recorded status=REJECTED; version=0; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "No receipt observed by the bounded read query."
+          },
+          {
+            "id": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+            "kind": "event",
+            "source": "/trade_events/218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+            "observation": "sequence=0; status=REJECTED; decision=INSTRUMENT_NOT_APPROVED; recordedAt=2026-10-20T16:10:47.224Z"
+          },
+          {
+            "id": "rule:RISK_INSTRUMENT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/RISK_INSTRUMENT",
+            "observation": "Only the deterministic eligibility check may approve an instrument and department combination."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:47.705673Z",
+        "attributions": []
+      },
+      "strong_rules": {
+        "tradeId": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+        "tradeVersion": 0,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "7890028f3fb4288730f6addda9718962669c9a2a6815468f14e048cccaa8b5a1",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_plus",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 6,
+        "abstained": false,
+        "summary": "Rejected: the deterministic instrument/department eligibility check did not approve the submitted combination. No capacity was reserved for this request.",
+        "findings": [
+          {
+            "id": "decision.instrument_not_approved",
+            "ruleId": "RISK_INSTRUMENT",
+            "text": "Rejected: the deterministic instrument/department eligibility check did not approve the submitted combination. No capacity was reserved for this request.",
+            "evidenceIds": [
+              "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+              "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+              "rule:RISK_INSTRUMENT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.eligibility",
+            "text": "Read the instrument eligibility configuration and the submitted combination; an explanation cannot approve an exception.",
+            "evidenceIds": [
+              "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+              "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+            "kind": "trade",
+            "source": "/reliable_trades/218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+            "observation": "Recorded status=REJECTED; version=0; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "No receipt observed by the bounded read query."
+          },
+          {
+            "id": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+            "kind": "event",
+            "source": "/trade_events/218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+            "observation": "sequence=0; status=REJECTED; decision=INSTRUMENT_NOT_APPROVED; recordedAt=2026-10-20T16:10:47.224Z"
+          },
+          {
+            "id": "rule:RISK_INSTRUMENT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/RISK_INSTRUMENT",
+            "observation": "Only the deterministic eligibility check may approve an instrument and department combination."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:47.727081Z",
+        "attributions": []
+      },
+      "ai_fallback": {
+        "tradeId": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+        "tradeVersion": 0,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "7890028f3fb4288730f6addda9718962669c9a2a6815468f14e048cccaa8b5a1",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_fallback",
+        "providerOutcome": "disabled",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 9,
+        "abstained": false,
+        "summary": "Rejected: the deterministic instrument/department eligibility check did not approve the submitted combination. No capacity was reserved for this request.",
+        "findings": [
+          {
+            "id": "decision.instrument_not_approved",
+            "ruleId": "RISK_INSTRUMENT",
+            "text": "Rejected: the deterministic instrument/department eligibility check did not approve the submitted combination. No capacity was reserved for this request.",
+            "evidenceIds": [
+              "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+              "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+              "rule:RISK_INSTRUMENT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.eligibility",
+            "text": "Read the instrument eligibility configuration and the submitted combination; an explanation cannot approve an exception.",
+            "evidenceIds": [
+              "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+              "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c@0",
+            "kind": "trade",
+            "source": "/reliable_trades/218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+            "observation": "Recorded status=REJECTED; version=0; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "No receipt observed by the bounded read query."
+          },
+          {
+            "id": "218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+            "kind": "event",
+            "source": "/trade_events/218313a2ab60efbf011b898f6e49da623f02f3636ac6885bef12ca28945b006c:0",
+            "observation": "sequence=0; status=REJECTED; decision=INSTRUMENT_NOT_APPROVED; recordedAt=2026-10-20T16:10:47.224Z"
+          },
+          {
+            "id": "rule:RISK_INSTRUMENT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/RISK_INSTRUMENT",
+            "observation": "Only the deterministic eligibility check may approve an instrument and department combination."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:47.718066Z",
+        "attributions": []
+      },
+      "mutation_route_status": 405,
+      "documents_before_sha256": "3b12a7d98050c2df1ba01049677f284b59bd854fd0ca2213b239565d683a7c69",
+      "documents_after_sha256": "3b12a7d98050c2df1ba01049677f284b59bd854fd0ca2213b239565d683a7c69",
+      "all_business_documents_unchanged": true,
+      "ledger_after": {
+        "id": "6ad79285def0c50b3336eedf",
+        "instrumentGroup": "EQUITY",
+        "counterparty": "NORTHSTAR",
+        "currency": "USD",
+        "availableLimit": 100.0,
+        "reservedLimit": 0.0,
+        "usedLimit": 0.0,
+        "totalLimit": 100.0,
+        "dataDate": "2026-10-20"
+      }
+    },
+    {
+      "id": "recorded_execution",
+      "trade_response": {
+        "status": "EXECUTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90"
+      },
+      "rules": {
+        "tradeId": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+        "tradeVersion": 2,
+        "tradeStatus": "EXECUTED",
+        "snapshotHash": "9e74b5c227f95d5608e2a141eb9221f309e277729a8035502caa3b770e567055",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 8,
+        "abstained": false,
+        "summary": "The local simulated venue returned a matching execution receipt and the trade is committed as EXECUTED. Recorded capacity usage is settled by the deterministic workflow.",
+        "findings": [
+          {
+            "id": "execution.accepted",
+            "ruleId": "EXEC_ACCEPTED",
+            "text": "The local simulated venue returned a matching execution receipt and the trade is committed as EXECUTED. Recorded capacity usage is settled by the deterministic workflow.",
+            "evidenceIds": [
+              "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+              "rule:EXEC_ACCEPTED@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status EXECUTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+              "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 EXECUTED.",
+            "evidenceIds": [
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [],
+        "evidence": [
+          {
+            "id": "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+            "kind": "trade",
+            "source": "/reliable_trades/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "observation": "Recorded status=EXECUTED; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:10:48.196Z"
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:10:48.206Z"
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+            "observation": "sequence=2; status=EXECUTED; decision=VENUE_ACCEPTED; recordedAt=2026-10-20T16:10:48.231Z"
+          },
+          {
+            "id": "rule:EXEC_ACCEPTED@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_ACCEPTED",
+            "observation": "A matching executed receipt and committed EXECUTED state establish recorded simulated execution, not real-exchange or settlement finality."
+          },
+          {
+            "id": "receipt:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "observation": "Matching simulated venue receipt status=EXECUTED; amount=10.00; recordedAt=2026-10-20T16:10:48.224Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:48.700634Z",
+        "attributions": []
+      },
+      "strong_rules": {
+        "tradeId": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+        "tradeVersion": 2,
+        "tradeStatus": "EXECUTED",
+        "snapshotHash": "9e74b5c227f95d5608e2a141eb9221f309e277729a8035502caa3b770e567055",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_plus",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 8,
+        "abstained": false,
+        "summary": "The local simulated venue returned a matching execution receipt and the trade is committed as EXECUTED. Recorded capacity usage is settled by the deterministic workflow.",
+        "findings": [
+          {
+            "id": "execution.accepted",
+            "ruleId": "EXEC_ACCEPTED",
+            "text": "The local simulated venue returned a matching execution receipt and the trade is committed as EXECUTED. Recorded capacity usage is settled by the deterministic workflow.",
+            "evidenceIds": [
+              "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+              "rule:EXEC_ACCEPTED@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status EXECUTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+              "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 EXECUTED.",
+            "evidenceIds": [
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [],
+        "evidence": [
+          {
+            "id": "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+            "kind": "trade",
+            "source": "/reliable_trades/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "observation": "Recorded status=EXECUTED; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:10:48.196Z"
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:10:48.206Z"
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+            "observation": "sequence=2; status=EXECUTED; decision=VENUE_ACCEPTED; recordedAt=2026-10-20T16:10:48.231Z"
+          },
+          {
+            "id": "rule:EXEC_ACCEPTED@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_ACCEPTED",
+            "observation": "A matching executed receipt and committed EXECUTED state establish recorded simulated execution, not real-exchange or settlement finality."
+          },
+          {
+            "id": "receipt:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "observation": "Matching simulated venue receipt status=EXECUTED; amount=10.00; recordedAt=2026-10-20T16:10:48.224Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:48.722775Z",
+        "attributions": []
+      },
+      "ai_fallback": {
+        "tradeId": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+        "tradeVersion": 2,
+        "tradeStatus": "EXECUTED",
+        "snapshotHash": "9e74b5c227f95d5608e2a141eb9221f309e277729a8035502caa3b770e567055",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_fallback",
+        "providerOutcome": "disabled",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 10,
+        "abstained": false,
+        "summary": "The local simulated venue returned a matching execution receipt and the trade is committed as EXECUTED. Recorded capacity usage is settled by the deterministic workflow.",
+        "findings": [
+          {
+            "id": "execution.accepted",
+            "ruleId": "EXEC_ACCEPTED",
+            "text": "The local simulated venue returned a matching execution receipt and the trade is committed as EXECUTED. Recorded capacity usage is settled by the deterministic workflow.",
+            "evidenceIds": [
+              "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+              "rule:EXEC_ACCEPTED@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status EXECUTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+              "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 EXECUTED.",
+            "evidenceIds": [
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+              "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [],
+        "evidence": [
+          {
+            "id": "trade:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90@2",
+            "kind": "trade",
+            "source": "/reliable_trades/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "observation": "Recorded status=EXECUTED; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:10:48.196Z"
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:10:48.206Z"
+          },
+          {
+            "id": "459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+            "kind": "event",
+            "source": "/trade_events/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90:2",
+            "observation": "sequence=2; status=EXECUTED; decision=VENUE_ACCEPTED; recordedAt=2026-10-20T16:10:48.231Z"
+          },
+          {
+            "id": "rule:EXEC_ACCEPTED@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_ACCEPTED",
+            "observation": "A matching executed receipt and committed EXECUTED state establish recorded simulated execution, not real-exchange or settlement finality."
+          },
+          {
+            "id": "receipt:459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/459fbbe3bada4df872c2d79e25bfbc04da8f9a541fb5b3141f0f25f52e240a90",
+            "observation": "Matching simulated venue receipt status=EXECUTED; amount=10.00; recordedAt=2026-10-20T16:10:48.224Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:10:48.712884Z",
+        "attributions": []
+      },
+      "mutation_route_status": 405,
+      "documents_before_sha256": "a1c30744169fe35e99c910e361907d36dfb4c0d5913d83d09558e3d70ee82df6",
+      "documents_after_sha256": "a1c30744169fe35e99c910e361907d36dfb4c0d5913d83d09558e3d70ee82df6",
+      "all_business_documents_unchanged": true,
+      "ledger_after": {
+        "id": "6ad79285def0c50b3336eedf",
+        "instrumentGroup": "EQUITY",
+        "counterparty": "NORTHSTAR",
+        "currency": "USD",
+        "availableLimit": 90.0,
+        "reservedLimit": 0.0,
+        "usedLimit": 10.0,
+        "totalLimit": 100.0,
+        "dataDate": "2026-10-20"
+      }
+    },
+    {
+      "id": "unknown_with_success_receipt",
+      "trade_response": {
+        "status": "UNKNOWN",
+        "message": "Execution outcome unknown; capacity remains reserved",
+        "tradeId": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86"
+      },
+      "rules": {
+        "tradeId": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+        "tradeVersion": 2,
+        "tradeStatus": "UNKNOWN",
+        "snapshotHash": "a07e788c05fd6ebc6b17504f0d11fb40b51e77946792ea9cf3b22de33f32011d",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 19,
+        "abstained": false,
+        "summary": "The execution outcome is uncertain. A timeout proves neither rejection nor execution; reserved capacity must remain held until deterministic reconciliation.",
+        "findings": [
+          {
+            "id": "execution.unknown",
+            "ruleId": "EXEC_UNKNOWN",
+            "text": "The execution outcome is uncertain. A timeout proves neither rejection nor execution; reserved capacity must remain held until deterministic reconciliation.",
+            "evidenceIds": [
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+              "rule:EXEC_UNKNOWN@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status EXECUTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 UNKNOWN.",
+            "evidenceIds": [
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.receipt",
+            "text": "Read the existing venue receipt and trade events. This explanation does not invoke reconciliation or retry execution.",
+            "evidenceIds": [
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+            "kind": "trade",
+            "source": "/reliable_trades/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "observation": "Recorded status=UNKNOWN; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:10:59.796Z"
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:10:59.856Z"
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+            "observation": "sequence=2; status=UNKNOWN; decision=EXECUTION_OUTCOME_UNKNOWN; recordedAt=2026-10-20T16:10:59.888Z"
+          },
+          {
+            "id": "rule:EXEC_UNKNOWN@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_UNKNOWN",
+            "observation": "A timeout does not prove rejection or execution. Reserved capacity must remain held until deterministic reconciliation."
+          },
+          {
+            "id": "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "observation": "Matching simulated venue receipt status=EXECUTED; amount=10.00; recordedAt=2026-10-20T16:10:59.879Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:11:00.464573Z",
+        "attributions": []
+      },
+      "strong_rules": {
+        "tradeId": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+        "tradeVersion": 2,
+        "tradeStatus": "UNKNOWN",
+        "snapshotHash": "a07e788c05fd6ebc6b17504f0d11fb40b51e77946792ea9cf3b22de33f32011d",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_plus",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 19,
+        "abstained": false,
+        "summary": "The execution outcome is uncertain. A timeout proves neither rejection nor execution; reserved capacity must remain held until deterministic reconciliation.",
+        "findings": [
+          {
+            "id": "execution.unknown",
+            "ruleId": "EXEC_UNKNOWN",
+            "text": "The execution outcome is uncertain. A timeout proves neither rejection nor execution; reserved capacity must remain held until deterministic reconciliation.",
+            "evidenceIds": [
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+              "rule:EXEC_UNKNOWN@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status EXECUTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 UNKNOWN.",
+            "evidenceIds": [
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.receipt",
+            "text": "Read the existing venue receipt and trade events. This explanation does not invoke reconciliation or retry execution.",
+            "evidenceIds": [
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+            "kind": "trade",
+            "source": "/reliable_trades/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "observation": "Recorded status=UNKNOWN; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:10:59.796Z"
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:10:59.856Z"
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+            "observation": "sequence=2; status=UNKNOWN; decision=EXECUTION_OUTCOME_UNKNOWN; recordedAt=2026-10-20T16:10:59.888Z"
+          },
+          {
+            "id": "rule:EXEC_UNKNOWN@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_UNKNOWN",
+            "observation": "A timeout does not prove rejection or execution. Reserved capacity must remain held until deterministic reconciliation."
+          },
+          {
+            "id": "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "observation": "Matching simulated venue receipt status=EXECUTED; amount=10.00; recordedAt=2026-10-20T16:10:59.879Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:11:00.505217Z",
+        "attributions": [
+          {
+            "relation": "RECEIPT_BEFORE_UNKNOWN",
+            "observedRelation": "A matching EXECUTED simulated receipt was recorded 0.009 seconds before the first UNKNOWN event. Latest recorded state=UNKNOWN.",
+            "interpretation": "This pattern is consistent with an acknowledgement or local settlement gap after the simulated venue recorded an outcome.",
+            "uncertainty": "These records cannot distinguish acknowledgement loss from a local commit interruption or another cause. Inspect existing event and receipt logs only.",
+            "evidenceIds": [
+              "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "validationScope": "Program-checked observations and deterministic reviewed hypotheses. Physical causation is not established. No model request or operation authority."
+          }
+        ]
+      },
+      "ai_fallback": {
+        "tradeId": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+        "tradeVersion": 2,
+        "tradeStatus": "UNKNOWN",
+        "snapshotHash": "a07e788c05fd6ebc6b17504f0d11fb40b51e77946792ea9cf3b22de33f32011d",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_fallback",
+        "providerOutcome": "disabled",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 11,
+        "abstained": false,
+        "summary": "The execution outcome is uncertain. A timeout proves neither rejection nor execution; reserved capacity must remain held until deterministic reconciliation.",
+        "findings": [
+          {
+            "id": "execution.unknown",
+            "ruleId": "EXEC_UNKNOWN",
+            "text": "The execution outcome is uncertain. A timeout proves neither rejection nor execution; reserved capacity must remain held until deterministic reconciliation.",
+            "evidenceIds": [
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+              "rule:EXEC_UNKNOWN@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status EXECUTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 UNKNOWN.",
+            "evidenceIds": [
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [
+          {
+            "id": "inspect.receipt",
+            "text": "Read the existing venue receipt and trade events. This explanation does not invoke reconciliation or retry execution.",
+            "evidenceIds": [
+              "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+              "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2"
+            ],
+            "required": true
+          }
+        ],
+        "evidence": [
+          {
+            "id": "trade:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86@2",
+            "kind": "trade",
+            "source": "/reliable_trades/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "observation": "Recorded status=UNKNOWN; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:10:59.796Z"
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:10:59.856Z"
+          },
+          {
+            "id": "9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+            "kind": "event",
+            "source": "/trade_events/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86:2",
+            "observation": "sequence=2; status=UNKNOWN; decision=EXECUTION_OUTCOME_UNKNOWN; recordedAt=2026-10-20T16:10:59.888Z"
+          },
+          {
+            "id": "rule:EXEC_UNKNOWN@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_UNKNOWN",
+            "observation": "A timeout does not prove rejection or execution. Reserved capacity must remain held until deterministic reconciliation."
+          },
+          {
+            "id": "receipt:9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/9e4dc9b2f2aa6bf3fdf87c43bd88f7e69bb8561a990b8379e8567c4bec907b86",
+            "observation": "Matching simulated venue receipt status=EXECUTED; amount=10.00; recordedAt=2026-10-20T16:10:59.879Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:11:00.483617Z",
+        "attributions": []
+      },
+      "mutation_route_status": 405,
+      "documents_before_sha256": "f2935f554e8730929835198b8a28830e4ab350e1988b88129b75c7a46ad6822f",
+      "documents_after_sha256": "f2935f554e8730929835198b8a28830e4ab350e1988b88129b75c7a46ad6822f",
+      "all_business_documents_unchanged": true,
+      "ledger_after": {
+        "id": "6ad79285def0c50b3336eedf",
+        "instrumentGroup": "EQUITY",
+        "counterparty": "NORTHSTAR",
+        "currency": "USD",
+        "availableLimit": 80.0,
+        "reservedLimit": 10.0,
+        "usedLimit": 10.0,
+        "totalLimit": 100.0,
+        "dataDate": "2026-10-20"
+      }
+    },
+    {
+      "id": "venue_rejection",
+      "trade_response": {
+        "status": "REJECTED",
+        "message": "Confirmed by execution receipt",
+        "tradeId": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6"
+      },
+      "rules": {
+        "tradeId": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+        "tradeVersion": 2,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "f5bdfda269457bcab2265e890b4ee9efc787aaf229883f5dfefa91414a1dfc62",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 18,
+        "abstained": false,
+        "summary": "The local simulated venue returned a matching rejection receipt and the trade is committed as REJECTED. The deterministic workflow returned the reservation once.",
+        "findings": [
+          {
+            "id": "execution.venue_rejected",
+            "ruleId": "EXEC_REJECTED",
+            "text": "The local simulated venue returned a matching rejection receipt and the trade is committed as REJECTED. The deterministic workflow returned the reservation once.",
+            "evidenceIds": [
+              "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+              "rule:EXEC_REJECTED@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status REJECTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+              "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 REJECTED.",
+            "evidenceIds": [
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [],
+        "evidence": [
+          {
+            "id": "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+            "kind": "trade",
+            "source": "/reliable_trades/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "observation": "Recorded status=REJECTED; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:11:11.795Z"
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:11:11.858Z"
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+            "observation": "sequence=2; status=REJECTED; decision=VENUE_REJECTED; recordedAt=2026-10-20T16:11:11.887Z"
+          },
+          {
+            "id": "rule:EXEC_REJECTED@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_REJECTED",
+            "observation": "A matching rejected receipt allows the deterministic settlement path to return the reservation once."
+          },
+          {
+            "id": "receipt:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "observation": "Matching simulated venue receipt status=REJECTED; amount=10.00; recordedAt=2026-10-20T16:11:11.878Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:11:12.431891Z",
+        "attributions": []
+      },
+      "strong_rules": {
+        "tradeId": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+        "tradeVersion": 2,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "f5bdfda269457bcab2265e890b4ee9efc787aaf229883f5dfefa91414a1dfc62",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_plus",
+        "providerOutcome": "not_requested",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 23,
+        "abstained": false,
+        "summary": "The local simulated venue returned a matching rejection receipt and the trade is committed as REJECTED. The deterministic workflow returned the reservation once.",
+        "findings": [
+          {
+            "id": "execution.venue_rejected",
+            "ruleId": "EXEC_REJECTED",
+            "text": "The local simulated venue returned a matching rejection receipt and the trade is committed as REJECTED. The deterministic workflow returned the reservation once.",
+            "evidenceIds": [
+              "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+              "rule:EXEC_REJECTED@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status REJECTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+              "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 REJECTED.",
+            "evidenceIds": [
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [],
+        "evidence": [
+          {
+            "id": "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+            "kind": "trade",
+            "source": "/reliable_trades/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "observation": "Recorded status=REJECTED; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:11:11.795Z"
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:11:11.858Z"
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+            "observation": "sequence=2; status=REJECTED; decision=VENUE_REJECTED; recordedAt=2026-10-20T16:11:11.887Z"
+          },
+          {
+            "id": "rule:EXEC_REJECTED@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_REJECTED",
+            "observation": "A matching rejected receipt allows the deterministic settlement path to return the reservation once."
+          },
+          {
+            "id": "receipt:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "observation": "Matching simulated venue receipt status=REJECTED; amount=10.00; recordedAt=2026-10-20T16:11:11.878Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:11:12.475816Z",
+        "attributions": []
+      },
+      "ai_fallback": {
+        "tradeId": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+        "tradeVersion": 2,
+        "tradeStatus": "REJECTED",
+        "snapshotHash": "f5bdfda269457bcab2265e890b4ee9efc787aaf229883f5dfefa91414a1dfc62",
+        "ruleVersion": "atlas-trade-rules-v1",
+        "promptVersion": "atlas-explanation-attribution-v3",
+        "mode": "rules_fallback",
+        "providerOutcome": "disabled",
+        "model": null,
+        "modelCalls": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedMillis": 10,
+        "abstained": false,
+        "summary": "The local simulated venue returned a matching rejection receipt and the trade is committed as REJECTED. The deterministic workflow returned the reservation once.",
+        "findings": [
+          {
+            "id": "execution.venue_rejected",
+            "ruleId": "EXEC_REJECTED",
+            "text": "The local simulated venue returned a matching rejection receipt and the trade is committed as REJECTED. The deterministic workflow returned the reservation once.",
+            "evidenceIds": [
+              "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+              "rule:EXEC_REJECTED@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.receipt",
+            "ruleId": "EXEC_RECEIPT",
+            "text": "A matching simulated venue receipt is present with status REJECTED. A receipt alone does not change the trade state or authorize a new execution.",
+            "evidenceIds": [
+              "receipt:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+              "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+              "rule:EXEC_RECEIPT@atlas-trade-rules-v1"
+            ],
+            "required": true
+          },
+          {
+            "id": "evidence.timeline",
+            "ruleId": "EXEC_RESERVATION",
+            "text": "The ordered status history is RESERVED \u2192 SUBMITTED \u2192 REJECTED.",
+            "evidenceIds": [
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+              "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2"
+            ],
+            "required": false
+          }
+        ],
+        "nextChecks": [],
+        "evidence": [
+          {
+            "id": "trade:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6@2",
+            "kind": "trade",
+            "source": "/reliable_trades/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "observation": "Recorded status=REJECTED; version=2; historyComplete=true"
+          },
+          {
+            "id": "receipt_lookup:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "kind": "read_result",
+            "source": "/snapshot/receipt",
+            "observation": "A receipt was observed by the bounded read query."
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:0",
+            "observation": "sequence=0; status=RESERVED; decision=CAPACITY_RESERVED; recordedAt=2026-10-20T16:11:11.795Z"
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:1",
+            "observation": "sequence=1; status=SUBMITTED; decision=SUBMISSION_PENDING; recordedAt=2026-10-20T16:11:11.858Z"
+          },
+          {
+            "id": "4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+            "kind": "event",
+            "source": "/trade_events/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6:2",
+            "observation": "sequence=2; status=REJECTED; decision=VENUE_REJECTED; recordedAt=2026-10-20T16:11:11.887Z"
+          },
+          {
+            "id": "rule:EXEC_REJECTED@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_REJECTED",
+            "observation": "A matching rejected receipt allows the deterministic settlement path to return the reservation once."
+          },
+          {
+            "id": "receipt:4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "kind": "receipt",
+            "source": "/simulated_execution_receipts/4081162132152fdf33fea445a08b4e84395b68c451284e306c11ca5ca7835fb6",
+            "observation": "Matching simulated venue receipt status=REJECTED; amount=10.00; recordedAt=2026-10-20T16:11:11.878Z"
+          },
+          {
+            "id": "rule:EXEC_RECEIPT@atlas-trade-rules-v1",
+            "kind": "rule",
+            "source": "/explanations/rules-v1.json#/rules/EXEC_RECEIPT",
+            "observation": "A matching venue receipt is evidence to inspect; only the deterministic settlement path may change the trade and ledger."
+          }
+        ],
+        "limitations": [
+          "Explanation only: no approval, capacity change or execution authority.",
+          "Evidence concerns a local venue simulator; it does not establish real-exchange finality."
+        ],
+        "generatedAt": "2026-10-20T16:11:12.450534Z",
+        "attributions": []
+      },
+      "mutation_route_status": 405,
+      "documents_before_sha256": "4decbe9b2f5c6577386c3efbe0c75822c696b5dc12d6f9b514d5437a1d7f2192",
+      "documents_after_sha256": "4decbe9b2f5c6577386c3efbe0c75822c696b5dc12d6f9b514d5437a1d7f2192",
+      "all_business_documents_unchanged": true,
+      "ledger_after": {
+        "id": "6ad79285def0c50b3336eedf",
+        "instrumentGroup": "EQUITY",
+        "counterparty": "NORTHSTAR",
+        "currency": "USD",
+        "availableLimit": 80.0,
+        "reservedLimit": 10.0,
+        "usedLimit": 10.0,
+        "totalLimit": 100.0,
+        "dataDate": "2026-10-20"
+      }
+    }
+  ],
+  "final_jvm_returncode": 143,
+  "own_child_cleanup_succeeded": true
+}

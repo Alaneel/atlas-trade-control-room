@@ -1,0 +1,173 @@
+{
+  "kind": "final_offline_full_verify_and_targeted_replay",
+  "full_verify": {
+    "tests": 106,
+    "passed": 103,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3
+  },
+  "additional_replay_test": {
+    "tests": 1,
+    "passed": 1,
+    "real_model_calls": 0
+  },
+  "latest_junit_totals": {
+    "tests": 107,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3,
+    "passed": 104
+  },
+  "python_tests_passed": 3,
+  "classes": [
+    {
+      "class": "com.gic.AtlasTradeControlApplicationTests",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.controller.TraderControllerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.exception.GlobalExceptionHandlerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventJudgeTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventLiveEvaluationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "class": "com.gic.explanation.CrossEventReplayTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.CrossEventVerifierTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationControllerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationEvaluationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationModelReportTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.ExplanationServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.LiveExplanationModelEvaluationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "class": "com.gic.explanation.ModelEvidenceContextTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.explanation.OpenAiPlannerTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.ExplanationMongoTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.LedgerSchemaMongoTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.MongoCommitFailureTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.integration.ReliableExecutionBenchmarkTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "class": "com.gic.reliability.integration.ReliableExecutionMongoTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.unit.TradeValidationTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.gic.reliability.unit.TradeWorkerTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "paid_evaluations": "two separate rounds, 60 total requests; no paid calls in these checks"
+}

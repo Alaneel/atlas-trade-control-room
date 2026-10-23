@@ -1,0 +1,325 @@
+{
+  "complete": true,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "eligible_cases": 10,
+  "controls": 2,
+  "request_attempts": 30,
+  "initiated_requests": 30,
+  "generation_requests": 10,
+  "fallbacks": 8,
+  "fallback_rate": 0.8,
+  "generation_latency_ms": {
+    "count": 10,
+    "p50": 3526,
+    "p95": 4207,
+    "max": 4207,
+    "mean": 3330.1
+  },
+  "strong_rules_latency_ms": {
+    "count": 10,
+    "p50": 4,
+    "p95": 24,
+    "max": 24,
+    "mean": 6.6
+  },
+  "cost": {
+    "currency": "USD",
+    "initiated_requests": 30,
+    "requests_missing_usage": 0,
+    "requests_unpriced": 0,
+    "requests_missing_cache_breakdown": 0,
+    "reported_input_tokens": 70465,
+    "reported_cached_input_tokens": 0,
+    "reported_output_tokens": 9075,
+    "reported_reasoning_tokens": 0,
+    "known_usage_estimate_usd_min": 0.042706,
+    "known_usage_estimate_usd_max": 0.042706,
+    "estimated_total_usd": 0.042706,
+    "status": "complete_usage_estimate",
+    "pricing_version": "atlas-openai-standard-prices-2026-10-21",
+    "pricing_source": "https://developers.openai.com/api/docs/pricing",
+    "pricing_verified_on": "2026-10-21",
+    "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens."
+  },
+  "cost_by_kind": {
+    "generation": {
+      "currency": "USD",
+      "initiated_requests": 10,
+      "requests_missing_usage": 0,
+      "requests_unpriced": 0,
+      "requests_missing_cache_breakdown": 0,
+      "reported_input_tokens": 17767,
+      "reported_cached_input_tokens": 0,
+      "reported_output_tokens": 3281,
+      "reported_reasoning_tokens": 0,
+      "known_usage_estimate_usd_min": 0.0123564,
+      "known_usage_estimate_usd_max": 0.0123564,
+      "estimated_total_usd": 0.0123564,
+      "status": "complete_usage_estimate",
+      "pricing_version": "atlas-openai-standard-prices-2026-10-21",
+      "pricing_source": "https://developers.openai.com/api/docs/pricing",
+      "pricing_verified_on": "2026-10-21",
+      "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens."
+    },
+    "review": {
+      "currency": "USD",
+      "initiated_requests": 20,
+      "requests_missing_usage": 0,
+      "requests_unpriced": 0,
+      "requests_missing_cache_breakdown": 0,
+      "reported_input_tokens": 52698,
+      "reported_cached_input_tokens": 0,
+      "reported_output_tokens": 5794,
+      "reported_reasoning_tokens": 0,
+      "known_usage_estimate_usd_min": 0.0303496,
+      "known_usage_estimate_usd_max": 0.0303496,
+      "estimated_total_usd": 0.0303496,
+      "status": "complete_usage_estimate",
+      "pricing_version": "atlas-openai-standard-prices-2026-10-21",
+      "pricing_source": "https://developers.openai.com/api/docs/pricing",
+      "pricing_verified_on": "2026-10-21",
+      "basis": "Per million tokens, standard synchronous text requests. Usage-based estimate, not an invoice. Unknown models/tiers or missing usage are never priced as zero. Reasoning tokens are already included in output tokens."
+    }
+  },
+  "mechanical": {
+    "checked_attributions": 1,
+    "explicit_relation_recall": {
+      "ai": {
+        "covered": 1,
+        "total": 17,
+        "rate": 0.058823529411764705
+      },
+      "strong_rules": {
+        "covered": 17,
+        "total": 17,
+        "rate": 1.0
+      }
+    },
+    "original_rule_relation_count": 0,
+    "rule_summaries_retained": 10,
+    "controls_abstain_without_request": 2,
+    "scope": "Checked relation recall measures explicit proof objects, not prose usefulness or independent semantic accuracy. Original rules may express some relevant meaning without proof objects."
+  },
+  "valid_model_reviews": 20,
+  "expected_model_reviews": 20,
+  "model_ratings": {
+    "rules": {
+      "goals_covered": 52,
+      "goals_total": 60,
+      "unsupported_claim_flags": 0,
+      "citation_error_flags": 0,
+      "unsafe_advice_flags": 0,
+      "flagged_case_ids": [],
+      "goal_coverage_rate": 0.8666666666666667,
+      "clarity_mean_1_to_5": 4.3,
+      "rated_presentations": 20,
+      "calibration_mean_1_to_5": 4.5
+    },
+    "strong_rules": {
+      "goals_covered": 60,
+      "goals_total": 60,
+      "unsupported_claim_flags": 0,
+      "citation_error_flags": 0,
+      "unsafe_advice_flags": 0,
+      "flagged_case_ids": [],
+      "goal_coverage_rate": 1.0,
+      "clarity_mean_1_to_5": 4.9,
+      "rated_presentations": 20,
+      "calibration_mean_1_to_5": 5
+    },
+    "ai": {
+      "goals_covered": 54,
+      "goals_total": 60,
+      "unsupported_claim_flags": 0,
+      "citation_error_flags": 0,
+      "unsafe_advice_flags": 0,
+      "flagged_case_ids": [],
+      "goal_coverage_rate": 0.9,
+      "clarity_mean_1_to_5": 4.4,
+      "rated_presentations": 20,
+      "calibration_mean_1_to_5": 4.5
+    }
+  },
+  "ai_vs_rules": {
+    "wins": 1,
+    "ties": 6,
+    "losses": 0,
+    "order_sensitive_or_disagreement": 3,
+    "incomplete": 0,
+    "case_count": 10,
+    "cases": [
+      {
+        "case_id": "receipt_before_uncertainty",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "receipt_recorded_later",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "persistent_unknown_without_receipt",
+        "outcome": "wins",
+        "orientation_winners": [
+          "ai",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "eventual_execution",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "rules"
+        ]
+      },
+      {
+        "case_id": "eventual_venue_rejection",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "delay_before_submission",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "old_receipt_state_still_unknown",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "rapid_terminal_counterexample",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "ai"
+        ]
+      },
+      {
+        "case_id": "timestamp_sequence_disagreement",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "sparse_unknown_counterexample",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "ai",
+          "TIE"
+        ]
+      }
+    ]
+  },
+  "ai_vs_strong_rules": {
+    "wins": 0,
+    "ties": 2,
+    "losses": 7,
+    "order_sensitive_or_disagreement": 1,
+    "incomplete": 0,
+    "case_count": 10,
+    "cases": [
+      {
+        "case_id": "receipt_before_uncertainty",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "receipt_recorded_later",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "persistent_unknown_without_receipt",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      },
+      {
+        "case_id": "eventual_execution",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "eventual_venue_rejection",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "delay_before_submission",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "old_receipt_state_still_unknown",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "rapid_terminal_counterexample",
+        "outcome": "order_sensitive_or_disagreement",
+        "orientation_winners": [
+          "TIE",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "timestamp_sequence_disagreement",
+        "outcome": "losses",
+        "orientation_winners": [
+          "strong_rules",
+          "strong_rules"
+        ]
+      },
+      {
+        "case_id": "sparse_unknown_counterexample",
+        "outcome": "ties",
+        "orientation_winners": [
+          "TIE",
+          "TIE"
+        ]
+      }
+    ]
+  },
+  "human_review": null,
+  "review_scope": "Same snapshot generates and grades; source labels hidden, positions reversed. Each case is counted once for stable pair preference; rating counts include both presentations. Self-preference, correlated error and order effects remain. Not human, heldout or production evidence."
+}

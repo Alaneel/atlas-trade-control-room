@@ -1,0 +1,67 @@
+{
+  "old_dataset_sha256": "05190bfdd3e6d9519af9b5cb14a6f9d7208a5e4c1353b68f7883d94bb58d10bf",
+  "new_dataset_sha256": "05190bfdd3e6d9519af9b5cb14a6f9d7208a5e4c1353b68f7883d94bb58d10bf",
+  "checks": [
+    {
+      "id": "receipt_before_uncertainty",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "receipt_recorded_later",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "persistent_unknown_without_receipt",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "eventual_execution",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "eventual_venue_rejection",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "delay_before_submission",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "old_receipt_state_still_unknown",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "rapid_terminal_counterexample",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "timestamp_sequence_disagreement",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "sparse_unknown_counterexample",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "missing_event_control",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    },
+    {
+      "id": "foreign_receipt_control",
+      "original_rule_content_identical": true,
+      "strong_rule_visible_content_identical": true
+    }
+  ],
+  "scope": "Baseline evidence, summary, findings, checks, limitations and strong relation/narrative/citations match. Runtime generatedAt and elapsedMillis excluded. Strong validationScope labeling changed before this task but is excluded from BOTH reviewer inputs."
+}

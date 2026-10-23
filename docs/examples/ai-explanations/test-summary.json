@@ -1,0 +1,621 @@
+{
+  "command": "ATLAS_MONGO_URI=<owned loopback replica set> ATLAS_MONGO_FAILPOINTS=true mvn -o -q verify",
+  "tests": 86,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 2,
+  "suites": [
+    {
+      "name": "com.gic.AtlasTradeControlApplicationTests",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.042",
+      "cases": [
+        {
+          "name": "contextLoads",
+          "seconds": "0.001",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.controller.TraderControllerTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.725",
+      "cases": [
+        {
+          "name": "uncertainSubmissionReturns202AndStableTradeReference",
+          "seconds": "0.058",
+          "skipped": false
+        },
+        {
+          "name": "missingIdempotencyHeaderReturns400BeforeService",
+          "seconds": "0.004",
+          "skipped": false
+        },
+        {
+          "name": "testGetLimit",
+          "seconds": "0.008",
+          "skipped": false
+        },
+        {
+          "name": "testGetInstruments",
+          "seconds": "0.004",
+          "skipped": false
+        },
+        {
+          "name": "unconfirmedOrFractionalCentRequestReturns400",
+          "seconds": "0.039",
+          "skipped": false
+        },
+        {
+          "name": "reconciliationUsesDedicatedReadOnlyServiceAndReturnsTerminal200",
+          "seconds": "0.003",
+          "skipped": false
+        },
+        {
+          "name": "testVerifyInstrument",
+          "seconds": "0.003",
+          "skipped": false
+        },
+        {
+          "name": "conflictRemains409AndMalformedJsonRemains400",
+          "seconds": "0.004",
+          "skipped": false
+        },
+        {
+          "name": "testGetTradeHistory",
+          "seconds": "0.003",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.exception.GlobalExceptionHandlerTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001",
+      "cases": [
+        {
+          "name": "testHandleGlobalException",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "testHandleInsufficientLimitException",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "testHandleBusinessException",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "testHandleResourceNotFoundException",
+          "seconds": "0",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.explanation.ExplanationControllerTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.03",
+      "cases": [
+        {
+          "name": "explicitAiModeUsesTheSameReadOnlyService",
+          "seconds": "0.075",
+          "skipped": false
+        },
+        {
+          "name": "arbitraryModeDoesNotReachTheService",
+          "seconds": "0.012",
+          "skipped": false
+        },
+        {
+          "name": "defaultEndpointIsNoStoreAndUsesRules",
+          "seconds": "0.095",
+          "skipped": false
+        },
+        {
+          "name": "thereIsNoExplanationMutationEndpoint",
+          "seconds": "0.008",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.explanation.ExplanationEvaluationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.087",
+      "cases": [
+        {
+          "name": "frozenCasesCompareRulesWithValidatedAndAdversarialPlannerContracts",
+          "seconds": "0.087",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.explanation.ExplanationServiceTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.087",
+      "cases": [
+        {
+          "name": "explanationServiceHasOnlyReadModelAndPlanningDependencies",
+          "seconds": "0.048",
+          "skipped": false
+        },
+        {
+          "name": "receiptPresenceDoesNotTurnUnknownIntoExecuted",
+          "seconds": "0.012",
+          "skipped": false
+        },
+        {
+          "name": "changesDuringModelRequestInvalidateItsPlan",
+          "seconds": "0.012",
+          "skipped": false
+        },
+        {
+          "name": "incompleteHistoryAbstainsBeforeAnyProviderCall",
+          "seconds": "0.007",
+          "skipped": false
+        },
+        {
+          "name": "modelUnavailableFallsBackWithoutClaimingARealModelCall",
+          "seconds": "0.007",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.explanation.LiveExplanationModelEvaluationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "1",
+      "time": "0.001",
+      "cases": [
+        {
+          "name": "com.gic.explanation.LiveExplanationModelEvaluationTest",
+          "seconds": "0",
+          "skipped": true
+        }
+      ]
+    },
+    {
+      "name": "com.gic.explanation.OpenAiPlannerTest",
+      "tests": "11",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.551",
+      "cases": [
+        {
+          "name": "missingCredentialsCannotMakeANetworkRequest",
+          "seconds": "0.135",
+          "skipped": false
+        },
+        {
+          "name": "stalledResponseHasAnOverallDeadline",
+          "seconds": "0.149",
+          "skipped": false
+        },
+        {
+          "name": "validResponseRequestsStrictSchemaWithoutToolsOrStorage",
+          "seconds": "0.029",
+          "skipped": false
+        },
+        {
+          "name": "stalledBodyAfterHeadersAlsoHasAnOverallDeadline",
+          "seconds": "0.154",
+          "skipped": false
+        },
+        {
+          "name": "testEndpointCannotSendCredentialsToAnArbitraryHost",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "incompleteResponseIsNotAccepted",
+          "seconds": "0.005",
+          "skipped": false
+        },
+        {
+          "name": "providerConcurrencyIsBoundedWithoutAnUnboundedWaitQueue",
+          "seconds": "0.008",
+          "skipped": false
+        },
+        {
+          "name": "httpErrorsNeverExposeRawProviderTextOrCredentials",
+          "seconds": "0.005",
+          "skipped": false
+        },
+        {
+          "name": "toolCallIsRejectedWithoutAnyDispatch",
+          "seconds": "0.004",
+          "skipped": false
+        },
+        {
+          "name": "oversizedResponseIsBoundedBeforeBeingRetained",
+          "seconds": "0.006",
+          "skipped": false
+        },
+        {
+          "name": "refusalIsNotRenderedAsAnExplanation",
+          "seconds": "0.005",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.ExplanationMongoTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.319",
+      "cases": [
+        {
+          "name": "legacyRecordsAbstainRatherThanParsingAnOldFreeTextMessage",
+          "seconds": "0.037",
+          "skipped": false
+        },
+        {
+          "name": "providerMutationAndInventedClaimsAreRejectedWithoutAnyDatabaseWrite",
+          "seconds": "0.025",
+          "skipped": false
+        },
+        {
+          "name": "venueRejectionCarriesVersionedCauseAndItsMatchingReceipt",
+          "seconds": "0.026",
+          "skipped": false
+        },
+        {
+          "name": "matchingSuccessReceiptStillCannotSettleUnknownThroughExplanation",
+          "seconds": "0.032",
+          "skipped": false
+        },
+        {
+          "name": "futureDecisionEnumsAbstainInsteadOfCrashingTheReadModel",
+          "seconds": "0.023",
+          "skipped": false
+        },
+        {
+          "name": "rejectionUsesTransactionTimeBalanceRatherThanTodaysBalance",
+          "seconds": "0.025",
+          "skipped": false
+        },
+        {
+          "name": "untrustedEventMessagesNeverReachThePlanner",
+          "seconds": "0.031",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.LedgerSchemaMongoTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.357",
+      "cases": [
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[1]",
+          "seconds": "0.149",
+          "skipped": false
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[2]",
+          "seconds": "0.028",
+          "skipped": false
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[3]",
+          "seconds": "0.018",
+          "skipped": false
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[4]",
+          "seconds": "0.017",
+          "skipped": false
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[5]",
+          "seconds": "0.016",
+          "skipped": false
+        },
+        {
+          "name": "startupRejectsMalformedBalancesWithoutInferringOrMigratingThem{String}[6]",
+          "seconds": "0.017",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.MongoCommitFailureTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "10.132",
+      "cases": [
+        {
+          "name": "anAbortedTransientTransactionRerunsCallbackButCommitsOneRecord",
+          "seconds": "0.036",
+          "skipped": false
+        },
+        {
+          "name": "unknownCommitResultRetriesTheSameCommitWithoutRepeatingBusinessCallback",
+          "seconds": "9.982",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.ReliableExecutionBenchmarkTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "1",
+      "time": "0",
+      "cases": [
+        {
+          "name": "com.gic.reliability.integration.ReliableExecutionBenchmarkTest",
+          "seconds": "0",
+          "skipped": true
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.integration.ReliableExecutionMongoTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "22.613",
+      "cases": [
+        {
+          "name": "timeoutBeforeSubmissionDoesNotReleaseFundsAndStableKeyRetryRecovers",
+          "seconds": "0.175",
+          "skipped": false
+        },
+        {
+          "name": "definitiveRejectionReleasesExactlyOnceDespiteRepeatedReconciliation",
+          "seconds": "0.17",
+          "skipped": false
+        },
+        {
+          "name": "committedReservationSurvivesServiceRecreationBeforeDispatch",
+          "seconds": "0.048",
+          "skipped": false
+        },
+        {
+          "name": "venueSuccessSurvivesDatabaseSettlementFailureAndAnExpiredWorkerLease",
+          "seconds": "0.051",
+          "skipped": false
+        },
+        {
+          "name": "oneHundredConcurrentReplaysProduceOneDurableTradeAndExecution",
+          "seconds": "0.172",
+          "skipped": false
+        },
+        {
+          "name": "legacyFloatingPointLedgerFailsClosedWithoutImportingFixtures",
+          "seconds": "0.12",
+          "skipped": false
+        },
+        {
+          "name": "expiredLeaseHolderCannotSettleOverANewerClaim",
+          "seconds": "0.041",
+          "skipped": false
+        },
+        {
+          "name": "eventsHaveUniqueOrderedSequencesAndTerminalReplayAppendsNothing",
+          "seconds": "0.096",
+          "skipped": false
+        },
+        {
+          "name": "eventWriteFailureAbortsReservationAndTradeTogether",
+          "seconds": "0.027",
+          "skipped": false
+        },
+        {
+          "name": "decimalCentsStayExactAndAreStoredAsDecimal128",
+          "seconds": "0.073",
+          "skipped": false
+        },
+        {
+          "name": "oneHundredConcurrentTenUnitTradesNeverOverspendOneHundred",
+          "seconds": "0.477",
+          "skipped": false
+        },
+        {
+          "name": "repeatedDevelopmentSeedDoesNotDuplicateRecordsOrResetConsumedMoney",
+          "seconds": "20.881",
+          "skipped": false
+        },
+        {
+          "name": "reusingAKeyWithAnotherPayloadConflictsWithoutMovingMoney",
+          "seconds": "0.012",
+          "skipped": false
+        },
+        {
+          "name": "currencyIsPartOfTheReservationScope",
+          "seconds": "0.037",
+          "skipped": false
+        },
+        {
+          "name": "lostSuccessResponseHoldsFundsThenReconcilesPersistedReceiptOnce",
+          "seconds": "0.069",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.unit.TradeValidationTest",
+      "tests": "13",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.025",
+      "cases": [
+        {
+          "name": "nullAmountRejected",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "unsafeKeysRejected{String}[1]",
+          "seconds": "0.006",
+          "skipped": false
+        },
+        {
+          "name": "unsafeKeysRejected{String}[2]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "unsafeKeysRejected{String}[3]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "unsafeKeysRejected{String}[4]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "canonicalFingerprintPreservesBusinessIdentity",
+          "seconds": "0.003",
+          "skipped": false
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[1]",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[2]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[3]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[4]",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[5]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "refusesOutOfRangeOrFractionalCents{String}[6]",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "incompleteAndUnconfirmedRequestsRejected",
+          "seconds": "0.001",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "name": "com.gic.reliability.unit.TradeWorkerTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.027",
+      "cases": [
+        {
+          "name": "timeoutPreservesReservationAsUnknown",
+          "seconds": "0.004",
+          "skipped": false
+        },
+        {
+          "name": "manualReconciliationNeverSubmitsEvenWithoutReceipt",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "refusesUnboundedLease",
+          "seconds": "0",
+          "skipped": false
+        },
+        {
+          "name": "leasedTradeIsOnlyRead",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "databaseFailureAfterReceiptIsNotMisclassifiedAsVenueRejection",
+          "seconds": "0.001",
+          "skipped": false
+        },
+        {
+          "name": "queryReceiptBeforeAnyResubmission",
+          "seconds": "0",
+          "skipped": false
+        }
+      ]
+    }
+  ],
+  "explanation_coverage": [
+    {
+      "type": "INSTRUCTION",
+      "missed": "174",
+      "covered": "2909"
+    },
+    {
+      "type": "BRANCH",
+      "missed": "94",
+      "covered": "231"
+    },
+    {
+      "type": "LINE",
+      "missed": "7",
+      "covered": "348"
+    },
+    {
+      "type": "COMPLEXITY",
+      "missed": "94",
+      "covered": "209"
+    },
+    {
+      "type": "METHOD",
+      "missed": "2",
+      "covered": "133"
+    },
+    {
+      "type": "CLASS",
+      "missed": "0",
+      "covered": "19"
+    }
+  ]
+}

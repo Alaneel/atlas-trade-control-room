@@ -1,3 +1,5 @@
+> The reliable execution milestone supersedes the original trade/limit mutation path described below. See [RELIABLE_EXECUTION.md](docs/RELIABLE_EXECUTION.md) for the current transaction, idempotency and recovery contract. This file retains prototype design history, not proof that every component is integrated.
+
 # Architecture Documentation
 
 ## System Architecture

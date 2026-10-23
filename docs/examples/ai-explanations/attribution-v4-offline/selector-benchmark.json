@@ -1,0 +1,23 @@
+{
+  "event_count" : 64,
+  "pair_enumeration_ns" : [ 332055583, 324449083, 314834459, 302257375, 323129583, 351122584, 313318375, 318475041, 328212000, 333082500, 311348084 ],
+  "linear_selection_ns" : [ 80833, 96958, 91541, 98625, 96250, 120750, 81125, 75875, 92000, 194292, 77375 ],
+  "median_pair_ns" : 323129583,
+  "scope" : "One development fixture, sequential old-then-new, warmed in one local JVM under the same current proof/rendering kernel. No database/HTTP/model requests. Exact output equality is asserted; timings are descriptive only, not an SLA or production load result.",
+  "median_linear_ns" : 92000,
+  "warmups_per_variant" : 3,
+  "kind" : "local_pure_rule_selector_microbenchmark",
+  "measured_iterations_per_variant" : 11,
+  "median_ratio" : 3512.2780760869564,
+  "unmeasured_setup_calls" : {
+    "pair_enumeration" : 1,
+    "linear_selection" : 0
+  },
+  "environment" : {
+    "vendor" : "Amazon.com Inc.",
+    "coverage_agent" : "Default Maven test instrumentation",
+    "architecture" : "aarch64",
+    "os" : "Mac OS X",
+    "java" : "17.0.14"
+  }
+}
