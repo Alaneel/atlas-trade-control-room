@@ -289,6 +289,79 @@ class IdempotencyFlowTest {
         assertEquals(2, mongo.count(new Query(), "trade_operations"));
     }
 
+    @Test
+    void aMalformedUnicodePayloadCannotReplayAQuestionMarkPayload() throws Exception {
+        String ordinary = payload("1.00").replace("\"AAPL\"", "\"AAPL?\"");
+        // Construct the JSON escape directly: ObjectMapper must not pre-normalize it.
+        String malformed = payload("1.00").replace("\"AAPL\"", "\"AAPL" + "\\" + "uD800\"");
+        mvc.perform(post("/api/trader/trade")
+                        .header("Idempotency-Key", "question-mark-unicode")
+                        .contentType(MediaType.APPLICATION_JSON).content(ordinary))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("EXECUTED"));
+
+        mvc.perform(post("/api/trader/trade")
+                        .header("Idempotency-Key", "question-mark-unicode")
+                        .contentType(MediaType.APPLICATION_JSON).content(malformed))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_TRADE_TEXT"))
+                .andExpect(header().doesNotExist("Idempotency-Replayed"));
+
+        verify(executor, times(1)).execute(any(TradeRequest.class));
+        assertBalance("99.00");
+        assertEquals(1, mongo.count(new Query(), TradeHistory.class));
+        assertEquals(1, mongo.count(new Query(), "trade_operations"));
+    }
+
+    @Test
+    void unpairedSurrogatesCannotReserveCapacityOrPoisonANewKey() throws Exception {
+        for (String surrogate : new String[] {"uD800", "uDC00"}) {
+            String malformed = payload("1.00").replace("\"AAPL\"", "\"AAPL" + "\\" + surrogate + "\"");
+            mvc.perform(post("/api/trader/trade")
+                            .header("Idempotency-Key", "invalid-unicode-first")
+                            .contentType(MediaType.APPLICATION_JSON).content(malformed))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value("INVALID_TRADE_TEXT"));
+        }
+        verify(executor, never()).execute(any(TradeRequest.class));
+        assertBalance("100.00");
+        assertEquals(0, mongo.count(new Query(), TradeHistory.class));
+        assertEquals(0, mongo.count(new Query(), "trade_operations"));
+
+        mvc.perform(post("/api/trader/trade")
+                        .header("Idempotency-Key", "invalid-unicode-first")
+                        .contentType(MediaType.APPLICATION_JSON).content(payload("1.00")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("EXECUTED"))
+                .andExpect(header().string("Idempotency-Replayed", "false"));
+        verify(executor, times(1)).execute(any(TradeRequest.class));
+        assertBalance("99.00");
+        assertEquals(1, mongo.count(new Query(), "trade_operations"));
+    }
+
+    @Test
+    void validUnicodeEmojiRemainEligibleForSubmissionAndReplay() throws Exception {
+        String escapedEmoji = payload("1.00").replace("\"AAPL\"",
+                "\"AAPL" + "\\" + "uD83D" + "\\" + "uDE80\"");
+        String plainEmoji = payload("1.0").replace("\"AAPL\"",
+                "\"AAPL" + new String(Character.toChars(0x1f680)) + "\"");
+        mvc.perform(post("/api/trader/trade")
+                        .header("Idempotency-Key", "valid-emoji")
+                        .contentType(MediaType.APPLICATION_JSON).content(escapedEmoji))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("EXECUTED"));
+        mvc.perform(post("/api/trader/trade")
+                        .header("Idempotency-Key", "valid-emoji")
+                        .contentType(MediaType.APPLICATION_JSON).content(plainEmoji))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("EXECUTED"))
+                .andExpect(header().string("Idempotency-Replayed", "true"));
+        verify(executor, times(1)).execute(any(TradeRequest.class));
+        assertBalance("99.00");
+        assertEquals(1, mongo.count(new Query(), TradeHistory.class));
+        assertEquals(1, mongo.count(new Query(), "trade_operations"));
+    }
+
     private MvcResult submit(String key, String amount) throws Exception {
         return mvc.perform(post("/api/trader/trade")
                         .header("Idempotency-Key", key)

@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep pending operations after execution/history uncertainty; retries never take over automatically.
 - Preserve decimal text and the same frozen API request across Streamlit timeout/pending retries.
 - Add parallel same-key HTTP tests, fault-injection replay tests, exact-money cases, and migration race tests.
+- Reject malformed Unicode before request fingerprinting and test valid Unicode replay without replacement-character collisions.
+- Exercise form edits as batched submissions across older and newer Streamlit AppTest versions.
 - Run pull-request checks for stacked review branches as well as main/develop targets.
 
 ### Reliability and demo correctness

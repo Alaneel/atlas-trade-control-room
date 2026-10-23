@@ -87,6 +87,8 @@ curl -sS http://localhost:8080/api/trader/trade \
 
 `X-Trade-Operation-Id` correlates the operation record and trade history. It is a hash, not a replacement for the original idempotency key. Omitting the key preserves the original independent-submission behavior: repeated calls can execute again.
 
+Trade text must be valid Unicode. Malformed surrogate sequences are rejected with `400 INVALID_TRADE_TEXT` before an operation is admitted, rather than being replaced during fingerprint encoding.
+
 The dashboard keeps a frozen request and key across timeouts and `202` replies. **Retry same trade** resends that saved request; editing and submitting fields or choosing **Start a new trade intent** creates a different intent. This saved state lasts only for the current Streamlit session.
 
 Legacy integer, long, and double balances are converted on access using a value-and-type compare-and-set. Doubles use their shortest round-trip decimal spelling. A value such as `0.30000000000000004` is rejected for explicit reconciliation instead of being silently rounded. Back up an existing database before migrating; already-stored historical floating-point errors cannot be reconstructed.

@@ -29,7 +29,7 @@ The demo is session-local and uses no backend. Its data and decisions reset with
 ## Decision sequence
 
 1. Bean validation checks the nested instrument, counterparty, and positive decimal amount (26 integral and 8 fractional digits). Malformed JSON and invalid requests return `400` before trade code runs.
-2. An atomic insert into `trade_operations` grants one owner for a key. The ID is a SHA-256 key hash; the fingerprint includes every mapped request attribute and the canonical decimal amount. A duplicate returns a cached final result or `202`, while different details return `409`.
+2. An atomic insert into `trade_operations` grants one owner for a key. The ID is a SHA-256 key hash; the fingerprint length-prefixes every mapped request attribute and the canonical decimal amount. Strict UTF-8 encoding rejects malformed Unicode before insertion, avoiding replacement-character collisions. A duplicate returns a cached final result or `202`, while different details return `409`.
 3. InstrumentService queries the complete instrument definition, including department. Spring caching wraps this lookup.
 4. LimitService identifies the canonical limit record for a counterparty and product group, sorted by `_id`. This ensures legacy duplicate snapshots do not become independent spendable pools.
 5. MongoDB atomically evaluates `availableLimit >= amount` and applies a Decimal128 `$inc` debit to that record. The preceding read selects identity; only this conditional update grants capacity.

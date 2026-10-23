@@ -120,7 +120,10 @@ class DashboardTest(unittest.TestCase):
                 patch("requests.request", side_effect=request):
             app = AppTest.from_file(str(APP)).run(timeout=15)
             app.radio[0].set_value("New trade").run()
-            next(field for field in app.text_input if field.label == "Notional in the counterparty limit currency").set_value("0.100000000").run()
+            # Forms send their edited values with the submit event. Running the
+            # script between typing and submit discards unsubmitted form edits
+            # in newer AppTest versions, unlike a browser's batched form event.
+            next(field for field in app.text_input if field.label == "Notional in the counterparty limit currency").set_value("0.100000000")
             next(button for button in app.button if button.label == "Run checks & submit").click().run()
             self.assertEqual("pending", app.session_state["api_trade_intent"]["state"])
             next(button for button in app.button if button.label == "Retry same trade").click().run()
@@ -156,7 +159,8 @@ class DashboardTest(unittest.TestCase):
             app.radio[0].set_value("New trade").run()
             next(button for button in app.button if button.label == "Run checks & submit").click().run()
             next(button for button in app.button if button.label == "Run checks & submit").click().run()
-            next(field for field in app.text_input if field.label == "Notional in the counterparty limit currency").set_value("0.00000001").run()
+            # Batch this edit with the form submit, matching browser behavior.
+            next(field for field in app.text_input if field.label == "Notional in the counterparty limit currency").set_value("0.00000001")
             next(button for button in app.button if button.label == "Run checks & submit").click().run()
             next(button for button in app.button if button.label == "Start a new trade intent").click().run()
             self.assertIsNone(app.session_state["api_trade_intent"])

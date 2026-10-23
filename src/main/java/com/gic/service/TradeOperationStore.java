@@ -15,7 +15,10 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -101,10 +104,27 @@ public class TradeOperationStore {
     }
 
     private void field(MessageDigest digest, String value) {
-        byte[] bytes = value == null ? null : value.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = value == null ? null : strictUtf8(value);
         digest.update(ByteBuffer.allocate(Integer.BYTES).putInt(bytes == null ? -1 : bytes.length).array());
         if (bytes != null) {
             digest.update(bytes);
+        }
+    }
+
+    private byte[] strictUtf8(String value) {
+        try {
+            ByteBuffer encoded = StandardCharsets.UTF_8.newEncoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .encode(CharBuffer.wrap(value));
+            byte[] bytes = new byte[encoded.remaining()];
+            encoded.get(bytes);
+            return bytes;
+        } catch (CharacterCodingException ex) {
+            // String.getBytes would replace an unpaired surrogate with '?',
+            // allowing a changed JSON payload to reuse another fingerprint.
+            throw new BusinessException("INVALID_TRADE_TEXT",
+                    "Trade text must contain valid Unicode without unpaired surrogate characters");
         }
     }
 
