@@ -70,7 +70,7 @@ jobs:
     - name: Evaluation report contracts (offline)
       run: |
         python3 -m unittest discover -s scripts/tests
-        python3 -m py_compile scripts/run-cross-event-eval.py scripts/cross_event_report.py scripts/build-cross-event-demo.py python_src/trading_dashboard.py
+        python3 -m py_compile scripts/run-cross-event-eval.py scripts/cross_event_report.py scripts/build-cross-event-demo.py scripts/build-human-review.py scripts/score-human-review.py scripts/human_review.py scripts/human_review_ui.py python_src/trading_dashboard.py
 
     - name: Remove owned test database container
       if: always()

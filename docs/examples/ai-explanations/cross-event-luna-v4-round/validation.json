@@ -1,0 +1,73 @@
+{
+  "kind": "v4_live_follow_up_targeted_validation",
+  "java_suites": [
+    {
+      "class": "CrossEventReplayTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "AttributionReplyTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "OpenAiPlannerTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "CrossEventJudgeTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "EvaluationBudgetTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "ExplanationModelReportTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "java_totals": {
+    "tests": 34,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope": "Local targeted guards, exact replay of all four retained rounds, Python contracts and browser smoke checks. The final replay adds exact facts/checks/relation/citation equality and passed separately after the initial 34-test run. Test pseudonyms and annotations are synthetic and not human evidence. Remote full CI is recorded separately.",
+  "new_paid_requests_outside_predeclared_run": 0,
+  "python_tests": {
+    "tests": 13,
+    "failures": 0,
+    "errors": 0
+  },
+  "browser_checks": {
+    "anonymous_candidates_rendered": true,
+    "navigation_retains_input": true,
+    "citation_locates_record": true,
+    "local_export_and_import": true,
+    "partial_annotation_scores_no_completed_case": true,
+    "synthetic_test_annotations_used_as_human_evidence": false,
+    "delivered_template_blank": true
+  },
+  "remote_ci": {
+    "status": "pending",
+    "scope": "Full Mongo, offline suites and five packaged HTTP cases will run for the pushed final commit."
+  }
+}

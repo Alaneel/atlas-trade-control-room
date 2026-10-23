@@ -2,7 +2,7 @@
 
 Atlas keeps the recorded decision, money/state invariants and reviewed rule findings authoritative. The optional model now connects events and authors short interpretations, rather than only ordering existing finding IDs. It has no tools or business mutation dependencies.
 
-The [initial two-round study](CROSS_EVENT_EVALUATION.md) did **not** establish an AI advantage: its second round fell back on 8/10 cases. The [GPT-5.6 Luna follow-up](LUNA_EVALUATION.md) reduced fallback to 2/10 and improved explicit relation recall to 14/17, but still did not establish a stable advantage over the 17/17 stronger rules. The UI defaults to deterministic cross-event rules; `?mode=rules_plus` exposes them without any model/key. The existing API default `rules` remains compatible and `ai` is an explicit experiment. All three paid rounds are retained.
+The [initial two-round study](CROSS_EVENT_EVALUATION.md) did **not** establish an AI advantage: its second round fell back on 8/10 cases. The [GPT-5.6 Luna follow-up](LUNA_EVALUATION.md) reduced fallback to 2/10 and improved explicit relation recall to 14/17. The subsequent [v4 live run](ATTRIBUTION_V4_LIVE_EVALUATION.md) reached 0/10 fallback and 17/17, yet still did not establish a stable advantage over the 17/17 stronger rules. It also adds local source-blinded human annotation tools; human review remains absent. The UI defaults to deterministic cross-event rules; `?mode=rules_plus` exposes them without any model/key. The existing API default `rules` remains compatible and `ai` is an explicit experiment. All four paid rounds are retained.
 
 ## Observations and hypotheses
 
@@ -38,7 +38,7 @@ The generator receives typed records, existing rule facts and generic relation d
 
 The historical v3 input introduced short aliases (`E0`, `E1`, `R`, `Q`) and numeric recorded-time offsets relative to the first event. The response schema restricts operands to actual aliases. The server resolves them into full source references within the bound snapshot before checking proofs. This reduces long-ID transcription and timestamp parsing errors without preselecting applicable relations or changing the source records. Original v2 raw-reference inputs and failed results are retained for comparison.
 
-V4 preserves those aliases and source records, but the model returns only `attributions`. Request binding and all factual findings/checks come from the trusted adapter and renderer, never model JSON. A payload cannot choose its own format. [V4 offline evidence](ATTRIBUTION_V4.md) is separate from the retained paid v3 measurements.
+V4 preserves those aliases and source records, but the model returns only `attributions`. Request binding and all factual findings/checks come from the trusted adapter and renderer, never model JSON. A payload cannot choose its own format. [V4 offline evidence](ATTRIBUTION_V4.md) and [actual v4 paid measurements](ATTRIBUTION_V4_LIVE_EVALUATION.md) are recorded separately.
 
 There are at most three attributions, each relation at most once. Each cites two exact relevant records; terminal recovery additionally cites the matching receipt. Extra action fields, invented/unrelated citations, false time direction, missing receipt, premature settlement, duplicate relations, active markup/URLs and oversized text are rejected. Invalid output falls back atomically. A stale snapshot discards the entire narrative without a second request.
 

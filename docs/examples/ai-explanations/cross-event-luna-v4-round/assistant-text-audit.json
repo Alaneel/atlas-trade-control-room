@@ -1,0 +1,16 @@
+{
+  "kind": "authoring_assistant_qualitative_text_audit",
+  "scope": "Post-hoc review of all 20 accepted attributions; not human, blinded, independent or an error-rate estimate. No extra model requests. Do not compare concern counts as a controlled quality score.",
+  "attributions_read": 20,
+  "real_model_requests": 0,
+  "cautions": [
+    {
+      "case_id": "receipt_before_uncertainty",
+      "relation": "RECEIPT_BEFORE_UNKNOWN",
+      "excerpt": "indicating a recorded acknowledgement or commit gap",
+      "concern": "Recorded receipt-before-UNKNOWN order is established; acknowledgement loss or a local commit gap remains a hypothesis. The phrasing can still suggest a known mechanism, despite adjacent uncertainty text.",
+      "status": "unverified_semantic_caution"
+    }
+  ],
+  "overall": "Most new text explicitly distinguishes recorded times from execution, arrival and visibility. Exact proof acceptance still does not verify every interpretation."
+}
