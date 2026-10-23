@@ -24,15 +24,19 @@ public class TradeService {
     }
 
     public TradeResult processTrade(TradeRequest tradeRequest) {
+        return processTrade(tradeRequest, null);
+    }
+
+    public TradeResult processTrade(TradeRequest tradeRequest, String operationId) {
         InstrumentVerificationResult verificationResult = instrumentService.verifyInstrument(tradeRequest.getInstrumentVerificationRequest());
 
         if (!verificationResult.isValid()) {
-            saveTrade(tradeRequest, "REJECTED");
+            saveTrade(tradeRequest, "REJECTED", operationId);
             return new TradeResult("REJECTED", "Invalid instrument combination");
         }
 
         if (!verificationResult.isApprovedForDepartment()) {
-            saveTrade(tradeRequest, "REJECTED");
+            saveTrade(tradeRequest, "REJECTED", operationId);
             return new TradeResult("REJECTED", "Instrument not approved for your department");
         }
 
@@ -40,7 +44,7 @@ public class TradeService {
         boolean limitAvailable = limitService.checkAndReserveLimit(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
 
         if (!limitAvailable) {
-            saveTrade(tradeRequest, "REJECTED");
+            saveTrade(tradeRequest, "REJECTED", operationId);
             return new TradeResult("REJECTED", "Insufficient limit for the counterparty and instrument group");
         }
 
@@ -50,17 +54,19 @@ public class TradeService {
 
         if (tradeExecuted) {
             limitService.confirmLimitUsage(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
-            saveTrade(tradeRequest, "EXECUTED");
+            saveTrade(tradeRequest, "EXECUTED", operationId);
             return new TradeResult("EXECUTED", "Trade executed successfully");
         } else {
             limitService.releaseLimitReservation(tradeRequest.getCounterparty(), instrumentGroup, tradeRequest.getAmount());
-            saveTrade(tradeRequest, "FAILED");
+            saveTrade(tradeRequest, "FAILED", operationId);
             return new TradeResult("FAILED", "Trade execution failed on the external platform");
         }
     }
 
-    private void saveTrade(TradeRequest tradeRequest, String status) {
+    private void saveTrade(TradeRequest tradeRequest, String status, String operationId) {
         TradeHistory tradeHistory = new TradeHistory();
+        // Match the durable operation record for manual failure reconciliation.
+        tradeHistory.setId(operationId);
         tradeHistory.setInstrumentVerificationRequest(tradeRequest.getInstrumentVerificationRequest());
         tradeHistory.setCounterparty(tradeRequest.getCounterparty());
         tradeHistory.setAmount(tradeRequest.getAmount());

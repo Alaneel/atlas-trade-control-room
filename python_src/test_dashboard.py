@@ -59,7 +59,7 @@ class DashboardTest(unittest.TestCase):
     def test_connected_rejection_is_not_rendered_as_success(self):
         history = Mock()
         history.json.return_value = []
-        rejection = Mock()
+        rejection = Mock(status_code=200)
         rejection.json.return_value = {"status": "REJECTED", "message": "Insufficient limit"}
 
         def request(method, url, **kwargs):
@@ -97,6 +97,123 @@ class DashboardTest(unittest.TestCase):
             next(button for button in app.button if button.label == "Run checks & submit").click().run()
         self.assertFalse(app.exception)
         self.assertTrue(any("counterparty: must not be blank" in item.value for item in app.error))
+
+    def test_timeout_and_pending_retry_keep_the_same_key_and_exact_payload(self):
+        history = Mock(status_code=200)
+        history.json.return_value = []
+        pending = Mock(status_code=202)
+        pending.json.return_value = {"status": "IN_PROGRESS", "message": "Manual reconciliation required; do not start another intent."}
+        complete = Mock(status_code=200)
+        complete.json.return_value = {"status": "EXECUTED", "message": "Recorded"}
+        posts = []
+
+        def request(method, url, **kwargs):
+            if method != "POST":
+                return history
+            posts.append(kwargs)
+            if len(posts) == 1:
+                raise requests.Timeout("Response timed out")
+            return pending if len(posts) == 2 else complete
+
+        with patch.dict("os.environ", {"DEMO_MODE": "false"}), \
+                patch("requests.get", return_value=Mock(ok=True)), \
+                patch("requests.request", side_effect=request):
+            app = AppTest.from_file(str(APP)).run(timeout=15)
+            app.radio[0].set_value("New trade").run()
+            next(field for field in app.text_input if field.label == "Notional in the counterparty limit currency").set_value("0.100000000").run()
+            next(button for button in app.button if button.label == "Run checks & submit").click().run()
+            self.assertEqual("pending", app.session_state["api_trade_intent"]["state"])
+            next(button for button in app.button if button.label == "Retry same trade").click().run()
+            self.assertEqual("pending", app.session_state["api_trade_intent"]["state"])
+            self.assertFalse(app.success)
+            self.assertTrue(any("Manual reconciliation required" in item.value for item in app.info))
+            next(button for button in app.button if button.label == "Retry same trade").click().run()
+            self.assertEqual("complete", app.session_state["api_trade_intent"]["state"])
+            self.assertTrue(app.success)
+        self.assertFalse(app.exception)
+        self.assertEqual(3, len(posts))
+        self.assertEqual(1, len({post["headers"]["Idempotency-Key"] for post in posts}))
+        self.assertTrue(all(post["json"]["amount"] == "0.1" for post in posts))
+        self.assertEqual(posts[0]["json"], posts[2]["json"])
+
+    def test_changed_form_and_explicit_new_intent_rotate_identity(self):
+        response = Mock(status_code=200)
+        response.json.return_value = {"status": "EXECUTED", "message": "Recorded"}
+        history = Mock(status_code=200)
+        history.json.return_value = []
+        posts = []
+
+        def request(method, url, **kwargs):
+            if method != "POST":
+                return history
+            posts.append(kwargs)
+            return response
+
+        with patch.dict("os.environ", {"DEMO_MODE": "false"}), \
+                patch("requests.get", return_value=Mock(ok=True)), \
+                patch("requests.request", side_effect=request):
+            app = AppTest.from_file(str(APP)).run(timeout=15)
+            app.radio[0].set_value("New trade").run()
+            next(button for button in app.button if button.label == "Run checks & submit").click().run()
+            next(button for button in app.button if button.label == "Run checks & submit").click().run()
+            next(field for field in app.text_input if field.label == "Notional in the counterparty limit currency").set_value("0.00000001").run()
+            next(button for button in app.button if button.label == "Run checks & submit").click().run()
+            next(button for button in app.button if button.label == "Start a new trade intent").click().run()
+            self.assertIsNone(app.session_state["api_trade_intent"])
+            next(button for button in app.button if button.label == "Run checks & submit").click().run()
+        self.assertFalse(app.exception)
+        keys = [post["headers"]["Idempotency-Key"] for post in posts]
+        self.assertEqual(keys[0], keys[1])
+        self.assertNotEqual(keys[1], keys[2])
+        self.assertNotEqual(keys[2], keys[3])
+        self.assertEqual("0.00000001", posts[2]["json"]["amount"])
+
+    def test_full_precision_api_history_renders_without_float_rounding(self):
+        response = requests.Response()
+        response.status_code = 200
+        response._content = b'[{"amount":99999999999999999999999999.12345678,"status":"EXECUTED"}]'
+        with patch.dict("os.environ", {"DEMO_MODE": "false"}), \
+                patch("requests.get", return_value=Mock(ok=True)), \
+                patch("requests.request", return_value=response):
+            app = AppTest.from_file(str(APP)).run(timeout=15)
+        self.assertFalse(app.exception)
+        rendered = " ".join(item.value for item in app.markdown)
+        self.assertIn("99,999,999,999,999,999,999,999,999.12345678", rendered)
+        self.assertIn("99,999,999,999,999,999,999,999,999.12345678", app.dataframe[0].value.iloc[0]["Notional"])
+
+    def test_uncertain_api_responses_keep_identity_until_a_confirmed_decision(self):
+        for content in [b"invalid proxy response", b"[]", b"{}", b'{"status":"UNKNOWN"}']:
+            with self.subTest(content=content):
+                history = Mock(status_code=200)
+                history.json.return_value = []
+                invalid = requests.Response()
+                invalid.status_code = 200
+                invalid._content = content
+                complete = Mock(status_code=200)
+                complete.json.return_value = {"status": "EXECUTED", "message": "Recorded"}
+                posts = []
+
+                def request(method, url, **kwargs):
+                    if method != "POST":
+                        return history
+                    posts.append(kwargs)
+                    return invalid if len(posts) == 1 else complete
+
+                with patch.dict("os.environ", {"DEMO_MODE": "false"}), \
+                        patch("requests.get", return_value=Mock(ok=True)), \
+                        patch("requests.request", side_effect=request):
+                    app = AppTest.from_file(str(APP)).run(timeout=15)
+                    app.radio[0].set_value("New trade").run()
+                    next(button for button in app.button if button.label == "Run checks & submit").click().run()
+                    self.assertFalse(app.exception)
+                    self.assertEqual("pending", app.session_state["api_trade_intent"]["state"])
+                    self.assertTrue(app.session_state["api_trade_intent"]["error"])
+                    self.assertFalse(app.success)
+                    next(button for button in app.button if button.label == "Retry same trade").click().run()
+                    self.assertFalse(app.exception)
+                    self.assertEqual("complete", app.session_state["api_trade_intent"]["state"])
+                self.assertEqual(posts[0]["headers"], posts[1]["headers"])
+                self.assertEqual(posts[0]["json"], posts[1]["json"])
 
 
 if __name__ == "__main__":

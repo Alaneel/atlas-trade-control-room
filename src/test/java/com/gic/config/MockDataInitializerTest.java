@@ -13,11 +13,15 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
+import org.bson.types.Decimal128;
+import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataMongoTest
 @ActiveProfiles("test")
@@ -35,21 +39,32 @@ class MockDataInitializerTest {
     @Test
     void restartDoesNotRestoreConsumedCapacity() {
         initializer.seedLimit(limit());
-        mongo.updateFirst(new Query(), new Update().inc("availableLimit", -75.0), Limit.class);
+        mongo.updateFirst(new Query(), new Update().inc("availableLimit", new Decimal128(new BigDecimal("-75"))), Limit.class);
         initializer.seedLimit(limit());
         assertEquals(1, mongo.count(new Query(), Limit.class));
-        assertEquals(25.0, mongo.findOne(new Query(), Limit.class).getAvailableLimit());
+        assertEquals(0, new BigDecimal("25").compareTo(mongo.findOne(new Query(), Limit.class).getAvailableLimit()));
+    }
+
+    @Test
+    void seedStoresDecimal128WithoutPassingThroughDouble() {
+        Limit seed = limit();
+        seed.setAvailableLimit(new BigDecimal("0.12345678"));
+        initializer.seedLimit(seed);
+        Document raw = mongo.getCollection("limits").find().first();
+        assertTrue(raw.get("availableLimit") instanceof Decimal128);
+        assertEquals(new BigDecimal("0.12345678"),
+                ((Decimal128) raw.get("availableLimit")).bigDecimalValue());
     }
 
     @Test
     void legacyLimitIsPreservedInsteadOfAddingFreshCapacity() {
         Limit legacy = limit();
         legacy.setId("legacy-snapshot");
-        legacy.setAvailableLimit(10.0);
+        legacy.setAvailableLimit(new BigDecimal("10"));
         mongo.save(legacy);
         initializer.seedLimit(limit());
         assertEquals(1, mongo.count(new Query(), Limit.class));
-        assertEquals(10.0, mongo.findById("legacy-snapshot", Limit.class).getAvailableLimit());
+        assertEquals(0, new BigDecimal("10").compareTo(mongo.findById("legacy-snapshot", Limit.class).getAvailableLimit()));
     }
 
     @Test
@@ -94,7 +109,7 @@ class MockDataInitializerTest {
         }
         Query pair = Query.query(Criteria.where("counterparty").is("TEST").and("instrumentGroup").is("Bonds"));
         assertEquals(1, mongo.count(pair, Limit.class));
-        assertEquals(100.0, mongo.findOne(pair, Limit.class).getAvailableLimit());
+        assertEquals(0, new BigDecimal("100").compareTo(mongo.findOne(pair, Limit.class).getAvailableLimit()));
     }
 
     private Limit limit() {
@@ -103,7 +118,7 @@ class MockDataInitializerTest {
         limit.setInstrumentGroup("Bonds");
         limit.setCurrency("USD");
         limit.setDataDate(LocalDate.of(2024, 9, 5));
-        limit.setAvailableLimit(100.0);
+        limit.setAvailableLimit(new BigDecimal("100"));
         return limit;
     }
 

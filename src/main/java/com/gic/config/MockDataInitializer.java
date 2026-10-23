@@ -4,6 +4,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.gic.model.Instrument;
 import com.gic.model.Limit;
+import com.gic.validation.MoneyAmounts;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -72,7 +74,7 @@ public class MockDataInitializer {
                 limit.setInstrumentGroup(row[0]);
                 limit.setCounterparty(row[1]);
                 limit.setCurrency(row[2]);
-                limit.setAvailableLimit(Double.parseDouble(row[3].replace(",", "")));
+                limit.setAvailableLimit(new BigDecimal(row[3].replace(",", "")));
                 limit.setDataDate(LocalDate.parse(row[4], formatter));
                 seedLimit(limit);
             }
@@ -119,7 +121,7 @@ public class MockDataInitializer {
                 .setOnInsert("counterparty", limit.getCounterparty())
                 .setOnInsert("instrumentGroup", limit.getInstrumentGroup())
                 .setOnInsert("currency", limit.getCurrency())
-                .setOnInsert("availableLimit", limit.getAvailableLimit())
+                .setOnInsert("availableLimit", MoneyAmounts.requireBalance(limit.getAvailableLimit()))
                 .setOnInsert("dataDate", limit.getDataDate());
         mongoTemplate.upsert(identity, insert, Limit.class);
     }

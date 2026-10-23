@@ -1,6 +1,7 @@
 package com.gic.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.gic.exception.GlobalExceptionHandler;
 import com.gic.model.InstrumentVerificationRequest;
 import com.gic.model.TradeRequest;
@@ -8,6 +9,7 @@ import com.gic.service.ApprovalService;
 import com.gic.service.InstrumentService;
 import com.gic.service.LimitService;
 import com.gic.service.TradeService;
+import com.gic.validation.MoneyAmounts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,8 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import java.math.BigDecimal;
 
 import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -48,15 +52,27 @@ class TraderValidationTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(doubles = {0, -1, -1000000, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY})
-    void invalidAmountsNeverReachTrading(Double amount) throws Exception {
-        TradeRequest request = validTrade();
-        request.setAmount(amount);
+    @ValueSource(strings = {"0", "-1", "-1000000", "NaN", "Infinity", "-Infinity", "0.000000001", "1E+26"})
+    void invalidAmountsNeverReachTrading(String amount) throws Exception {
+        ObjectNode request = json.valueToTree(validTrade());
+        request.put("amount", amount);
         mvc.perform(post("/api/trader/trade").contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(400));
         verifyNoInteractions(trades);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"0.1", "0.00000001", "99999999999999999999999999.99999999"})
+    void numericAndStringAmountsDeserializeWithoutLosingPrecision(String amount) throws Exception {
+        ObjectNode numeric = json.valueToTree(validTrade());
+        numeric.put("amount", new BigDecimal(amount));
+        ObjectNode quoted = json.valueToTree(validTrade());
+        quoted.put("amount", amount);
+        BigDecimal expected = MoneyAmounts.requirePositive(new BigDecimal(amount));
+        assertEquals(0, expected.compareTo(json.treeToValue(numeric, TradeRequest.class).getAmount()));
+        assertEquals(0, expected.compareTo(json.treeToValue(quoted, TradeRequest.class).getAmount()));
     }
 
     @Test
@@ -115,6 +131,6 @@ class TraderValidationTest {
         instrument.setExchange("Colombo");
         instrument.setTradeCurrency("CHF");
         instrument.setSettlementCurrency("MXN");
-        return new TradeRequest(instrument, "Sample counterparty", 100.0, false);
+        return new TradeRequest(instrument, "Sample counterparty", new BigDecimal("100"), false);
     }
 }

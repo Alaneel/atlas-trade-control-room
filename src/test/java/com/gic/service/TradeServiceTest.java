@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TradeServiceTest {
+    private static final BigDecimal AMOUNT = new BigDecimal("100");
     @Mock private InstrumentService instruments;
     @Mock private LimitService limits;
     @Mock private TradeHistoryRepository history;
@@ -34,7 +36,7 @@ class TradeServiceTest {
         service = new TradeService(instruments, limits, history, executor);
         InstrumentVerificationRequest definition = new InstrumentVerificationRequest();
         definition.setInstrumentGroup("Bonds");
-        request = new TradeRequest(definition, "TEST", 100.0, false);
+        request = new TradeRequest(definition, "TEST", AMOUNT, false);
     }
 
     @Test
@@ -56,7 +58,7 @@ class TradeServiceTest {
     @Test
     void exhaustedCapacityCannotReachExecution() {
         verification(true, true);
-        when(limits.checkAndReserveLimit("TEST", "Bonds", 100.0)).thenReturn(false);
+        when(limits.checkAndReserveLimit("TEST", "Bonds", AMOUNT)).thenReturn(false);
         assertEquals("REJECTED", service.processTrade(request).getStatus());
         verifyNoInteractions(executor);
         verify(limits, never()).releaseLimitReservation(any(), any(), any());
@@ -66,13 +68,13 @@ class TradeServiceTest {
     @Test
     void successfulExecutionConsumesOnlyTheReservation() {
         verification(true, true);
-        when(limits.checkAndReserveLimit("TEST", "Bonds", 100.0)).thenReturn(true);
+        when(limits.checkAndReserveLimit("TEST", "Bonds", AMOUNT)).thenReturn(true);
         when(executor.execute(request)).thenReturn(true);
         assertEquals("EXECUTED", service.processTrade(request).getStatus());
         InOrder order = inOrder(limits, executor, history);
-        order.verify(limits).checkAndReserveLimit("TEST", "Bonds", 100.0);
+        order.verify(limits).checkAndReserveLimit("TEST", "Bonds", AMOUNT);
         order.verify(executor).execute(request);
-        order.verify(limits).confirmLimitUsage("TEST", "Bonds", 100.0);
+        order.verify(limits).confirmLimitUsage("TEST", "Bonds", AMOUNT);
         order.verify(history).save(any(TradeHistory.class));
         verify(limits, never()).releaseLimitReservation(any(), any(), any());
         assertHistory("EXECUTED");
@@ -81,15 +83,15 @@ class TradeServiceTest {
     @Test
     void failedExecutionReleasesExactlyOnceBeforeRecordingFailure() {
         verification(true, true);
-        when(limits.checkAndReserveLimit("TEST", "Bonds", 100.0)).thenReturn(true);
+        when(limits.checkAndReserveLimit("TEST", "Bonds", AMOUNT)).thenReturn(true);
         when(executor.execute(request)).thenReturn(false);
         assertEquals("FAILED", service.processTrade(request).getStatus());
         InOrder order = inOrder(limits, executor, history);
-        order.verify(limits).checkAndReserveLimit("TEST", "Bonds", 100.0);
+        order.verify(limits).checkAndReserveLimit("TEST", "Bonds", AMOUNT);
         order.verify(executor).execute(request);
-        order.verify(limits).releaseLimitReservation("TEST", "Bonds", 100.0);
+        order.verify(limits).releaseLimitReservation("TEST", "Bonds", AMOUNT);
         order.verify(history).save(any(TradeHistory.class));
-        verify(limits, times(1)).releaseLimitReservation("TEST", "Bonds", 100.0);
+        verify(limits, times(1)).releaseLimitReservation("TEST", "Bonds", AMOUNT);
         verify(limits, never()).confirmLimitUsage(any(), any(), any());
         assertHistory("FAILED");
     }
@@ -97,11 +99,22 @@ class TradeServiceTest {
     @Test
     void unknownExecutionOutcomeRetainsCapacityForReconciliation() {
         verification(true, true);
-        when(limits.checkAndReserveLimit("TEST", "Bonds", 100.0)).thenReturn(true);
+        when(limits.checkAndReserveLimit("TEST", "Bonds", AMOUNT)).thenReturn(true);
         when(executor.execute(request)).thenThrow(new IllegalStateException("Outcome unknown"));
         assertThrows(IllegalStateException.class, () -> service.processTrade(request));
         verify(limits, never()).releaseLimitReservation(any(), any(), any());
         verifyNoInteractions(history);
+    }
+
+    @Test
+    void historyCanBeCorrelatedWithItsDurableOperation() {
+        verification(true, true);
+        when(limits.checkAndReserveLimit("TEST", "Bonds", AMOUNT)).thenReturn(true);
+        when(executor.execute(request)).thenReturn(true);
+        service.processTrade(request, "operation-for-reconciliation");
+        ArgumentCaptor<TradeHistory> saved = ArgumentCaptor.forClass(TradeHistory.class);
+        verify(history).save(saved.capture());
+        assertEquals("operation-for-reconciliation", saved.getValue().getId());
     }
 
     private void verification(boolean valid, boolean approved) {
@@ -119,7 +132,7 @@ class TradeServiceTest {
         verify(history).save(saved.capture());
         assertEquals(status, saved.getValue().getStatus());
         assertEquals("TEST", saved.getValue().getCounterparty());
-        assertEquals(100.0, saved.getValue().getAmount());
+        assertEquals(AMOUNT, saved.getValue().getAmount());
         assertNotNull(saved.getValue().getTimestamp());
     }
 }

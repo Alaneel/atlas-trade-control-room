@@ -2,7 +2,9 @@
 
 from copy import deepcopy
 from datetime import datetime
-from math import isfinite
+from decimal import Decimal
+
+from money import format_money, parse_money, subtract_money
 
 
 DEMO_TRADES = [
@@ -22,6 +24,10 @@ DEMO_LIMITS = {
 
 DEMO_INSTRUMENTS = {"EQUITY": ("AAPL", "MSFT"), "BOND": ("US10Y",), "FX": ("EURUSD",), "COMMODITY": ("XAUUSD",)}
 
+for trade in DEMO_TRADES:
+    trade["amount"] = Decimal(trade["amount"])
+DEMO_LIMITS = {key: Decimal(value) for key, value in DEMO_LIMITS.items()}
+
 
 def new_demo_state():
     return {"trades": deepcopy(DEMO_TRADES), "limits": DEMO_LIMITS.copy()}
@@ -29,8 +35,7 @@ def new_demo_state():
 
 def submit_demo_trade(state, counterparty, group, instrument, amount):
     """Reserve once per submission; rejected/reviewed orders consume no capacity."""
-    if not isinstance(amount, (int, float)) or not isfinite(amount) or amount <= 0:
-        raise ValueError("Notional must be a finite number greater than zero.")
+    amount = parse_money(amount)
     if not instrument or not instrument.strip():
         raise ValueError("Enter an instrument.")
 
@@ -43,9 +48,9 @@ def submit_demo_trade(state, counterparty, group, instrument, amount):
     elif amount > available:
         status, message = "REVIEW", "Notional exceeds remaining capacity; added to the session's exception queue."
     else:
-        state["limits"][key] -= amount
+        state["limits"][key] = subtract_money(available, amount)
         status = "APPROVED"
-        message = f"USD {amount:,.0f} reserved. Remaining capacity: USD {state['limits'][key]:,.0f}."
+        message = f"USD {format_money(amount)} reserved. Remaining capacity: USD {format_money(state['limits'][key])}."
 
     state["trades"].insert(0, {
         "time": datetime.now().strftime("%H:%M:%S"), "counterparty": counterparty,

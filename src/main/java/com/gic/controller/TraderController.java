@@ -26,6 +26,9 @@ public class TraderController {
     @Autowired
     private TradeService tradeService;
 
+    @Autowired
+    private IdempotentTradeService idempotentTradeService;
+
     @PostMapping("/verify-instrument")
     public ResponseEntity<?> verifyInstrument(@Valid @RequestBody InstrumentVerificationRequest request) {
         InstrumentVerificationResult result = instrumentService.verifyInstrument(request);
@@ -53,9 +56,13 @@ public class TraderController {
     }
 
     @PostMapping("/trade")
-    public ResponseEntity<TradeResult> executeTrade(@Valid @RequestBody TradeRequest tradeRequest) {
-        TradeResult result = tradeService.processTrade(tradeRequest);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<TradeResult> executeTrade(@Valid @RequestBody TradeRequest tradeRequest,
+            @RequestHeader(value = "Idempotency-Key", required = false) String key) {
+        IdempotentTradeService.Submission submission = idempotentTradeService.submit(tradeRequest, key);
+        return ResponseEntity.status(submission.isPending() ? 202 : 200)
+                .header("Idempotency-Replayed", Boolean.toString(submission.isReplayed()))
+                .header("X-Trade-Operation-Id", submission.getOperationId())
+                .body(submission.getResult());
     }
 
     @GetMapping("/trades")
