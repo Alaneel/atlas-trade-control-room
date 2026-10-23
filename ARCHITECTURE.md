@@ -86,6 +86,8 @@ Compose runs MongoDB 7, Redis 7, the Java API, and Streamlit. The frontend waits
 
 CI runs Java tests, Python unit/Streamlit AppTest cases, Trivy reporting, Docker builds, and a full Compose health/API/UI smoke check. The legacy Checkstyle job remains advisory (`continue-on-error`); its green job status is not proof that every formatting rule passed.
 
+The CI Java suite explicitly disables embedded MongoDB and connects to its MongoDB 7 service. The local `test` profile keeps embedded MongoDB 4.0.12 for convenience; CI and the Compose smoke check verify the deployed database version separately. Integration tests clear their collections: any externally configured test database must be disposable and must not contain real data.
+
 Local checks:
 
 ```bash

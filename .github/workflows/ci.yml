@@ -79,7 +79,9 @@ jobs:
     - name: Run tests
       run: mvn test
       env:
-        MONGODB_URI: mongodb://localhost:27017/atlas_trade_control_test
+        # Use the production-version service, not the test profile's embedded MongoDB.
+        SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+        SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/atlas_trade_control_test
         REDIS_HOST: localhost
         REDIS_PORT: 6379
 

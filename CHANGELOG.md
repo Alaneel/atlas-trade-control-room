@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reject malformed Unicode before request fingerprinting and test valid Unicode replay without replacement-character collisions.
 - Exercise form edits as batched submissions across older and newer Streamlit AppTest versions.
 - Run pull-request checks for stacked review branches as well as main/develop targets.
+- Connect CI Java tests to the MongoDB 7 service instead of silently starting the older embedded test database.
 
 ### Reliability and demo correctness
 
